@@ -218,7 +218,8 @@ function logPrompt(state, sessionId, promptId, text, timestamp, model) {
 
 function logResponse(state, sessionId, turn, finalText, timestamp) {
   const { exchanges, finalText: transcriptText, model } = analyseTurn(turn);
-  const turnModel = model || state.lastModel;
+  // The final message may not be in the transcript yet when Stop fires, so fall back to the prompt's model.
+  const turnModel = model || state.lastModel || state.prompts[turn.promptId].model;
   for (const exchange of exchanges) appendEntry(state, sessionId, { ...exchange, model: exchange.model || turnModel });
   const text = (finalText || transcriptText || '').trim() || INTERRUPTED;
   appendEntry(state, sessionId, { type: 'RESPONSE', text, timestamp, model: turnModel });
