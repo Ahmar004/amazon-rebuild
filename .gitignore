@@ -1,0 +1,22 @@
+# Agent capture bookkeeping (the logs themselves in .agent-logs/ are committed)
+.claude/agent-capture/
+.claude/settings.local.json
+
+# Secrets
+.env
+.env.local
+.env.*.local
+
+# Dependencies and build output
+node_modules/
+.next/
+dist/
+build/
+coverage/
+.vercel/
+
+# OS and editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
