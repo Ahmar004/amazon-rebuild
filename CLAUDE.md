@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - Follow `roadmap.md` in root at all costs. DO NOT edit `roadmap.md` unless the user approves the exact change.
 - `roadmap.md` governs the order of work. Do one step at a time. DO NOT start a later step, and DO NOT invent a new step - propose it in `roadmap.md` and wait for approval first.
-- Every specification document lives in `docs/`. The only docs at the repository root are `roadmap.md`, this file and `README.md`; project config files also belong at the root. Where a comment or doc names a spec file without a directory, it means the copy in `docs/`.
+- Every specification document lives in `docs/`. The only docs at the repository root are `roadmap.md`, this file, `README.md` and `CAPTURE-TEST.md` (required by 8x); project config files also belong at the root. Where a comment or doc names a spec file without a directory, it means the copy in `docs/`.
 - DO NOT invent requirements. If something the product needs is not in the specification documents, it is an open question for the user, not a decision to make alone. Where the specs are silent on how something looks or behaves, the reference is how amazon.com does it.
 
 ## Time Budget
