@@ -20,3 +20,14 @@ coverage/
 Thumbs.db
 .vscode/
 .idea/
+
+# Next.js and tooling (merged from create-next-app)
+/out/
+/.pnp
+.pnp.*
+*.pem
+*.tsbuildinfo
+next-env.d.ts
+npm-debug.log*
+/test-results/
+/playwright-report/

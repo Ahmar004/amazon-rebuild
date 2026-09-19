@@ -181,7 +181,7 @@ users            { id uuid pk, email text unique (stored lowercased), name text,
 sessions         { id text pk (32 random bytes, hex), userId uuid fk users on delete cascade, expiresAt timestamptz }
 departments      { id serial pk, slug text unique, name text, sortOrder int }
 products         { asin text pk, title text, brand text, departmentId int fk, categoryPath text[],
-                   priceCents int, listPriceCents int null, ratingTotal numeric(12,1), ratingCount int,
+                   priceCents int, listPriceCents int null, ratingCounts int[5] /* [1..5 stars] */, ratingCount and ratingAvg (generated, stored),
                    stock int, isBestSeller bool, features text[], description text, details jsonb,
                    images jsonb /* {thumb, large, hiRes}[] */, importedRank int /* "Newest Arrivals" order */,
                    searchVector tsvector generated (title A, brand B, features C) + GIN index,
@@ -206,7 +206,7 @@ listItems        { listId fk cascade, asin fk, priceAtAddCents int, addedAt, pk 
 browsingHistory  { userId fk, asin fk, viewedAt, pk (userId, asin) }
 ```
 
-- **Rating (design choice, from spec 6.7):** average = `ratingTotal / ratingCount`. The import sets `ratingTotal = datasetAverage * datasetCount`. A user review adds its rating and adds 1 to the count; an edit applies the difference; a delete takes it away. The star histogram percentages come from the reviews stored in our database (the imported sample plus user reviews). The dataset has no histogram.
+- **Rating (design choice, from spec 6.7):** products store star counts `ratingCounts` ([1-star .. 5-star]); `ratingCount` and `ratingAvg` are generated columns. The dataset gives only an average and a count, so the import derives the counts with `histogramFromAverage` (`lib/reviews/histogram.ts`: the most even spread whose mean equals the real average). A user review increments its star's count; an edit moves one count; a delete decrements it. The histogram percentages come from these counts via `histogramPercents`.
 - **Guest state:**
   - The cart uses a signed `cart_token` cookie that points at `carts.guestToken`.
   - Browsing history is a `history` cookie (JSON array of up to 20 ASINs).
@@ -321,7 +321,7 @@ Every function that takes `userId` filters by it in SQL. Unit tests cover "user 
 - `<Results>` streams inside Suspense; `searchProducts` is cached per query.
 - **SQL:**
   - Base `WHERE`: `searchVector @@ websearch_to_tsquery('english', k)` (or no text filter for department browse).
-  - Filters: `departmentId`, `(ratingTotal/ratingCount) >= minRating`, `brand = ANY(brands)`, price range, and `listPriceCents > priceCents` for deals.
+  - Filters: `departmentId`, `ratingAvg >= minRating`, `brand = ANY(brands)`, price range, and `listPriceCents > priceCents` for deals.
   - Sort map in `lib/constants/sort.ts`: featured = `ts_rank` desc then ratingCount desc; price-asc; price-desc; review = average desc, then count desc; newest = importedRank desc; bestsellers = isBestSeller desc, then ratingCount desc.
   - Brand facets: `SELECT brand, count(*) ... GROUP BY brand ORDER BY count desc LIMIT 30` over the same filters (except brand).
 - **`suggest`:** `SELECT DISTINCT lower(left(title, 60)) ... WHERE title % $1 OR title ILIKE $1 || '%' ORDER BY similarity desc LIMIT 10`. `/api/suggest` responses are cached with `'use cache'` per prefix.
@@ -428,7 +428,7 @@ Every function that takes `userId` filters by it in SQL. Unit tests cover "user 
 - **Reviews:**
   - `/review/create-review/[asin]` requires sign-in.
   - It has star buttons (a radio group with keyboard support), a headline, and the written review; it pre-fills the user's existing review and offers Delete.
-  - `upsertReview` sets `verified` when the user has a delivered order with that ASIN, adjusts the product's `ratingTotal` and `ratingCount`, and calls `revalidateTag('product:<asin>')`.
+  - `upsertReview` sets `verified` when the user has a delivered order with that ASIN, adjusts the product's `ratingCounts`, and calls `revalidateTag('product:<asin>')`.
 - **History:**
   - `recordView` upserts `browsingHistory` for signed-in users, or prepends to the `history` cookie (deduplicated, at most 20).
   - `HistoryStrip` (shop layout, Suspense) shows up to 10 items plus a link to `/history`.

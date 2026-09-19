@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+/* Amazon's design tokens (docs/design.md section 3). Every colour and font in the UI comes from here. */
+@theme {
+  --color-nav: #131921;
+  --color-subnav: #232f3e;
+  --color-back-to-top: #37475a;
+  --color-footer-bottom: #131a22;
+  --color-search-btn: #febd69;
+  --color-search-btn-hover: #f3a847;
+  --color-btn-yellow: #ffd814;
+  --color-btn-yellow-border: #fcd200;
+  --color-btn-yellow-hover: #f7ca00;
+  --color-btn-orange: #ffa41c;
+  --color-btn-orange-border: #ff8f00;
+  --color-btn-orange-hover: #fa8900;
+  --color-link: #007185;
+  --color-link-hover: #c7511f;
+  --color-text: #0f1111;
+  --color-text-muted: #565959;
+  --color-price-deal: #cc0c39;
+  --color-in-stock: #007600;
+  --color-star: #de7921;
+  --color-border: #d5d9d9;
+  --color-page-bg: #e3e6e6;
+
+  /* amazon.com renders its UI in Arial (checked live on 2026-09-19). */
+  --font-sans: Arial, sans-serif;
+}
+
+html {
+  font-size: 14px;
+}
+
+body {
+  background: white;
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  line-height: 20px;
+}
