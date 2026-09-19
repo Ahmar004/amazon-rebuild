@@ -43,6 +43,10 @@
   --color-error: #c40000;
   /* Slice 2: background behind home-page card tile images (docs design.md 6.2). */
   --color-tile-bg: #f7f7f7;
+  /* Slice 3: the bold orange query text in "results for <query>" (docs design.md 6.3). */
+  --color-results-query: #c45500;
+  /* Slice 3: the orange-red "Best Seller" badge (docs design.md 6.3). */
+  --color-best-seller: #e47911;
 
   /* amazon.com renders its UI in Arial (checked live on 2026-09-19). */
   --font-sans: Arial, sans-serif;

@@ -1,22 +1,62 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { Suspense, useRef, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { Department } from "@/lib/data/departments";
 import { CaretDown } from "@/components/layout/CaretDown";
 import { SearchIcon } from "@/components/layout/SearchIcon";
+import { useTypeahead } from "@/hooks/useTypeahead";
+import { ROUTES } from "@/lib/constants/links";
 
 type SearchBarProps = {
   departments: Department[];
 };
 
-// The header search form. A real <select name="i"> (opacity 0) sits over a decorative label
-// so the native department dropdown opens, per the measured values in task-2-brief.md.
-// action="/s" method="get" keeps it working without JavaScript.
+// useSearchParams() (used to keep the field synced with /s) needs a Suspense boundary, since its
+// value is only known at request time. SearchBarFallback is the same static shell so there is no
+// layout shift while it resolves.
 export function SearchBar({ departments }: SearchBarProps) {
-  const [dept, setDept] = useState("");
+  return (
+    <Suspense fallback={<SearchBarFallback departments={departments} />}>
+      <SearchBarInner departments={departments} />
+    </Suspense>
+  );
+}
+
+function SearchBarInner({ departments }: SearchBarProps) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const onResultsPage = pathname === ROUTES.search;
+
+  const [dept, setDept] = useState(() => (onResultsPage ? (searchParams.get("i") ?? "") : ""));
+  const [query, setQuery] = useState(() => (onResultsPage ? (searchParams.get("k") ?? "") : ""));
+  const [open, setOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
+
   const selectRef = useRef<HTMLSelectElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  // Keeps the field synced with the URL when the user searches again from the results page.
+  // Adjusted during render (React's documented pattern for deriving state from a changed prop)
+  // rather than in an effect, so it takes effect before the stale value ever paints.
+  const [syncedSearchParams, setSyncedSearchParams] = useState(searchParams);
+  if (onResultsPage && searchParams !== syncedSearchParams) {
+    setSyncedSearchParams(searchParams);
+    setDept(searchParams.get("i") ?? "");
+    setQuery(searchParams.get("k") ?? "");
+  }
+
+  const { suggestions } = useTypeahead(query);
+
+  const [suggestionsForActiveIndex, setSuggestionsForActiveIndex] = useState(suggestions);
+  if (suggestions !== suggestionsForActiveIndex) {
+    setSuggestionsForActiveIndex(suggestions);
+    setActiveIndex(-1);
+  }
 
   const selectedLabel = dept === "" ? "All" : (departments.find((d) => d.slug === dept)?.name ?? "All");
+  const showSuggestions = open && suggestions.length > 0;
 
   function handleSubmit() {
     // Empty "i" is not sent: disable the select just before the native GET submit collects
@@ -27,26 +67,147 @@ export function SearchBar({ departments }: SearchBarProps) {
         if (selectRef.current) selectRef.current.disabled = false;
       }, 0);
     }
+    setOpen(false);
+  }
+
+  function submitWith(value: string) {
+    setQuery(value);
+    setOpen(false);
+    const params = new URLSearchParams();
+    params.set("k", value);
+    if (dept) params.set("i", dept);
+    router.push(`${ROUTES.search}?${params.toString()}`);
+  }
+
+  function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (!showSuggestions) return;
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setActiveIndex((i) => (i + 1) % suggestions.length);
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setActiveIndex((i) => (i <= 0 ? suggestions.length - 1 : i - 1));
+    } else if (event.key === "Enter" && activeIndex >= 0) {
+      event.preventDefault();
+      submitWith(suggestions[activeIndex]);
+    } else if (event.key === "Escape") {
+      setOpen(false);
+    }
   }
 
   return (
+    <>
+      {open && (
+        <button
+          type="button"
+          aria-label="Close search suggestions"
+          onClick={() => setOpen(false)}
+          className="fixed inset-0 top-[120px] z-30 hidden bg-black/50 md:block"
+        />
+      )}
+
+      <form
+        ref={formRef}
+        action={ROUTES.search}
+        method="get"
+        onSubmit={handleSubmit}
+        className="relative z-40 flex h-10 flex-1 rounded focus-within:ring-[3px] focus-within:ring-search-btn"
+      >
+        <div className="relative flex shrink-0 items-center rounded-l border-r border-search-dept-border bg-search-dept pl-3 pr-5 text-xs text-search-dept-text">
+          <span className="whitespace-nowrap">{selectedLabel}</span>
+          <CaretDown className="ml-1.5" />
+          <select
+            ref={selectRef}
+            name="i"
+            aria-label="Search in department"
+            value={dept}
+            onChange={(event) => setDept(event.target.value)}
+            className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+          >
+            <option value="">All Departments</option>
+            {departments.map((department) => (
+              <option key={department.slug} value={department.slug}>
+                {department.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <label htmlFor="search-input" className="sr-only">
+          Search Amazon
+        </label>
+        <input
+          id="search-input"
+          name="k"
+          type="text"
+          autoComplete="off"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          onFocus={() => setOpen(true)}
+          onKeyDown={handleKeyDown}
+          placeholder="Search Amazon"
+          className="min-w-0 flex-1 border-0 bg-white pl-[10px] text-[15px] text-text placeholder:text-text-muted outline-none"
+        />
+
+        <button
+          type="submit"
+          aria-label="Go"
+          className="flex h-10 w-[45px] shrink-0 items-center justify-center rounded-r bg-search-btn hover:bg-search-btn-hover"
+        >
+          <SearchIcon size={22} />
+        </button>
+
+        {showSuggestions && (
+          <ul
+            role="listbox"
+            aria-label="Search suggestions"
+            className="absolute left-0 right-[45px] top-full mt-1 max-h-[400px] overflow-y-auto rounded border border-search-dept-border bg-white shadow-lg"
+          >
+            {suggestions.map((suggestion, index) => {
+              const matchLength = query.trim().length;
+              const typed = suggestion.slice(0, matchLength);
+              const rest = suggestion.slice(matchLength);
+              return (
+                <li key={suggestion} role="option" aria-selected={index === activeIndex}>
+                  <button
+                    type="button"
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => submitWith(suggestion)}
+                    onMouseEnter={() => setActiveIndex(index)}
+                    className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-text ${
+                      index === activeIndex ? "bg-search-dept" : ""
+                    }`}
+                  >
+                    <SearchIcon size={14} />
+                    <span>
+                      {typed}
+                      <b>{rest}</b>
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </form>
+    </>
+  );
+}
+
+// Static markup only (no state, no useSearchParams): ships in the prerendered shell while
+// SearchBarInner resolves, then is replaced once it does. Still a real form, so search works
+// even if JavaScript never loads.
+function SearchBarFallback({ departments }: SearchBarProps) {
+  return (
     <form
-      action="/s"
+      action={ROUTES.search}
       method="get"
-      onSubmit={handleSubmit}
       className="flex h-10 flex-1 rounded focus-within:ring-[3px] focus-within:ring-search-btn"
     >
       <div className="relative flex shrink-0 items-center rounded-l border-r border-search-dept-border bg-search-dept pl-3 pr-5 text-xs text-search-dept-text">
-        <span className="whitespace-nowrap">{selectedLabel}</span>
+        <span className="whitespace-nowrap">All</span>
         <CaretDown className="ml-1.5" />
-        <select
-          ref={selectRef}
-          name="i"
-          aria-label="Search in department"
-          value={dept}
-          onChange={(event) => setDept(event.target.value)}
-          className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-        >
+        <select name="i" aria-label="Search in department" defaultValue="" className="absolute inset-0 h-full w-full cursor-pointer opacity-0">
           <option value="">All Departments</option>
           {departments.map((department) => (
             <option key={department.slug} value={department.slug}>

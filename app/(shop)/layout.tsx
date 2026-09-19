@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { Header } from "@/components/layout/Header";
 import { HeaderMobile } from "@/components/layout/HeaderMobile";
+import { ScrollHideHeader } from "@/components/layout/ScrollHideHeader";
 import { SubNav } from "@/components/layout/SubNav";
 import { DeliverTo, DeliverToFallback } from "@/components/layout/DeliverTo";
 import { CartLink } from "@/components/layout/CartLink";
@@ -18,26 +19,28 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
 
   return (
     <>
-      <Header
-        departments={departments}
-        deliverTo={
-          <Suspense fallback={<DeliverToFallback />}>
-            <DeliverTo />
-          </Suspense>
-        }
-        cartLink={<CartLink count={0} />}
-      />
-      <SubNav departments={departments} />
+      <ScrollHideHeader>
+        <Header
+          departments={departments}
+          deliverTo={
+            <Suspense fallback={<DeliverToFallback />}>
+              <DeliverTo />
+            </Suspense>
+          }
+          cartLink={<CartLink count={0} />}
+        />
+        <SubNav departments={departments} />
 
-      <HeaderMobile
-        departments={departments}
-        deliverTo={
-          <Suspense fallback={<DeliverToFallback variant="mobile" />}>
-            <DeliverTo variant="mobile" />
-          </Suspense>
-        }
-        cartLink={<CartLink count={0} variant="mobile" />}
-      />
+        <HeaderMobile
+          departments={departments}
+          deliverTo={
+            <Suspense fallback={<DeliverToFallback variant="mobile" />}>
+              <DeliverTo variant="mobile" />
+            </Suspense>
+          }
+          cartLink={<CartLink count={0} variant="mobile" />}
+        />
+      </ScrollHideHeader>
 
       <main>{children}</main>
 
