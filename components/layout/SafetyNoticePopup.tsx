@@ -14,7 +14,7 @@ export function SafetyNoticePopup() {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 flex justify-center p-4 sm:bottom-4 sm:left-4 sm:right-auto sm:justify-start">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
       <div className="w-full max-w-sm rounded-lg border border-border bg-white p-4 shadow-lg">
         <p className="text-sm text-text">
           Demo clone built for an 8x assessment. Not affiliated with Amazon. Do not enter real
