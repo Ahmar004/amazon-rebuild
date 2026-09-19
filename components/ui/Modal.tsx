@@ -10,11 +10,13 @@ type ModalProps = {
   /** id used to associate the dialog with its title via aria-labelledby. */
   labelledBy: string;
   children: ReactNode;
+  /** Overrides the panel's max width (default "max-w-md"), e.g. for ImageViewer's larger panel. */
+  widthClassName?: string;
 };
 
 // Generic modal dialog: dimmed overlay, centred white panel with Amazon's grey header bar
 // and an X close button. No Amazon-specific content lives here - callers supply children.
-export function Modal({ open, onClose, title, labelledBy, children }: ModalProps) {
+export function Modal({ open, onClose, title, labelledBy, children, widthClassName }: ModalProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const previouslyFocused = useRef<HTMLElement | null>(null);
 
@@ -41,7 +43,7 @@ export function Modal({ open, onClose, title, labelledBy, children }: ModalProps
         aria-modal="true"
         aria-labelledby={labelledBy}
         tabIndex={-1}
-        className="w-full max-w-md rounded-lg bg-white shadow-lg outline-none"
+        className={`w-full ${widthClassName ?? "max-w-md"} rounded-lg bg-white shadow-lg outline-none`}
       >
         <div className="flex items-center justify-between rounded-t-lg bg-modal-header px-4 py-3">
           <h2 id={labelledBy} className="text-base font-bold text-text">
