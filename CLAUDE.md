@@ -26,7 +26,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Check the live amazon.com page for each screen before building it, rather than recreating it from memory.
 - Every visible control must work. No dead links, placeholder buttons or fake states. Which controls get built follows the scope ranking in `docs/spec.md`; ask the user only about controls the spec does not cover, batched into one round.
 - Links to Amazon features we don't build (Prime Video, Registry, Sell, Careers, sister sites) open the real public page in a new tab with `rel="noopener noreferrer"`. Their URLs live in one constants module.
-- Amazon's brand assets (Amazon Ember font, logo, sprites, hero and card images) load from Amazon's CDN, with every URL kept in `lib/assets.ts`. Product images use Amazon's size suffixes (for example `._AC_SX300_`), not Vercel image optimisation.
+- Amazon's brand assets (logo, sprites, hero and card images) load from Amazon's CDN, with every URL kept in `lib/assets.ts`. Product images use Amazon's size suffixes (for example `._AC_SX300_`), not Vercel image optimisation. The font is plain `Arial, sans-serif`: amazon.com renders its UI in Arial (checked live on 2026-09-19), so no web font is loaded.
 - Never remove the safety notice ("Demo clone built for an 8x assessment. Not affiliated with Amazon. Do not enter real Amazon credentials.") from the footer and the sign-in, create-account and checkout boxes, or the site-wide `noindex` and `robots.txt`. They keep the live link from being flagged as phishing.
 - No "Sponsored" labels or fake ad placements; related-product carousels show real catalogue items.
 

@@ -76,7 +76,7 @@ Writes go through Server Actions or Route Handlers that check the session first,
 
 ## 7. Amazon brand assets and the safety notice
 
-- **Assets (user decision: Amazon's originals):** Amazon's own files are loaded from Amazon's CDN for an exact match: the Amazon Ember font, the logo and icon sprites, and the hero and home-card images. Their URLs are captured from the live amazon.com page during the slice that first needs them, and kept in one `lib/assets.ts` file.
+- **Assets (user decision: Amazon's originals):** Amazon's own files are loaded from Amazon's CDN for an exact match: the logo and icon sprites, and the hero and home-card images. Their URLs are captured from the live amazon.com page during the slice that first needs them, and kept in one `lib/assets.ts` file.
   - Product images use Amazon's size suffixes (for example `._AC_SX300_`, `._AC_SL1500_`), so each surface loads the right size without Vercel image optimisation (which is capped at 5,000 transformations a month on Hobby).
   - A request check on 2026-09-19 confirmed the CDN serves these images to other sites.
 - **Safety notice (user decision):** one small line in the footer and under the sign-in, create account and checkout boxes: "Demo clone built for an 8x assessment. Not affiliated with Amazon. Do not enter real Amazon credentials."

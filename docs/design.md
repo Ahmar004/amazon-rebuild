@@ -167,9 +167,9 @@ These are Amazon's values, confirmed against the live site in Slice 1:
 | `--color-star` | #de7921 | rating stars |
 | `--color-border` | #d5d9d9 | cards, inputs |
 | `--color-page-bg` | #e3e6e6 | home background |
-| `--font-sans` | "Amazon Ember", Arial, sans-serif | everything |
+| `--font-sans` | Arial, sans-serif | everything (base 14px; search input 15px) |
 
-Font (user decision, Step-4): if Amazon's CDN refuses to serve Amazon Ember to our origin (browsers block cross-origin fonts without CORS headers), the stack falls back to Arial, Amazon's own fallback; the font files are never copied into the repo.
+Font: amazon.com renders its header, search, headings, body and footer in `Arial, sans-serif` (computed styles checked live on 2026-09-19; "Amazon Ember" is declared but never loaded), so Arial is the exact match and no font file is loaded or copied.
 
 Breakpoint **(design choice):** below 768 px renders the mobile components; 768 px and up renders desktop.
 
@@ -477,7 +477,7 @@ Every slice builds its screens' mobile layout (spec 5.13) together with the desk
 
 **Slice 0 - Foundation (roadmap Step-5)**
 - `create-next-app` (TypeScript, App Router, Tailwind 4, ESLint), `cacheComponents: true`, `images.unoptimized`.
-- Tokens in `globals.css`; Amazon Ember `@font-face` from `lib/assets.ts`.
+- Tokens in `globals.css` (Arial, no web font).
 - Drizzle schema (section 4) with migrations; `pg_trgm` extension.
 - `scripts/import-catalogue.ts` (Hugging Face range reads, then `data/catalogue.json`) and `scripts/seed.ts`. The dataset's files are per top-level category (for example `Electronics`, `Home_and_Kitchen`); our departments come from those files, except "Computers", which is taken from Electronics products whose category path contains "Computers & Accessories".
 - `.env.example`; Vitest and Playwright configs.
