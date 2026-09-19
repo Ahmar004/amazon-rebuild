@@ -1,15 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 // Shows on every first load/reload (not persisted) per user request - a phishing-avoidance
 // disclaimer, same wording as SafetyNotice, plus a contact link.
 export function SafetyNoticePopup() {
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    setOpen(true);
-  }, []);
+  const [open, setOpen] = useState(true);
 
   if (!open) return null;
 

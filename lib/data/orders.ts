@@ -2,7 +2,7 @@
 // withTransaction (actions/checkout.ts's finalizeOrder) so the order insert, the order-item
 // snapshots, the stock decrement and the cart cleanup all succeed or fail together
 // (CLAUDE.md: "created in one transaction with the stock decrement and cart cleanup").
-import { and, eq, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import type { Tx } from "@/lib/db/client";
 import { db } from "@/lib/db/client";
 import { cartItems, carts, orderItems, orders, products, type AddressSnapshot } from "@/lib/db/schema";
@@ -120,6 +120,37 @@ export type OrderSummary = {
   cancelledAt: Date | null;
   items: OrderItemInput[];
 };
+
+// Ownership-checked: only returns orders belonging to userId, newest first, for the Your Orders list.
+export async function getOrdersForUser(userId: string): Promise<OrderSummary[]> {
+  const rows = await db.select().from(orders).where(eq(orders.userId, userId)).orderBy(desc(orders.placedAt));
+  if (rows.length === 0) return [];
+
+  const orderIds = rows.map((row) => row.id);
+  const items = await db.select().from(orderItems).where(inArray(orderItems.orderId, orderIds));
+  const itemsByOrder = new Map<string, OrderItemInput[]>();
+  for (const item of items) {
+    const list = itemsByOrder.get(item.orderId) ?? [];
+    list.push({ asin: item.asin, title: item.title, imageUrl: item.imageUrl, unitPriceCents: item.unitPriceCents, quantity: item.quantity });
+    itemsByOrder.set(item.orderId, list);
+  }
+
+  return rows.map((order) => ({
+    id: order.id,
+    placedAt: order.placedAt,
+    speed: order.speed,
+    deliveryDate: order.deliveryDate,
+    address: order.address,
+    paymentBrand: order.paymentBrand,
+    paymentLast4: order.paymentLast4,
+    itemsCents: order.itemsCents,
+    shippingCents: order.shippingCents,
+    taxCents: order.taxCents,
+    totalCents: order.totalCents,
+    cancelledAt: order.cancelledAt,
+    items: itemsByOrder.get(order.id) ?? [],
+  }));
+}
 
 // Ownership-checked: only returns an order belonging to userId.
 export async function getOrder(userId: string, orderId: string): Promise<OrderSummary | null> {
