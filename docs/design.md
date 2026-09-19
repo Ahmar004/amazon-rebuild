@@ -169,6 +169,8 @@ These are Amazon's values, confirmed against the live site in Slice 1:
 | `--color-page-bg` | #e3e6e6 | home background |
 | `--font-sans` | "Amazon Ember", Arial, sans-serif | everything |
 
+Font (user decision, Step-4): if Amazon's CDN refuses to serve Amazon Ember to our origin (browsers block cross-origin fonts without CORS headers), the stack falls back to Arial, Amazon's own fallback; the font files are never copied into the repo.
+
 Breakpoint **(design choice):** below 768 px renders the mobile components; 768 px and up renders desktop.
 
 ## 4. Data model (`lib/db/schema.ts`)
@@ -439,7 +441,7 @@ Every function that takes `userId` filters by it in SQL. Unit tests cover "user 
   - The `setLocation({zip})` action validates 5 digits, looks up the city and state through `api.zippopotam.us/us/<zip>` (free, no key), and sets the `deliver_to` cookie.
   - `setLocationFromAddress(addressId)` checks ownership.
   - A lookup failure shows "Please enter a valid US zip code".
-  - `DeliverTo` shows "Deliver to <city> <zip>", or "Hello, <name>" style lines when signed in, per the recon.
+  - `DeliverTo` shows two lines, as in the recon: "Deliver to" over "<city> <zip>" when signed out, and "Delivering to <city> <zip>" over "Update location" when signed in.
 
 ## 7. Caching and invalidation
 
@@ -469,13 +471,15 @@ Every function that takes `userId` filters by it in SQL. Unit tests cover "user 
 
 ## 9. Slice plan
 
+**Review process (user decision, Step-4):** one implementer subagent (Sonnet) per task; one combined spec-and-quality reviewer subagent (Sonnet) per slice, not per task; then a final check by the main agent (Opus) before the commit. Visual checks use Claude in Chrome against the live amazon.com, falling back to `docs/recon/` while the extension is unavailable.
+
 Every slice builds its screens' mobile layout (spec 5.13) together with the desktop layout, never later. Each slice ends with: tests green, lint and build green, a visual check against amazon.com at desktop and mobile widths, a commit (with `.agent-logs/`), a push, and the Vercel deploy verified live. **Slices up to 7 form the core purchase path**; if time runs short, what's live is still a complete store. Header links to pages from later slices stay pointed at their final routes; before those slices land they reach the not-found page, which the no-dead-links rule allows only between slices, never at submission.
 
 **Slice 0 - Foundation (roadmap Step-5)**
 - `create-next-app` (TypeScript, App Router, Tailwind 4, ESLint), `cacheComponents: true`, `images.unoptimized`.
 - Tokens in `globals.css`; Amazon Ember `@font-face` from `lib/assets.ts`.
 - Drizzle schema (section 4) with migrations; `pg_trgm` extension.
-- `scripts/import-catalogue.ts` (Hugging Face range reads, then `data/catalogue.json`) and `scripts/seed.ts`.
+- `scripts/import-catalogue.ts` (Hugging Face range reads, then `data/catalogue.json`) and `scripts/seed.ts`. The dataset's files are per top-level category (for example `Electronics`, `Home_and_Kitchen`); our departments come from those files, except "Computers", which is taken from Electronics products whose category path contains "Computers & Accessories".
 - `.env.example`; Vitest and Playwright configs.
 - Deploy to Vercel with Neon and Stripe env vars; record the commands in CLAUDE.md.
 - Tests: the seed row counts and that every product has an image and a price.

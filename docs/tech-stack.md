@@ -105,6 +105,7 @@ Writes go through Server Actions or Route Handlers that check the session first,
 | `SESSION_SECRET` | server | Signs the guest-cart and session cookies |
 | `STRIPE_SECRET_KEY` | server | Stripe test secret key |
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | browser | Stripe test publishable key |
+| `DATABASE_URL_TEST` | local and test only | A separate Neon branch used by the data-layer tests, so tests never touch production data |
 
 They live in `.env.local` (never committed); `.env.example` lists the names with no values.
 
