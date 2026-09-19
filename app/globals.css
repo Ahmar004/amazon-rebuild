@@ -23,6 +23,7 @@
   --color-star: #de7921;
   --color-border: #d5d9d9;
   --color-page-bg: #e3e6e6;
+  --color-modal-header: #f0f2f2;
 
   /* amazon.com renders its UI in Arial (checked live on 2026-09-19). */
   --font-sans: Arial, sans-serif;
