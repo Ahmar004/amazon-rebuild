@@ -25,19 +25,24 @@ Read this first in a new session, then `roadmap.md` (including Rule-0.0A), `docs
 
 ## How to resume (Slice 6 next)
 
-1. Read `docs/remaining-work-finish-strategy.md` for the time budget and session shape.
+Slice 6 is Tier A (see `docs/remaining-work-finish-strategy.md` - revised session shape after Slice 5):
+
+1. Read `docs/remaining-work-finish-strategy.md` for the usage budget and the Tier A/B session shape.
 2. Dispatch one Sonnet implementer on `docs/superpowers/plans/2026-09-19-slice-6-auth.md`.
-3. Run `npm test`, `npm run lint`, `npm run typecheck`, `npm run build`; fix anything failing.
-4. Per `CLAUDE.md`, Slice 6 (auth) also gets a separate Sonnet reviewer subagent before the visual check, since it handles passwords.
-5. Visual check: `npx next start -p 3100`, then either Claude in Chrome (if connected - check with `tabs_context_mcp` first) or the curl/DOM fallback used for Slice 3 if it is not.
+3. Dispatch a separate Sonnet reviewer subagent before the visual check, since it handles passwords, per `CLAUDE.md`.
+4. Controller re-runs `npm test`, `npm run lint`, `npm run typecheck`, `npm run build` itself; fix anything failing.
+5. Controller does its own visual/flow check of sign-in/up/out (Chrome if connected - check with `tabs_context_mcp` first - otherwise the curl/DOM fallback used for Slice 3).
 6. Commit (code + `.agent-logs/`) and push to `main` (pre-approved, this deploys).
-7. Update this file's status table and the strategy doc's status column, then stop the session (Rule-0.0A: one slice per session).
+7. Update this file's status table (short entry) and the strategy doc's status column, then stop the session (Rule-0.0A: one slice per session).
+
+Slices 9 onward are Tier B: dispatch the implementer with instructions to run its own test/lint/typecheck/build and its own visual check and report the results; the controller trusts a clean report (spot-checks `git status`/`git diff --stat` against it) instead of re-running everything, to fit the remaining usage budget. See the strategy doc for the full Tier A/B rule and why it changed.
 
 ## How the work is run (decided with the user; keep doing it this way)
 
-- **One slice at a time, in the plan order.** One Sonnet implementer subagent builds a whole slice from its plan file. The controller (Opus) checks it visually against amazon.com and its tests, then commits (including `.agent-logs/`) and pushes to `main`. Pushing to `main` is pre-approved by the user.
-- **Reviews:** only Slices 6 (auth), 7 (checkout) and 8 (orders) get a separate Sonnet reviewer subagent, because they handle passwords, payments and refunds. The other slices rely on tests plus the controller's visual check.
-- **The user's usage budget is tight.** Keep dispatch prompts short and point at the plan file instead of pasting it. Use few screenshots, at scale 0.5.
+- **One slice at a time, in the plan order.** One Sonnet implementer subagent builds a whole slice from its plan file. Pushing to `main` is pre-approved by the user.
+- **Tier A (Slices 6, 7, 8 - auth, checkout, orders):** full rigor. A separate Sonnet reviewer subagent, plus the controller re-running tests/lint/typecheck/build and doing its own visual check of the security/money-critical paths, because these handle passwords, payments and refunds.
+- **Tier B (everything else from Slice 9 on, plus hardening/README):** the controller trusts the implementer's own test/lint/typecheck/build run and its own visual check, reported back, instead of redundantly re-running them - this was the single biggest token cost on Slice 5 and the remaining usage budget cannot absorb it 9 more times. The controller still fixes/re-dispatches if the implementer's own report shows a failure.
+- **The user's usage budget is tight (45% used after Slice 5, 55% left for 9 more sessions).** Keep dispatch prompts short and point at the plan file instead of pasting it. Use few screenshots, at scale 0.5, only on Tier A slices.
 - **Never run two agents that commit to `main` at the same time.** Wait for one to finish before dispatching the next.
 - **Rulings already made:**
   - `useDismiss`, `Popover` and `Modal` get no unit tests; their Esc and outside-click behaviour is covered by the Step-7 Playwright tests.
