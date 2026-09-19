@@ -1,9 +1,10 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import { Sprite } from "@/components/ui/Sprite";
 import { SideMenu } from "@/components/layout/SideMenu";
+import { SideMenuSession } from "@/components/layout/SideMenuSession";
 import { NavAnchor } from "@/components/layout/NavAnchor";
-import { PersonIcon } from "@/components/layout/PersonIcon";
+import { HeaderMobileAccount, HeaderMobileAccountFallback } from "@/components/layout/HeaderMobileAccount";
 import { SearchIcon } from "@/components/layout/SearchIcon";
 import { MOBILE_LINK_ROW, ROUTES } from "@/lib/constants/links";
 import type { Department } from "@/lib/data/departments";
@@ -23,17 +24,18 @@ export function HeaderMobile({ departments, deliverTo, cartLink }: HeaderMobileP
   return (
     <header className="md:hidden">
       <div className="flex h-12 w-full min-w-0 items-center gap-2 bg-nav px-3">
-        <SideMenu departments={departments} variant="mobile" />
+        <Suspense fallback={<SideMenu departments={departments} variant="mobile" user={null} />}>
+          <SideMenuSession departments={departments} variant="mobile" />
+        </Suspense>
 
         <Link href={ROUTES.home} className="flex shrink-0 items-center">
           <Sprite name="logo" label="Amazon" />
         </Link>
 
         <div className="ml-auto flex min-w-0 shrink-0 items-center gap-2">
-          <Link href={ROUTES.signIn} className="shrink-0 whitespace-nowrap text-sm text-white">
-            Sign in &#8250;
-          </Link>
-          <PersonIcon className="shrink-0 text-white" />
+          <Suspense fallback={<HeaderMobileAccountFallback />}>
+            <HeaderMobileAccount />
+          </Suspense>
           {cartLink}
         </div>
       </div>

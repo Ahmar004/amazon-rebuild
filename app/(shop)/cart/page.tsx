@@ -21,6 +21,8 @@ export default function CartPage() {
 
 async function CartPageContent() {
   const owner = await getCartOwner();
+  const signedIn = owner !== null && "userId" in owner;
+  const checkoutHref = signedIn ? ROUTES.checkout : `${ROUTES.signIn}?return_to=${encodeURIComponent(ROUTES.checkout)}`;
   const cart = owner ? await getCart(owner) : { lines: [], saved: [], subtotalCents: 0, itemCount: 0 };
   const isCompletelyEmpty = cart.lines.length === 0 && cart.saved.length === 0;
 
@@ -28,7 +30,7 @@ async function CartPageContent() {
     return (
       <div className="min-h-[60vh] bg-page-bg px-4 py-8">
         <div className="mx-auto max-w-[600px]">
-          <EmptyCart />
+          <EmptyCart signedIn={signedIn} />
         </div>
       </div>
     );
@@ -44,7 +46,7 @@ async function CartPageContent() {
             Subtotal <span className="font-bold">{formatPrice(cart.subtotalCents)}</span>
           </p>
           <Link
-            href={ROUTES.checkout}
+            href={checkoutHref}
             className="mt-3 block w-full rounded-full border border-btn-yellow-border bg-btn-yellow px-3 py-2 text-center text-sm text-text hover:bg-btn-yellow-hover"
           >
             Proceed to checkout ({itemsLabel})
@@ -91,7 +93,7 @@ async function CartPageContent() {
 
         {cart.lines.length > 0 && (
           <div className="hidden w-[300px] shrink-0 md:block">
-            <SubtotalBox itemCount={cart.itemCount} subtotalCents={cart.subtotalCents} />
+            <SubtotalBox itemCount={cart.itemCount} subtotalCents={cart.subtotalCents} checkoutHref={checkoutHref} />
           </div>
         )}
       </div>

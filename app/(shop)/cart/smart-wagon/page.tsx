@@ -29,6 +29,8 @@ export default function SmartWagonPage({ searchParams }: SmartWagonPageProps) {
 async function SmartWagonContent({ searchParams }: SmartWagonPageProps) {
   const { asin } = await searchParams;
   const owner = await getCartOwner();
+  const signedIn = owner !== null && "userId" in owner;
+  const checkoutHref = signedIn ? ROUTES.checkout : `${ROUTES.signIn}?return_to=${encodeURIComponent(ROUTES.checkout)}`;
   const cart = owner ? await getCart(owner) : { lines: [], saved: [], subtotalCents: 0, itemCount: 0 };
 
   // "An unknown asin parameter falls back to showing the cart summary only" (plan): this also
@@ -67,7 +69,7 @@ async function SmartWagonContent({ searchParams }: SmartWagonPageProps) {
                 Cart Subtotal: <span className="font-bold">{formatPrice(cart.subtotalCents)}</span>
               </p>
               <Link
-                href={ROUTES.checkout}
+                href={checkoutHref}
                 className="rounded-full border border-btn-yellow-border bg-btn-yellow px-3 py-1.5 text-center text-sm text-text hover:bg-btn-yellow-hover"
               >
                 Proceed to checkout ({itemsLabel})

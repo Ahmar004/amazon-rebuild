@@ -6,6 +6,8 @@ import { SubNav } from "@/components/layout/SubNav";
 import { DeliverTo, DeliverToFallback } from "@/components/layout/DeliverTo";
 import { CartLink } from "@/components/layout/CartLink";
 import { CartCount } from "@/components/cart/CartCount";
+import { AccountFlyout } from "@/components/layout/AccountFlyout";
+import { Greeting } from "@/components/layout/Greeting";
 import { Footer } from "@/components/layout/Footer";
 import { FooterMobile } from "@/components/layout/FooterMobile";
 import { getDepartments } from "@/lib/data/departments";
@@ -31,6 +33,11 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
           cartLink={
             <Suspense fallback={<CartLink count={0} />}>
               <CartCount />
+            </Suspense>
+          }
+          accountMenu={
+            <Suspense fallback={<AccountFlyout user={null} />}>
+              <Greeting />
             </Suspense>
           }
         />

@@ -8,19 +8,23 @@ import { PersonIcon } from "@/components/layout/PersonIcon";
 import { GlobeIcon } from "@/components/layout/GlobeIcon";
 import { navItemClass } from "@/components/layout/navItemClass";
 import { useDismiss } from "@/hooks/useDismiss";
+import { SignOutForm } from "@/components/layout/SignOutForm";
 import { ROUTES, SIDE_MENU_PROGRAMS, SIDE_MENU_TRENDING, type NavLink } from "@/lib/constants/links";
 import type { Department } from "@/lib/data/departments";
+import type { SessionUser } from "@/lib/auth/current-user";
 
 type SideMenuProps = {
   departments: Department[];
   /** "mobile" swaps the "All" text button for an icon-only hamburger (Task 4's HeaderMobile). */
   variant?: "desktop" | "mobile";
+  /** Drives the "Hello, <name>" header and the Sign in / Sign Out row (Slice 6). */
+  user: SessionUser | null;
 };
 
 // The "All"/hamburger trigger and the drawer it opens: a 365px white panel sliding in from the
 // left over an 80%-black overlay. Owns its own open state so SubNav/HeaderMobile stay server
 // components.
-export function SideMenu({ departments, variant = "desktop" }: SideMenuProps) {
+export function SideMenu({ departments, variant = "desktop", user }: SideMenuProps) {
   const [open, setOpen] = useState(false);
   const [entered, setEntered] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -107,8 +111,8 @@ export function SideMenu({ departments, variant = "desktop" }: SideMenuProps) {
           >
             <div className="flex h-[50px] shrink-0 items-center gap-3 bg-subnav px-4 text-white">
               <PersonIcon />
-              <Link href={ROUTES.signIn} id={titleId} className="text-[19px] font-bold">
-                Hello, sign in
+              <Link href={user ? ROUTES.account : ROUTES.signIn} id={titleId} className="text-[19px] font-bold">
+                Hello, {user ? user.firstName : "sign in"}
               </Link>
             </div>
 
@@ -141,7 +145,13 @@ export function SideMenu({ departments, variant = "desktop" }: SideMenuProps) {
                 United States
               </div>
               <Row link={{ label: "Customer Service", href: ROUTES.customerService, external: false }} />
-              <Row link={{ label: "Sign in", href: ROUTES.signIn, external: false }} />
+              {user ? (
+                <SignOutForm className="block w-full py-[13px] pl-9 pr-5 text-left text-sm text-side-menu-text hover:bg-side-menu-hover">
+                  Sign Out
+                </SignOutForm>
+              ) : (
+                <Row link={{ label: "Sign in", href: ROUTES.signIn, external: false }} />
+              )}
             </Section>
           </div>
 
