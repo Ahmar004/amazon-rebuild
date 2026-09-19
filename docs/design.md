@@ -324,7 +324,7 @@ Every function that takes `userId` filters by it in SQL. Unit tests cover "user 
   - Filters: `departmentId`, `ratingAvg >= minRating`, `brand = ANY(brands)`, price range, and `listPriceCents > priceCents` for deals.
   - Sort map in `lib/constants/sort.ts`: featured = `ts_rank` desc then ratingCount desc; price-asc; price-desc; review = average desc, then count desc; newest = importedRank desc; bestsellers = isBestSeller desc, then ratingCount desc.
   - Brand facets: `SELECT brand, count(*) ... GROUP BY brand ORDER BY count desc LIMIT 30` over the same filters (except brand).
-- **`suggest`:** `SELECT DISTINCT lower(left(title, 60)) ... WHERE title % $1 OR title ILIKE $1 || '%' ORDER BY similarity desc LIMIT 10`. `/api/suggest` responses are cached with `'use cache'` per prefix.
+- **`suggest`:** `SELECT DISTINCT lower(left(title, 60)) ... WHERE $1 <% title ORDER BY word_similarity($1, title) DESC LIMIT 10` (word-level trigram match, so a partial word like "headph" finds "Headphones" anywhere in the title; checked on the seeded catalogue). `/api/suggest` responses are cached with `'use cache'` per prefix.
 - **`ResultRow`:** Add to cart calls `addToCart({asin, quantity: 1, redirectTo: 'none'})`, then updates the header count through a small client store and `router.refresh()`.
 
 ### 6.4 Product page

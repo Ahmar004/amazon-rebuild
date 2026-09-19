@@ -1,5 +1,5 @@
 {
-  "id": "05f71d81-058b-4e63-824c-2360e804b04b",
+  "id": "79604906-2691-4a3d-9ef7-3b7ad5d35e84",
   "prevId": "3e5352a8-bc99-4a4d-93ea-2a70fc8d2733",
   "version": "7",
   "dialect": "postgresql",
@@ -1008,7 +1008,7 @@
           "primaryKey": false,
           "notNull": false,
           "generated": {
-            "as": "setweight(to_tsvector('english', coalesce(title, '')), 'A') || setweight(to_tsvector('english', coalesce(brand, '')), 'B') || setweight(to_tsvector('english', array_to_string(features, ' ')), 'C')",
+            "as": "setweight(to_tsvector('english', coalesce(title, '')), 'A') || setweight(to_tsvector('english', coalesce(brand, '')), 'B') || setweight(to_tsvector('english', immutable_array_to_string(features, ' ')), 'C')",
             "type": "stored"
           }
         }

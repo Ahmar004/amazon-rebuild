@@ -87,7 +87,7 @@ export const products = pgTable(
     images: jsonb().$type<ProductImage[]>().notNull(),
     importedRank: integer().notNull(),
     searchVector: tsvector().generatedAlwaysAs(
-      sql`setweight(to_tsvector('english', coalesce(title, '')), 'A') || setweight(to_tsvector('english', coalesce(brand, '')), 'B') || setweight(to_tsvector('english', array_to_string(features, ' ')), 'C')`,
+      sql`setweight(to_tsvector('english', coalesce(title, '')), 'A') || setweight(to_tsvector('english', coalesce(brand, '')), 'B') || setweight(to_tsvector('english', immutable_array_to_string(features, ' ')), 'C')`,
     ),
   },
   (t) => [

@@ -123,7 +123,7 @@ CREATE TABLE "products" (
 	"details" jsonb NOT NULL,
 	"images" jsonb NOT NULL,
 	"imported_rank" integer NOT NULL,
-	"search_vector" "tsvector" GENERATED ALWAYS AS (setweight(to_tsvector('english', coalesce(title, '')), 'A') || setweight(to_tsvector('english', coalesce(brand, '')), 'B') || setweight(to_tsvector('english', array_to_string(features, ' ')), 'C')) STORED
+	"search_vector" "tsvector" GENERATED ALWAYS AS (setweight(to_tsvector('english', coalesce(title, '')), 'A') || setweight(to_tsvector('english', coalesce(brand, '')), 'B') || setweight(to_tsvector('english', immutable_array_to_string(features, ' ')), 'C')) STORED
 );
 --> statement-breakpoint
 CREATE TABLE "review_votes" (
