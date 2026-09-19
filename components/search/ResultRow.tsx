@@ -5,6 +5,7 @@ import { imageAt } from "@/lib/assets";
 import { deliveryDate, formatDeliveryDate } from "@/lib/pricing/delivery";
 import { formatPrice } from "@/lib/pricing/money";
 import { FREE_SHIPPING_THRESHOLD_CENTS, shippingCents } from "@/lib/pricing/shipping";
+import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import type { ProductSummary } from "@/lib/data/products";
 
 const LOW_STOCK_THRESHOLD = 10;
@@ -14,9 +15,8 @@ type ResultRowProps = {
   now: Date;
 };
 
-// One search result: image, title, rating, price and delivery line, list layout on desktop and
-// a 2-column layout on mobile (docs/design.md 6.3). No "Add to cart" button in this slice
-// (arrives with the cart in Slice 5).
+// One search result: image, title, rating, price, delivery line and an "Add to cart" button,
+// list layout on desktop and a 2-column layout on mobile (docs/design.md 6.3).
 export function ResultRow({ item, now }: ResultRowProps) {
   const href = `/dp/${item.asin}`;
   const freeShipping = item.priceCents >= FREE_SHIPPING_THRESHOLD_CENTS;
@@ -60,8 +60,14 @@ export function ResultRow({ item, now }: ResultRowProps) {
           <span className="font-bold">{eta}</span>
         </p>
 
-        {item.stock <= LOW_STOCK_THRESHOLD && (
+        {item.stock <= LOW_STOCK_THRESHOLD && item.stock > 0 && (
           <p className="mt-1 text-sm text-price-deal">Only {item.stock} left in stock - order soon.</p>
+        )}
+
+        {item.stock > 0 && (
+          <div className="mt-2">
+            <AddToCartButton asin={item.asin} />
+          </div>
         )}
       </div>
     </div>

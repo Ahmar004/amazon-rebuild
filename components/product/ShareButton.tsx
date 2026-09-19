@@ -4,14 +4,21 @@ import { useState } from "react";
 
 const COPIED_TOOLTIP_MS = 1500;
 
-// Copies the current page URL and shows Amazon's small "Copied" tooltip (docs/spec.md 5.5:
-// "a share button that copies the link").
-export function ShareButton() {
+type ShareButtonProps = {
+  /** Path to share instead of the current page, e.g. a cart line's "/dp/<asin>" (Slice 5). */
+  path?: string;
+};
+
+// Copies a product URL and shows Amazon's small "Copied" tooltip (docs/spec.md 5.5: "a share
+// button that copies the link"). Defaults to the current page (the product page's own Gallery);
+// components/cart/CartLine.tsx passes `path` to share the product it's showing instead.
+export function ShareButton({ path }: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
 
   async function handleClick() {
     try {
-      await navigator.clipboard.writeText(window.location.href);
+      const url = path ? `${window.location.origin}${path}` : window.location.href;
+      await navigator.clipboard.writeText(url);
       setCopied(true);
       setTimeout(() => setCopied(false), COPIED_TOOLTIP_MS);
     } catch {

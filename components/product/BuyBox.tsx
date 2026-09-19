@@ -3,13 +3,13 @@ import { deliveryDate, formatDeliveryDate } from "@/lib/pricing/delivery";
 import { formatPrice } from "@/lib/pricing/money";
 import { FREE_SHIPPING_THRESHOLD_CENTS, shippingCents } from "@/lib/pricing/shipping";
 import { Price } from "@/components/product/Price";
-import { QuantitySelect } from "@/components/product/QuantitySelect";
 import { BuyBoxLocationButton } from "@/components/product/BuyBoxLocationButton";
 import { DeliveryDetailsPopover } from "@/components/product/DeliveryDetailsPopover";
+import { AddToCartForm } from "@/components/cart/AddToCartForm";
+import { MAX_CART_QUANTITY } from "@/lib/data/cart";
 import type { ProductDetail } from "@/lib/data/products";
 
 const LOW_STOCK_THRESHOLD = 10;
-const MAX_QUANTITY = 30;
 
 type BuyBoxProps = {
   product: ProductDetail;
@@ -26,7 +26,7 @@ export async function BuyBox({ product }: BuyBoxProps) {
   const standardEta = formatDeliveryDate(deliveryDate(now, "standard"));
   const fastEta = formatDeliveryDate(deliveryDate(now, "fast"));
   const freeShipping = product.priceCents >= FREE_SHIPPING_THRESHOLD_CENTS;
-  const maxQty = Math.max(0, Math.min(product.stock, MAX_QUANTITY));
+  const maxQty = Math.max(0, Math.min(product.stock, MAX_CART_QUANTITY));
 
   return (
     <div className="rounded-lg border border-border p-[18px]">
@@ -49,14 +49,7 @@ export async function BuyBox({ product }: BuyBoxProps) {
 
       <StockLine stock={product.stock} />
 
-      {product.stock > 0 && (
-        <div className="mt-3">
-          <QuantitySelect max={maxQty} />
-        </div>
-      )}
-
-      {/* "Add to cart" (yellow) and "Buy Now" (orange) arrive in Slice 5. */}
-      <div aria-hidden="true" data-slot="cart-buttons" className="mt-4 empty:hidden" />
+      {product.stock > 0 && <AddToCartForm asin={product.asin} maxQuantity={maxQty} />}
 
       <dl className="mt-4 space-y-1 border-t border-border pt-3 text-sm text-text">
         <InfoRow label="Ships from" value="Amazon.com" />

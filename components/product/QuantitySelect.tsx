@@ -3,8 +3,8 @@ type QuantitySelectProps = {
 };
 
 // Amazon's grey rounded "Quantity: N" select, 1 up to min(stock, 30) (docs/spec.md 5.5, 6.6).
-// A plain <select> - no onChange handler yet, since "Add to cart" arrives in Slice 5 and this
-// slice leaves that slot empty rather than wiring a dead control.
+// A plain uncontrolled <select> - components/cart/AddToCartForm.tsx reads its value from
+// FormData on submit rather than wiring an onChange handler.
 export function QuantitySelect({ max }: QuantitySelectProps) {
   if (max <= 0) return null;
   const options = Array.from({ length: max }, (_, i) => i + 1);

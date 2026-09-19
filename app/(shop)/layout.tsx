@@ -5,6 +5,7 @@ import { ScrollHideHeader } from "@/components/layout/ScrollHideHeader";
 import { SubNav } from "@/components/layout/SubNav";
 import { DeliverTo, DeliverToFallback } from "@/components/layout/DeliverTo";
 import { CartLink } from "@/components/layout/CartLink";
+import { CartCount } from "@/components/cart/CartCount";
 import { Footer } from "@/components/layout/Footer";
 import { FooterMobile } from "@/components/layout/FooterMobile";
 import { getDepartments } from "@/lib/data/departments";
@@ -12,8 +13,8 @@ import { getDepartments } from "@/lib/data/departments";
 // Shell for every storefront page: header + sub-nav + page content + footer, desktop and mobile
 // each as their own deliberate design (CLAUDE.md) toggled by hidden/md:flex classes inside each
 // component. Departments are cached catalogue data ('use cache' in lib/data/departments.ts), so
-// this layout can read them directly. DeliverTo reads cookies() (Task 3), so each instance of it
-// renders inside its own <Suspense> boundary rather than blocking the rest of the shell.
+// this layout can read them directly. DeliverTo and CartCount read cookies() (Task 3, Slice 5), so
+// each instance renders inside its own <Suspense> boundary rather than blocking the rest of the shell.
 export default async function ShopLayout({ children }: { children: React.ReactNode }) {
   const departments = await getDepartments();
 
@@ -27,7 +28,11 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
               <DeliverTo />
             </Suspense>
           }
-          cartLink={<CartLink count={0} />}
+          cartLink={
+            <Suspense fallback={<CartLink count={0} />}>
+              <CartCount />
+            </Suspense>
+          }
         />
         <SubNav departments={departments} />
 
@@ -38,7 +43,11 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
               <DeliverTo variant="mobile" />
             </Suspense>
           }
-          cartLink={<CartLink count={0} variant="mobile" />}
+          cartLink={
+            <Suspense fallback={<CartLink count={0} variant="mobile" />}>
+              <CartCount variant="mobile" />
+            </Suspense>
+          }
         />
       </ScrollHideHeader>
 

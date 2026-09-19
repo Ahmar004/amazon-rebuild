@@ -3,6 +3,12 @@ import { useEffect, useState } from "react";
 const DEBOUNCE_MS = 150;
 const MIN_LENGTH = 2;
 
+// A stable reference for the "too short to search" case. Returning a fresh `[]` literal each
+// render instead would make every consuming `suggestions !== previous` check (SearchBar.tsx)
+// true forever, since two different empty arrays are never ===, causing an infinite re-render
+// loop on any page whose search box starts empty (Slice 5 hit this on /cart).
+const NO_SUGGESTIONS: string[] = [];
+
 // Debounces GET /api/suggest?q= for the header search typeahead (docs/design.md 6.1, 6.3) and
 // cancels a stale in-flight request with an AbortController when the query changes again.
 export function useTypeahead(query: string): { suggestions: string[] } {
@@ -34,5 +40,5 @@ export function useTypeahead(query: string): { suggestions: string[] } {
     };
   }, [trimmed, tooShort]);
 
-  return { suggestions: tooShort ? [] : suggestions };
+  return { suggestions: tooShort ? NO_SUGGESTIONS : suggestions };
 }

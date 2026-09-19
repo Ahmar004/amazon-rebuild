@@ -10,6 +10,9 @@ export const FLAG_SPRITE = "https://m.media-amazon.com/images/S/sash/MAbi1rCjQI9
 // Task 4: the dog illustration on Amazon's 404 page.
 export const NOT_FOUND_IMAGE = "https://m.media-amazon.com/images/G/01/error/title._TTD_.png";
 
+// Slice 5: the kettle illustration on Amazon's empty-cart state (captured live 2026-09-19).
+export const EMPTY_CART_IMAGE = "https://m.media-amazon.com/images/G/01/cart/empty/kettle-desaturated._CB445243794_.svg";
+
 // Amazon's product images carry a size suffix such as "._AC_SX300_" before the extension.
 // Replaces (or inserts) that suffix so a single catalogue image URL can be requested at the
 // size a given surface needs (CLAUDE.md: "Product images use Amazon's size suffixes").

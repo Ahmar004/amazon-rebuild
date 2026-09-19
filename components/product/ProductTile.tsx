@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Stars } from "@/components/product/Stars";
 import { Price } from "@/components/product/Price";
 import { imageAt } from "@/lib/assets";
+import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import type { ProductSummary } from "@/lib/data/products";
 
 type ProductTileProps = {
@@ -10,8 +11,8 @@ type ProductTileProps = {
 
 const TILE_WIDTH = 180;
 
-// One carousel card: image, a title link clamped to 3 lines, stars + count, price
-// (docs/spec.md 5.5). No "Sponsored" label (CLAUDE.md).
+// One carousel card: image, a title link clamped to 3 lines, stars + count, price and an
+// "Add to cart" button (docs/spec.md 5.5). No "Sponsored" label (CLAUDE.md).
 export function ProductTile({ item }: ProductTileProps) {
   const href = `/dp/${item.asin}`;
 
@@ -39,6 +40,11 @@ export function ProductTile({ item }: ProductTileProps) {
       <div className="mt-1">
         <Price priceCents={item.priceCents} listPriceCents={item.listPriceCents} />
       </div>
+      {item.stock > 0 && (
+        <div className="mt-2">
+          <AddToCartButton asin={item.asin} />
+        </div>
+      )}
     </div>
   );
 }
