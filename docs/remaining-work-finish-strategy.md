@@ -30,7 +30,7 @@ Slice 5 spent about 22% of usage with full controller re-verification and no rev
 | 3 Search | `2026-09-19-slice-3-search.md` | - | (already built) | Done |
 | 4 Product page | `2026-09-19-slice-4-product.md` | - | (already built) | Done (commits `2469339`, `b36a75c`) |
 | 5 Cart | `2026-09-19-slice-5-cart.md` | - | (already built, ~22% spent) | Done (commit `9c9e201`) |
-| 6 Auth (sign in/up/out) | `2026-09-19-slice-6-auth.md` | A | 9% | Not started |
+| 6 Auth (sign in/up/out) | `2026-09-19-slice-6-auth.md` | A | 9% | Done (commit `c805877`) |
 | 7 Checkout (Stripe) | `2026-09-19-slice-7-checkout.md` | A | 10% | Not started |
 | 8 Your Orders | `2026-09-19-slice-8-orders.md` | A | 9% | Not started |
 | 9 Your Account | `2026-09-19-slice-9-account.md` | B | 4% | Not started |
