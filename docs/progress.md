@@ -26,25 +26,28 @@ Read this first in a new session, then `roadmap.md` (including Rule-0.0A), `docs
 
 ## How to resume (Slice 7 next)
 
-Slice 7 (Checkout, Stripe) is Tier A - same shape as Slice 6 above:
+Slice 6 (Tier A: separate reviewer subagent + full controller re-verification) cost ~21% of usage against a 9% budget - the reviewer dispatch and the full test/lint/typecheck/build re-run were the two biggest costs. 67% of usage is spent after Slice 6, leaving 33% for everything from here to the README, so Slices 7 and 8 move to **Tier A-minus**: still money-critical, but the controller drops the separate reviewer dispatch and the redundant full re-run.
 
-1. Read `docs/remaining-work-finish-strategy.md` for the usage budget and the Tier A/B session shape.
+Slice 7 (Checkout, Stripe) is Tier A-minus:
+
+1. Read `docs/remaining-work-finish-strategy.md` for the usage budget and the Tier A-minus session shape.
 2. Before starting, check `.env.local` has both Stripe test keys (per the gotcha below).
-3. Dispatch one Sonnet implementer on `docs/superpowers/plans/2026-09-19-slice-7-checkout.md`.
-4. Dispatch a separate Sonnet reviewer subagent before the visual check, since it handles payments, per `CLAUDE.md`.
-5. Controller re-runs `npm test`, `npm run lint`, `npm run typecheck`, `npm run build` itself; fix anything failing.
-6. Controller does its own visual/flow check of the Stripe payment and order-creation transaction (Chrome if connected - check with `tabs_context_mcp` first - otherwise the curl/DOM fallback used for Slice 3).
+3. Dispatch one Sonnet implementer on `docs/superpowers/plans/2026-09-19-slice-7-checkout.md`. Its dispatch prompt requires it to run `npm test`, `npm run lint`, `npm run typecheck`, `npm run build` itself and report pass/fail with output tails, plus its own visual/flow check.
+4. No separate reviewer subagent. Controller reads the diff itself (`git diff`), focused on: the Stripe PaymentIntent re-read-before-order-creation rule (CLAUDE.md, non-negotiable), the transaction wrapping order creation + stock decrement + cart cleanup, and server-side ownership checks - lighter read on everything else.
+5. If the implementer's report is clean, controller does NOT re-run the full test/lint/typecheck/build suite - spot-check via `git status`/`git diff --stat` against the report instead.
+6. Controller does one focused flow check of the money path only (Chrome if connected - check with `tabs_context_mcp` first - otherwise curl/DOM): the Stripe payment and order-creation transaction.
 7. Commit (code + `.agent-logs/`) and push to `main` (pre-approved, this deploys).
 8. Update this file's status table (short entry) and the strategy doc's status column, then stop the session (Rule-0.0A: one slice per session).
 
-Slices 9 onward are Tier B: dispatch the implementer with instructions to run its own test/lint/typecheck/build and its own visual check and report the results; the controller trusts a clean report (spot-checks `git status`/`git diff --stat` against it) instead of re-running everything, to fit the remaining usage budget. See the strategy doc for the full Tier A/B rule and why it changed.
+Slice 8 (Your Orders) follows the same Tier A-minus shape, focused on order list/cancel and ownership checks instead of Stripe. Slices 9 onward are Tier B: dispatch the implementer with instructions to run its own test/lint/typecheck/build and its own visual check and report the results; the controller trusts a clean report (spot-checks `git status`/`git diff --stat` against it) instead of re-running everything. See the strategy doc for the full Tier A/A-minus/B rules and why they changed.
 
 ## How the work is run (decided with the user; keep doing it this way)
 
 - **One slice at a time, in the plan order.** One Sonnet implementer subagent builds a whole slice from its plan file. Pushing to `main` is pre-approved by the user.
-- **Tier A (Slices 6, 7, 8 - auth, checkout, orders):** full rigor. A separate Sonnet reviewer subagent, plus the controller re-running tests/lint/typecheck/build and doing its own visual check of the security/money-critical paths, because these handle passwords, payments and refunds.
-- **Tier B (everything else from Slice 9 on, plus hardening/README):** the controller trusts the implementer's own test/lint/typecheck/build run and its own visual check, reported back, instead of redundantly re-running them - this was the single biggest token cost on Slice 5 and the remaining usage budget cannot absorb it 9 more times. The controller still fixes/re-dispatches if the implementer's own report shows a failure.
-- **The user's usage budget is tight (45% used after Slice 5, 55% left for 9 more sessions).** Keep dispatch prompts short and point at the plan file instead of pasting it. Use few screenshots, at scale 0.5, only on Tier A slices.
+- **Tier A (Slice 6 auth only):** full rigor. A separate Sonnet reviewer subagent, plus the controller re-running tests/lint/typecheck/build and doing its own visual check of the security-critical paths. This cost ~21% of usage against a 9% budget, so it is not repeated for Slices 7-8.
+- **Tier A-minus (Slices 7, 8 - checkout, orders):** still money-critical, but no separate reviewer subagent (the controller reads the diff itself, focused on the Stripe re-read rule, the order transaction, and ownership checks) and no redundant full test/lint/typecheck/build re-run when the implementer's own report is clean - only a targeted flow check of the money path. See the strategy doc for the full shape.
+- **Tier B (everything else from Slice 9 on, plus hardening/README):** the controller trusts the implementer's own test/lint/typecheck/build run and its own visual check, reported back, instead of redundantly re-running them. The controller still fixes/re-dispatches if the implementer's own report shows a failure.
+- **The user's usage budget is tight (67% used after Slice 6, 33% left for 8 more sessions).** Keep dispatch prompts short and point at the plan file instead of pasting it. Use few screenshots, at scale 0.5, only where a visual check is required.
 - **Never run two agents that commit to `main` at the same time.** Wait for one to finish before dispatching the next.
 - **Rulings already made:**
   - `useDismiss`, `Popover` and `Modal` get no unit tests; their Esc and outside-click behaviour is covered by the Step-7 Playwright tests.
