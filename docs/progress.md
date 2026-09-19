@@ -19,12 +19,13 @@ Read this first in a new session, then `roadmap.md` (including Rule-0.0A), `docs
 | 1 Layout shell (header, sub-nav, side menu, location, footer, mobile) | `2026-09-19-slice-1-layout-shell.md` | Done and live. It got a Sonnet review and one fix round (10 findings fixed). |
 | 2 Home page | `2026-09-19-slice-2-home.md` | Done and live (commit `bfd706e`, plus the background fix in `1510314`). |
 | 3 Search | `2026-09-19-slice-3-search.md` | **Done and live** (commit `42f8e54`). Tests (68 passed), lint, typecheck and build all clean. Visual check was a DOM/structural check (curl against `next start`), not a screenshot - the Claude in Chrome extension was not connected this session. Confirmed: "N-M of X results" header, department/brand filter sidebar, sort dropdown, star ratings, FREE delivery text, working `/api/suggest` typeahead, a separate `MobileFilters` component for the mobile breakpoint. Worth a real screenshot check next time the extension is available. |
-| 4 Product page to 12 History, deals and help | `...slice-4-product.md` to `...slice-12-history-deals-help.md` | Planned, not started. Budgeted in `docs/remaining-work-finish-strategy.md`. |
+| 4 Product page | `2026-09-19-slice-4-product.md` | **Done and live** (commits `2469339`, `b36a75c`). Tests (84 passed), lint, typecheck and build all clean. Visual check: Claude in Chrome was connected this session - desktop screenshots confirmed gallery, buy box (delivery lines, stock, quantity), sticky product nav, carousels, and the reviews section (histogram, "Amazon Customer" reviews, star filter). Mobile checked at 390px via the same-origin iframe trick - hamburger menu, search, sub-nav, breadcrumb, image carousel with dots, title all correct. Known gaps: the shared `Price` component renders the struck-through list price inline on the same row rather than on its own line under the price (reused Slice 3's component rather than duplicating price logic - flag if this needs to change); zoom lens, image-viewer modal and the sticky nav's scroll-trigger were not interactively exercised (only their markup was confirmed present); stock-0 and >8-review code paths are implemented and unit-tested but unexercised by real seeded data (dataset never produces those cases). |
+| 5 Cart to 12 History, deals and help | `...slice-5-cart.md` to `...slice-12-history-deals-help.md` | Planned, not started. Budgeted in `docs/remaining-work-finish-strategy.md`. |
 
-## How to resume (Slice 4 next)
+## How to resume (Slice 5 next)
 
 1. Read `docs/remaining-work-finish-strategy.md` for the time budget and session shape.
-2. Dispatch one Sonnet implementer on `docs/superpowers/plans/2026-09-19-slice-4-product.md`.
+2. Dispatch one Sonnet implementer on `docs/superpowers/plans/2026-09-19-slice-5-cart.md`.
 3. Run `npm test`, `npm run lint`, `npm run typecheck`, `npm run build`; fix anything failing.
 4. Visual check: `npx next start -p 3100`, then either Claude in Chrome (if connected - check with `tabs_context_mcp` first) or the curl/DOM fallback used for Slice 3 if it is not.
 5. Commit (code + `.agent-logs/`) and push to `main` (pre-approved, this deploys).
