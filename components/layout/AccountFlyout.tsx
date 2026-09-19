@@ -1,0 +1,87 @@
+"use client";
+
+import Link from "next/link";
+import { Popover } from "@/components/ui/Popover";
+import { CaretDown } from "@/components/layout/CaretDown";
+import { NavAnchor } from "@/components/layout/NavAnchor";
+import { useHoverPopover } from "@/hooks/useHoverPopover";
+import { ACCOUNT_FLYOUT, ROUTES } from "@/lib/constants/links";
+
+// "Hello, sign in / Account & Lists". Opens on hover (100ms intent delay) or click, closes on
+// leave/Esc/outside click. While open, everything below the header dims (ruling: fixed
+// overlay starting under the header bar, which is 60px tall).
+export function AccountFlyout() {
+  const { open, onMouseEnter, onMouseLeave, toggle, close } = useHoverPopover(100);
+
+  return (
+    <div className="relative" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+      <button
+        type="button"
+        onClick={toggle}
+        aria-haspopup="true"
+        aria-expanded={open}
+        className="flex flex-col justify-center rounded-sm border border-transparent px-[9px] py-1 text-left text-white hover:border-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+      >
+        <span className="text-xs leading-[14px]">Hello, sign in</span>
+        <span className="flex items-center gap-1 text-sm font-bold leading-[15px]">
+          Account &amp; Lists
+          <CaretDown />
+        </span>
+      </button>
+
+      {open && (
+        <div
+          className="fixed inset-x-0 bottom-0 top-[60px] z-40 bg-black/50"
+          aria-hidden="true"
+          onClick={close}
+        />
+      )}
+
+      <Popover open={open} onClose={close} anchorClassName="right-0" className="w-[660px] p-5 text-text">
+        <div className="flex flex-col items-center border-b border-border pb-4">
+          <Link
+            href={ROUTES.signIn}
+            className="flex w-[200px] items-center justify-center rounded-lg border border-btn-yellow-border bg-btn-yellow py-1.5 text-sm font-medium hover:bg-btn-yellow-hover"
+          >
+            Sign in
+          </Link>
+          <p className="mt-2 text-xs">
+            New customer?{" "}
+            <Link href={ROUTES.register} className="text-link hover:text-link-hover hover:underline">
+              Start here.
+            </Link>
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 divide-x divide-border pt-4">
+          <div className="pr-4">
+            <h3 className="mb-2 text-base font-bold">Your Lists</h3>
+            <ul className="space-y-1.5">
+              {ACCOUNT_FLYOUT.lists.map((link) => (
+                <li key={link.label}>
+                  <NavAnchor
+                    link={link}
+                    className="text-[13px] text-flyout-link hover:text-link-hover hover:underline"
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="pl-4">
+            <h3 className="mb-2 text-base font-bold">Your Account</h3>
+            <ul className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+              {ACCOUNT_FLYOUT.account.map((link) => (
+                <li key={link.label}>
+                  <NavAnchor
+                    link={link}
+                    className="text-[13px] text-flyout-link hover:text-link-hover hover:underline"
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </Popover>
+    </div>
+  );
+}

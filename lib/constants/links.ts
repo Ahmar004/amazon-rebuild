@@ -61,6 +61,16 @@ export const ACCOUNT_FLYOUT: { lists: NavLink[]; account: NavLink[] } = {
   ],
 };
 
+// Task 2: language popover external links (spec #18: English only, no Spanish row).
+export const LANGUAGE_HELP_URL = "https://www.amazon.com/gp/help/customer/display.html?nodeId=202036240";
+export const CHANGE_COUNTRY_URL = "https://www.amazon.com/customer-preferences/country";
+
+export const SIDE_MENU_TRENDING: NavLink[] = [
+  { label: "Best Sellers", href: `${ROUTES.search}?sort=bestsellers`, external: false },
+  { label: "New Releases", href: `${ROUTES.search}?sort=newest`, external: false },
+  { label: "Movers & Shakers", href: "https://www.amazon.com/gp/movers-and-shakers", external: true },
+];
+
 export const SIDE_MENU_PROGRAMS: NavLink[] = [
   { label: "Today's Deals", href: ROUTES.deals, external: false },
   { label: "Gift Cards", href: "https://www.amazon.com/gift-cards/b/?node=2238192011", external: true },

@@ -24,6 +24,15 @@
   --color-border: #d5d9d9;
   --color-page-bg: #e3e6e6;
   --color-modal-header: #f0f2f2;
+  --color-search-dept: #e6e6e6;
+  --color-search-dept-border: #cdcdcd;
+  --color-search-dept-text: #555555;
+  --color-cart-count: #f08804;
+  --color-side-menu-divider: #d5dbdb;
+  --color-side-menu-hover: #eaeded;
+  --color-flyout-link: #444444;
+  --color-side-menu-text: #111111;
+  --color-search-icon: #333333;
 
   /* amazon.com renders its UI in Arial (checked live on 2026-09-19). */
   --font-sans: Arial, sans-serif;
