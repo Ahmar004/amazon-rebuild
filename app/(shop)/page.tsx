@@ -1,17 +1,34 @@
+import { cacheLife, cacheTag } from "next/cache";
+import { HeroCarousel } from "@/components/home/HeroCarousel";
+import { HomeCardGrid } from "@/components/home/HomeCardGrid";
+import { SignInBand } from "@/components/home/SignInBand";
+import { HomeMobile } from "@/components/home/HomeMobile";
+import { heroSlides, homeCards } from "@/lib/content/home";
 import { getDepartments } from "@/lib/data/departments";
 
-// Step-5 placeholder: proves the deployed app reaches the seeded database.
-// Replaced by the Amazon home page in Slice 2 (docs/design.md section 9).
+// The Amazon home page (spec 5.3, 5.13; design.md 6.2): hero carousel, overlapping card grid
+// and the signed-out sign-in band on desktop; hero, sign-in band, one card per row and
+// "Explore Departments" on mobile. Shared catalogue content only (no cookies/session read in
+// this slice, since the sign-in band shows unconditionally until Slice 6), so the whole page
+// is cacheable.
 export default async function Home() {
+  "use cache";
+  cacheLife("days");
+  cacheTag("home");
+
   const departments = await getDepartments();
+
   return (
-    <main className="p-4">
-      <h1 className="text-xl font-bold">Departments</h1>
-      <ul>
-        {departments.map((d) => (
-          <li key={d.id}>{d.name}</li>
-        ))}
-      </ul>
-    </main>
+    <>
+      <div className="hidden md:block">
+        <HeroCarousel slides={heroSlides} />
+        <HomeCardGrid cards={homeCards} />
+        <div className="mt-5">
+          <SignInBand variant="desktop" />
+        </div>
+      </div>
+
+      <HomeMobile heroSlides={heroSlides} homeCards={homeCards} departments={departments} />
+    </>
   );
 }

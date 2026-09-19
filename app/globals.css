@@ -41,6 +41,8 @@
   --color-search-icon: #333333;
   --color-nav-muted: #cccccc;
   --color-error: #c40000;
+  /* Slice 2: background behind home-page card tile images (docs design.md 6.2). */
+  --color-tile-bg: #f7f7f7;
 
   /* amazon.com renders its UI in Arial (checked live on 2026-09-19). */
   --font-sans: Arial, sans-serif;
