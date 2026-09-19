@@ -23,7 +23,7 @@ Budget assumes 5h40m from 20:50 PKT. Each row is one session. If a slice runs ov
 |---|---|---|---|
 | 3 Search | `2026-09-19-slice-3-search.md` | (already built) | Verifying now (this session) |
 | 4 Product page | `2026-09-19-slice-4-product.md` | 35 min | Done (commits `2469339`, `b36a75c`) |
-| 5 Cart | `2026-09-19-slice-5-cart.md` | 30 min | Not started |
+| 5 Cart | `2026-09-19-slice-5-cart.md` | 30 min | Done (commit `9c9e201`) |
 | 6 Auth (sign in/up/out) | `2026-09-19-slice-6-auth.md` | 40 min (+reviewer) | Not started |
 | 7 Checkout (Stripe) | `2026-09-19-slice-7-checkout.md` | 45 min (+reviewer) | Not started |
 | 8 Your Orders | `2026-09-19-slice-8-orders.md` | 40 min (+reviewer) | Not started |

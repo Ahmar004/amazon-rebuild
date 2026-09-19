@@ -20,16 +20,18 @@ Read this first in a new session, then `roadmap.md` (including Rule-0.0A), `docs
 | 2 Home page | `2026-09-19-slice-2-home.md` | Done and live (commit `bfd706e`, plus the background fix in `1510314`). |
 | 3 Search | `2026-09-19-slice-3-search.md` | **Done and live** (commit `42f8e54`). Tests (68 passed), lint, typecheck and build all clean. Visual check was a DOM/structural check (curl against `next start`), not a screenshot - the Claude in Chrome extension was not connected this session. Confirmed: "N-M of X results" header, department/brand filter sidebar, sort dropdown, star ratings, FREE delivery text, working `/api/suggest` typeahead, a separate `MobileFilters` component for the mobile breakpoint. Worth a real screenshot check next time the extension is available. |
 | 4 Product page | `2026-09-19-slice-4-product.md` | **Done and live** (commits `2469339`, `b36a75c`). Tests (84 passed), lint, typecheck and build all clean. Visual check: Claude in Chrome was connected this session - desktop screenshots confirmed gallery, buy box (delivery lines, stock, quantity), sticky product nav, carousels, and the reviews section (histogram, "Amazon Customer" reviews, star filter). Mobile checked at 390px via the same-origin iframe trick - hamburger menu, search, sub-nav, breadcrumb, image carousel with dots, title all correct. Known gaps: the shared `Price` component renders the struck-through list price inline on the same row rather than on its own line under the price (reused Slice 3's component rather than duplicating price logic - flag if this needs to change); zoom lens, image-viewer modal and the sticky nav's scroll-trigger were not interactively exercised (only their markup was confirmed present); stock-0 and >8-review code paths are implemented and unit-tested but unexercised by real seeded data (dataset never produces those cases). |
-| 5 Cart to 12 History, deals and help | `...slice-5-cart.md` to `...slice-12-history-deals-help.md` | Planned, not started. Budgeted in `docs/remaining-work-finish-strategy.md`. |
+| 5 Cart (add, quantity, save for later, mini-cart, smart wagon) | `2026-09-19-slice-5-cart.md` | **Done and live** (commit `9c9e201`). Tests (125 passed), lint, typecheck and build all clean. Guest cart via HMAC-signed cookie (`lib/auth/guest.ts`), data layer in `lib/data/cart.ts`, server actions in `actions/cart.ts`. Visual check: implementer exercised the full flow live in Chrome against the real dev DB (add from search row and product page, smart-wagon interstitial, mini-cart rail, quantity stepper, save/move-for-later, subtotal) and it matched the recon screenshots; controller re-ran tests/lint/typecheck/build plus a curl check of the empty-cart state. Bug fixed in passing: `useTypeahead` returned a fresh `[]` every render, causing an infinite re-render loop on any page with an empty search box (home, product, cart) - fixed with a stable empty-array reference. Known gap: no separate mobile component tree for cart/smart-wagon (uses responsive classes like Slice 3's `ResultRow`), not interactively checked at 390px this session. |
+| 6 Auth to 12 History, deals and help | `...slice-6-auth.md` to `...slice-12-history-deals-help.md` | Planned, not started. Budgeted in `docs/remaining-work-finish-strategy.md`. |
 
-## How to resume (Slice 5 next)
+## How to resume (Slice 6 next)
 
 1. Read `docs/remaining-work-finish-strategy.md` for the time budget and session shape.
-2. Dispatch one Sonnet implementer on `docs/superpowers/plans/2026-09-19-slice-5-cart.md`.
+2. Dispatch one Sonnet implementer on `docs/superpowers/plans/2026-09-19-slice-6-auth.md`.
 3. Run `npm test`, `npm run lint`, `npm run typecheck`, `npm run build`; fix anything failing.
-4. Visual check: `npx next start -p 3100`, then either Claude in Chrome (if connected - check with `tabs_context_mcp` first) or the curl/DOM fallback used for Slice 3 if it is not.
-5. Commit (code + `.agent-logs/`) and push to `main` (pre-approved, this deploys).
-6. Update this file's status table and the strategy doc's status column, then stop the session (Rule-0.0A: one slice per session).
+4. Per `CLAUDE.md`, Slice 6 (auth) also gets a separate Sonnet reviewer subagent before the visual check, since it handles passwords.
+5. Visual check: `npx next start -p 3100`, then either Claude in Chrome (if connected - check with `tabs_context_mcp` first) or the curl/DOM fallback used for Slice 3 if it is not.
+6. Commit (code + `.agent-logs/`) and push to `main` (pre-approved, this deploys).
+7. Update this file's status table and the strategy doc's status column, then stop the session (Rule-0.0A: one slice per session).
 
 ## How the work is run (decided with the user; keep doing it this way)
 
