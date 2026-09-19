@@ -31,3 +31,6 @@ next-env.d.ts
 npm-debug.log*
 /test-results/
 /playwright-report/
+
+# Subagent-driven-development scratch workspace
+.superpowers/
