@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 # Amazon Clone - AI Rules
 
-**What this repository is: a fully working clone of https://amazon.com, built as a one-day practical assessment.** The requirements document will be added under `docs/` when the assessment starts. Until the scope, tech stack and architecture are recorded in `docs/`, treat every such decision as an open question for the user, not a choice to make alone.
+**What this repository is: a fully working clone of https://amazon.com, built as a one-day practical assessment for 8x.** What we build is in `docs/spec.md` (scope ranking in its section 3); how we build it is in `docs/tech-stack.md`; per-feature design will be in `docs/design.md`. Read the relevant section before starting any task. `docs/requirements.md` is only the verbatim brief. Any decision these docs don't settle is an open question for the user, not a choice to make alone.
+
+**Stack in one line:** Next.js 16 App Router (TypeScript strict, `cacheComponents: true`) on Vercel Hobby, Neon Postgres with Drizzle ORM, Tailwind 4, own email-and-password sessions, Stripe in test mode, Vitest and Playwright. Everything must stay free of cost (roadmap Rule 0.3).
 
 ## Source of Truth and Roadmap Discipline
 
@@ -23,6 +25,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - The UI must match amazon.com exactly: layout, colours, typography, spacing, iconography, copy tone and interaction behaviour. Apart from the URL, a user should not be able to tell it is a clone.
 - Check the live amazon.com page for each screen before building it, rather than recreating it from memory.
 - Every visible control must work. No dead links, placeholder buttons or fake states. Which controls get built follows the scope ranking in `docs/spec.md`; ask the user only about controls the spec does not cover, batched into one round.
+- Links to Amazon features we don't build (Prime Video, Registry, Sell, Careers, sister sites) open the real public page in a new tab with `rel="noopener noreferrer"`. Their URLs live in one constants module.
+- Amazon's brand assets (Amazon Ember font, logo, sprites, hero and card images) load from Amazon's CDN, with every URL kept in `lib/assets.ts`. Product images use Amazon's size suffixes (for example `._AC_SX300_`), not Vercel image optimisation.
+- Never remove the safety notice ("Demo clone built for an 8x assessment. Not affiliated with Amazon. Do not enter real Amazon credentials.") from the footer and the sign-in, create-account and checkout boxes, or the site-wide `noindex` and `robots.txt`. They keep the live link from being flagged as phishing.
+- No "Sponsored" labels or fake ad placements; related-product carousels show real catalogue items.
 
 ## Writing Rules (apply to code, UI copy and docs)
 
@@ -30,7 +36,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - No long hyphens anywhere. Use a single hyphen "-" where a dash is needed.
 - In docs, spell out technical justifications in plain sentences: state the claim, then the reason behind it.
 - DO NOT bloat any doc. Every line must prevent a concrete mistake or answer a real question; cut anything that does neither.
-- Use one agreed domain vocabulary (for example: product, category, cart, order, address, review) once it is defined in the specs. Import these terms from a constants module and DO NOT invent synonyms.
+- Use the domain vocabulary from `docs/spec.md` section 4 (product, department, brand, review, rating, cart, cart item, saved item, order, order item, address, payment method, list, list item, browsing history, deal, user). Import these terms from a constants module and DO NOT invent synonyms.
 
 ## Architecture Rules
 
@@ -40,8 +46,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - DO NOT hardcode domain enum literals (order statuses, payment states, sort options, user roles if the specs define any); import them from a constants module.
 - DO NOT hardcode design tokens inline. Amazon's colours, spacing and typography live in one theme definition, so one edit restyles every surface consistently.
 - Derive every signed-in or role-dependent UI decision from one session object, never from ad hoc checks scattered through components. Never rely on the UI alone for authorisation; the backend must enforce the same rules.
-- Money is calculated on the server (cart totals, tax, shipping, order totals). The client displays those values and never computes the charged amount itself.
-- Prefer open source, openly licensed, or free-tier dependencies. Ask before adding anything that needs a paid plan or billing details.
+- Money is calculated on the server (cart totals, tax, shipping, order totals). The client displays those values and never computes the charged amount itself. Store money as integer cents; all pricing, shipping, tax and order-status rules live in `lib/pricing` (and its siblings), matching `docs/spec.md` section 6.
+- All database access goes through `lib/data/*` functions (Drizzle). Components and pages never import the database client directly.
+- Every read or write of a user-owned resource (cart, orders, addresses, payment methods, lists, reviews, browsing history) checks ownership on the server against the session, even when the UI already hides it.
+- Next.js 16 caching: shared catalogue data uses `'use cache'` with an explicit `cacheLife` and a `cacheTag`. Anything that reads `cookies()`, `headers()` or the session is never inside `'use cache'` and renders inside `<Suspense>`. Writes call `revalidateTag`/`updateTag` for the cached data they change. Next.js 16 APIs differ from older versions, so check the current docs before using an API from memory.
+- Stripe: `STRIPE_SECRET_KEY` stays server-only. An order is created only after the server re-reads the PaymentIntent and sees it has succeeded, and it is created in one transaction with the stock decrement and cart cleanup.
+- Prefer open source, openly licensed, or free-tier dependencies. Everything must be free of cost (roadmap Rule 0.3); ask before adding anything that needs a paid plan or billing details.
 
 ## Responsive and Input Design
 
@@ -51,7 +61,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-Not yet defined. Add the install, dev, build, lint and test commands here once the project is scaffolded.
+Not yet defined. Step-5 adds the install, dev, build, lint, test, e2e, database migrate and catalogue import commands here once the project is scaffolded.
 
 ## Workflow
 
@@ -60,5 +70,6 @@ Not yet defined. Add the install, dev, build, lint and test commands here once t
 - When writing utils, hooks, API routes or money logic, use test-driven-development before writing implementation code. Presentational components are verified by the visual check against the live amazon.com page instead.
 - When using subagent-driven-development, use Opus for the main agent and Sonnet for the subagents to avoid hitting token limits.
 - Git: make one commit per finished slice with a clear message. Never commit `.env.local` or any secret.
+- Agent logs: every commit also includes the current `.agent-logs/` changes, so logs land together with the code they produced. Never edit, tidy or delete a log entry, and never add `.agent-logs/` to `.gitignore`.
 - When library or framework documentation is needed (APIs, versions, migration details), fetch current docs rather than relying on training data.
 - When an answer, decision or clarification is needed, ask via the AskUserQuestion tool and keep looping with follow-up rounds until every open point is resolved. DO NOT end a turn with questions posed only in prose.

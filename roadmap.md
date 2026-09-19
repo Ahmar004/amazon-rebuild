@@ -54,7 +54,7 @@ Use /superpowers:brainstorming writing-plans skill to create a design.md documen
 Use /superpowers:brainstorming skill to re-analyze Design.md, @spec.md and @tech-stack.md files under /docs and validate that we are ready to build a perfect clone of the Amazon app. Ask any open-questions from user related to confusions or conflicts in between the docs, and ensure that our next step could be starting the code implementation (meaning that the plan and design is solid and smooth, having no conflicts/confusion and no weaknesses) (about 15 min)
 
 ### Step-5:
-Foundation (git and GitHub already set up in Step-00): scaffold the project, set up the database and external services under .env.local with an env.example file, seed the product catalogue, deploy the empty app to Vercel, and start the custom domain DNS setup (ask the user for the domain). (about 45 min)
+Foundation (git and GitHub already set up in Step-00): scaffold the project, set up the database and external services under .env.local with an env.example file, seed the product catalogue, deploy the empty app to Vercel on its free vercel.app address (no paid domain, Rule 0.3). (about 45 min)
 
 ### Step-6:
 Use subagent-driven-development skill to build the app slice by slice in the order of the slice plan in Design.md, on the basis of Design.md, @spec.md and @tech-stack.md files. For every slice: write tests first (test-driven-development), build it, compare it visually against the live amazon.com page, then commit and deploy before starting the next slice. Use Opus for the main agent and Sonnet for the subagents to avoid hitting token limits.
@@ -63,7 +63,7 @@ Use subagent-driven-development skill to build the app slice by slice in the ord
 Hardening: use systematic-debugging and end-to-end tests of the key flows (browse, search, product page, cart, checkout, orders) to find and fix bugs across the whole system, then run a light load check to confirm the deployed app stays responsive under concurrent users.
 
 ### Step-8:
-Finish the custom domain setup and guide the user through any remaining DNS steps.
+Skipped: no paid domain under Rule 0.3; the live link is the free vercel.app address.
 
 ### Step-9:
 Write the README for submission: what is built, how to run it, the live URL, the trade-offs made, and how AI was used to build it, and a talking-point outline for the walkthrough video (five minutes at most, camera on).
