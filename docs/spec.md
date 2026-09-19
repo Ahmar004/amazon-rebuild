@@ -24,6 +24,9 @@ This is the single source of truth for what we build. It replaces `docs/requirem
 | Unbuilt links | Amazon's header, footer and account links all stay visible. Links to pages we build go to our pages; links to other Amazon businesses and sister sites (Prime Video, Registry, Sell, Careers, IMDb and so on) open the real public site in a new tab. |
 | Order status | Status comes from the order's age (section 6.4). Orders can be cancelled until they ship. |
 | Extras | Lists, writing reviews, Buy Again, browsing history, and Your Addresses / Your Payments in the account area are all must-haves. |
+| Brand assets | Amazon's own font (Amazon Ember), logo, icon sprites, and hero and home-card images are loaded from Amazon's CDN for an exact match (details in `docs/tech-stack.md`). |
+| Safety notice | One small line in the footer and under the sign-in, create account and checkout boxes: "Demo clone built for an 8x assessment. Not affiliated with Amazon. Do not enter real Amazon credentials." Every page is noindex. This protects the live link from being flagged as phishing, and it is the only visible difference from amazon.com. |
+| Live URL | The free `vercel.app` address; no paid domain (roadmap Rule 0.3). |
 | Ads | No sponsored placements or "Sponsored" labels. We have no advertisers, so labelling anything as sponsored would be a fake state. Amazon's related-product carousels stay, filled with real catalogue items. |
 
 ## 3. Scope ranking

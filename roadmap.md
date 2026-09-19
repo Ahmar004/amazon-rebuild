@@ -12,6 +12,8 @@ We have only one day window to build this (an amazon.com clone) and so you shall
 Interview me and ask me questions at every important decision making step or when you face a confusion, asking questions from me would also help you get more context on how I want you to build the Amazon and also the "why" behind a requirement.
 ### Rule-0.2: 
 The front-end shall be bug-free and exactly like that of https://amazon.com, it shall be robust and MUST BE user-friendly. The code & backend shall be clean, easy-to-understand, scalable and that the code as well as the front-end doesn't have emojis or long hyphens (use single hyphens like "-" where needed).
+### Rule 0.3:
+Tech Stack & deployment must be free of cost
 ### Rule-1: 
 Follow this roadmap file at all costs. if you think another step or task needs to be done, please first add it here after approval from me.
 ### Rule-2: 
