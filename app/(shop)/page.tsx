@@ -20,7 +20,7 @@ export default async function Home() {
 
   return (
     <>
-      <div className="hidden md:block">
+      <div className="hidden bg-page-bg md:block">
         <HeroCarousel slides={heroSlides} />
         <HomeCardGrid cards={homeCards} />
         <div className="mt-5">
