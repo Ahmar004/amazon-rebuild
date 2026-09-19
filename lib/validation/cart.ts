@@ -17,12 +17,6 @@ export const addToCartInputSchema = z.object({
 });
 export type AddToCartInput = z.infer<typeof addToCartInputSchema>;
 
-export const buyNowInputSchema = z.object({
-  asin: asinSchema,
-  quantity: z.coerce.number().int().min(1).max(MAX_CART_QUANTITY),
-});
-export type BuyNowInput = z.infer<typeof buyNowInputSchema>;
-
 // setQuantity treats 0 as "delete the line" (lib/data/cart.ts), so 0 is a valid quantity here.
 export const updateQuantityInputSchema = z.object({
   asin: asinSchema,

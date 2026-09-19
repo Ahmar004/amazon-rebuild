@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addToCartInputSchema, buyNowInputSchema, updateQuantityInputSchema } from "@/lib/validation/cart";
+import { addToCartInputSchema, updateQuantityInputSchema } from "@/lib/validation/cart";
 
 describe("addToCartInputSchema", () => {
   it("accepts a well-formed add-to-cart input", () => {
@@ -33,12 +33,6 @@ describe("addToCartInputSchema", () => {
     expect(
       addToCartInputSchema.safeParse({ asin: "B000TEST01", quantity: 1, redirectTo: "elsewhere" }).success,
     ).toBe(false);
-  });
-});
-
-describe("buyNowInputSchema", () => {
-  it("accepts asin and quantity without redirectTo", () => {
-    expect(buyNowInputSchema.safeParse({ asin: "B000TEST01", quantity: 1 }).success).toBe(true);
   });
 });
 

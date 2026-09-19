@@ -62,6 +62,10 @@ export const ACCOUNT_FLYOUT: { lists: NavLink[]; account: NavLink[] } = {
   ],
 };
 
+// Checkout small print (docs/spec.md 5.8, recon 6-we-reach-checkout-page-...): a legal page we
+// don't build, so it opens the real amazon.com page in a new tab (CLAUDE.md's constants-module rule).
+export const TAX_AND_SELLER_INFO_URL = "https://www.amazon.com/gp/help/customer/display.html?nodeId=202211470";
+
 // Task 2: language popover external links (spec #18: English only, no Spanish row).
 export const LANGUAGE_HELP_URL = "https://www.amazon.com/gp/help/customer/display.html?nodeId=202036240";
 export const CHANGE_COUNTRY_URL = "https://www.amazon.com/customer-preferences/country";

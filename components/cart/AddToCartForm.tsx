@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useTransition, type FormEvent } from "react";
-import { addToCart, buyNow } from "@/actions/cart";
+import { useRouter } from "next/navigation";
+import { addToCart } from "@/actions/cart";
 import { QuantitySelect } from "@/components/product/QuantitySelect";
+import { ROUTES } from "@/lib/constants/links";
 
 type AddToCartFormProps = {
   asin: string;
@@ -11,9 +13,13 @@ type AddToCartFormProps = {
 
 // The buy box's "Add to cart" (yellow) and "Buy Now" (orange) buttons, one <form> so Enter
 // submits "Add to cart" (CLAUDE.md forms rule). Add to cart adds the item and goes to the
-// smart-wagon interstitial; Buy Now adds it and goes to /cart (Slice 7 sends it to checkout
-// directly instead). Only rendered when the product is in stock (see BuyBox).
+// smart-wagon interstitial. Buy Now skips the cart entirely (docs/spec.md 5.8: "Buy Now skips
+// the cart and opens checkout with only that product and quantity; the rest of the cart stays as
+// it was") by navigating straight to /checkout?buy=<asin>:<qty>; requireUser there sends a
+// signed-out visitor to sign in first with that URL as return_to. Only rendered when the product
+// is in stock (see BuyBox).
 export function AddToCartForm({ asin, maxQuantity }: AddToCartFormProps) {
+  const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -25,11 +31,14 @@ export function AddToCartForm({ asin, maxQuantity }: AddToCartFormProps) {
     const intent = submitter?.dataset.intent ?? "add-to-cart";
 
     setError(null);
+
+    if (intent === "buy-now") {
+      router.push(`${ROUTES.checkout}?buy=${encodeURIComponent(asin)}:${quantity}`);
+      return;
+    }
+
     startTransition(async () => {
-      const result =
-        intent === "buy-now"
-          ? await buyNow({ asin, quantity })
-          : await addToCart({ asin, quantity, redirectTo: "smart-wagon" });
+      const result = await addToCart({ asin, quantity, redirectTo: "smart-wagon" });
       if (!result.ok) setError(result.error);
     });
   }

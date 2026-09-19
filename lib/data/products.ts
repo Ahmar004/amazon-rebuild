@@ -1,6 +1,7 @@
-import { sql } from "drizzle-orm";
+import { eq, inArray, sql } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { db } from "@/lib/db/client";
+import { departments, products } from "@/lib/db/schema";
 
 // Contract fixed by docs/superpowers/plans/2026-09-19-slice-3-search.md: later slices (product
 // page, cart, orders) depend on this exact shape.
@@ -225,4 +226,30 @@ export async function getTopAsins(n: number = TOP_ASINS_DEFAULT): Promise<string
     sql`select asin from products order by rating_count desc limit ${n}`,
   );
   return result.rows.map((row) => row.asin);
+}
+
+// Live (uncached) lookup for a set of ASINs, used by lib/checkout/source.ts's Buy Now path where
+// stock must be current at the moment of payment, not a cached snapshot up to an hour old.
+export async function getProductsByAsins(asins: string[]): Promise<ProductSummary[]> {
+  if (asins.length === 0) return [];
+
+  const rows = await db
+    .select({
+      asin: products.asin,
+      title: products.title,
+      brand: products.brand,
+      departmentSlug: departments.slug,
+      images: products.images,
+      priceCents: products.priceCents,
+      listPriceCents: products.listPriceCents,
+      ratingAvg: products.ratingAvg,
+      ratingCount: products.ratingCount,
+      stock: products.stock,
+      isBestSeller: products.isBestSeller,
+    })
+    .from(products)
+    .innerJoin(departments, eq(departments.id, products.departmentId))
+    .where(inArray(products.asin, asins));
+
+  return rows.map(mapProductSummaryRow);
 }

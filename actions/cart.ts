@@ -11,7 +11,6 @@ import * as cartData from "@/lib/data/cart";
 import {
   addToCartInputSchema,
   asinSchema,
-  buyNowInputSchema,
   updateQuantityInputSchema,
   type CartRedirectTarget,
 } from "@/lib/validation/cart";
@@ -51,24 +50,6 @@ export async function addToCart(input: {
 
   const count = await cartData.cartCount(owner);
   return { ok: true, count };
-}
-
-// The buy box's "Buy Now": adds the item then goes straight to /cart (Slice 7 will send it to
-// checkout directly instead).
-export async function buyNow(input: { asin: string; quantity: number }): Promise<ActionResult> {
-  const parsed = buyNowInputSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: GENERIC_ERROR };
-
-  const owner = await getCartOwnerOrCreate();
-
-  try {
-    await cartData.addItem(owner, parsed.data.asin, parsed.data.quantity);
-  } catch (err) {
-    return { ok: false, error: errorMessage(err) };
-  }
-
-  revalidatePath("/", "layout");
-  redirect("/cart");
 }
 
 export async function updateQuantity(asin: string, quantity: number): Promise<ActionResult> {
