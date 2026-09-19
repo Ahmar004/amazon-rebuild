@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type ReactNode } from "react";
+import { useRef, type ReactNode, type RefObject } from "react";
 import { useDismiss } from "@/hooks/useDismiss";
 
 type PopoverProps = {
@@ -11,14 +11,20 @@ type PopoverProps = {
   anchorClassName?: string;
   /** Extra classes on the panel itself (e.g. width). */
   className?: string;
+  /**
+   * The button that opens/toggles this popover. Passed through to useDismiss so a pointerdown on
+   * the trigger isn't treated as "outside" - otherwise a second click to close fires close() then
+   * immediately toggle()'s it back open (see useDismiss.ts).
+   */
+  triggerRef?: RefObject<HTMLElement | null>;
 };
 
 // Generic positioned popover: Amazon's white card with a 1px border, soft shadow, 8px radius
 // and an upward caret. No Amazon-specific content lives here - callers supply children.
-export function Popover({ open, onClose, children, anchorClassName, className }: PopoverProps) {
+export function Popover({ open, onClose, children, anchorClassName, className, triggerRef }: PopoverProps) {
   const ref = useRef<HTMLDivElement>(null);
 
-  useDismiss(ref, open, onClose);
+  useDismiss(ref, open, onClose, triggerRef);
 
   if (!open) return null;
 

@@ -37,8 +37,8 @@ export function Header({ departments, deliverTo, cartLink }: HeaderProps) {
         href={ROUTES.orders}
         className={`flex shrink-0 flex-col justify-center ${navItemClass}`}
       >
-        <span className="text-xs leading-[14px] text-white">Returns</span>
-        <span className="text-sm font-bold leading-[15px] text-white">&amp; Orders</span>
+        <span className="whitespace-nowrap text-xs leading-[14px] text-white">Returns</span>
+        <span className="whitespace-nowrap text-sm font-bold leading-[15px] text-white">&amp; Orders</span>
       </Link>
 
       {cartLink}

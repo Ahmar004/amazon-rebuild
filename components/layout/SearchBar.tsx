@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import type { Department } from "@/lib/data/departments";
 import { CaretDown } from "@/components/layout/CaretDown";
+import { SearchIcon } from "@/components/layout/SearchIcon";
 
 type SearchBarProps = {
   departments: Department[];
@@ -63,7 +64,7 @@ export function SearchBar({ departments }: SearchBarProps) {
         name="k"
         type="text"
         placeholder="Search Amazon"
-        className="min-w-0 flex-1 border-0 pl-[10px] text-[15px] text-text outline-none"
+        className="min-w-0 flex-1 border-0 bg-white pl-[10px] text-[15px] text-text placeholder:text-text-muted outline-none"
       />
 
       <button
@@ -71,17 +72,7 @@ export function SearchBar({ departments }: SearchBarProps) {
         aria-label="Go"
         className="flex h-10 w-[45px] shrink-0 items-center justify-center rounded-r bg-search-btn hover:bg-search-btn-hover"
       >
-        <svg
-          width="22"
-          height="22"
-          viewBox="0 0 22 22"
-          fill="none"
-          aria-hidden="true"
-          style={{ color: "var(--color-search-icon)" }}
-        >
-          <circle cx="9.5" cy="9.5" r="7" stroke="currentColor" strokeWidth="2" />
-          <line x1="14.5" y1="14.5" x2="20" y2="20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-        </svg>
+        <SearchIcon size={22} />
       </button>
     </form>
   );

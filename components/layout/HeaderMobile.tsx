@@ -4,6 +4,7 @@ import { Sprite } from "@/components/ui/Sprite";
 import { SideMenu } from "@/components/layout/SideMenu";
 import { NavAnchor } from "@/components/layout/NavAnchor";
 import { PersonIcon } from "@/components/layout/PersonIcon";
+import { SearchIcon } from "@/components/layout/SearchIcon";
 import { MOBILE_LINK_ROW, ROUTES } from "@/lib/constants/links";
 import type { Department } from "@/lib/data/departments";
 
@@ -21,18 +22,18 @@ type HeaderMobileProps = {
 export function HeaderMobile({ departments, deliverTo, cartLink }: HeaderMobileProps) {
   return (
     <header className="md:hidden">
-      <div className="flex h-12 items-center gap-3 bg-nav px-3">
+      <div className="flex h-12 w-full min-w-0 items-center gap-2 bg-nav px-3">
         <SideMenu departments={departments} variant="mobile" />
 
         <Link href={ROUTES.home} className="flex shrink-0 items-center">
           <Sprite name="logo" label="Amazon" />
         </Link>
 
-        <div className="ml-auto flex items-center gap-3">
-          <Link href={ROUTES.signIn} className="text-sm text-white">
+        <div className="ml-auto flex min-w-0 shrink-0 items-center gap-2">
+          <Link href={ROUTES.signIn} className="shrink-0 whitespace-nowrap text-sm text-white">
             Sign in &#8250;
           </Link>
-          <PersonIcon className="text-white" />
+          <PersonIcon className="shrink-0 text-white" />
           {cartLink}
         </div>
       </div>
@@ -54,25 +55,7 @@ export function HeaderMobile({ departments, deliverTo, cartLink }: HeaderMobileP
             aria-label="Go"
             className="flex w-12 shrink-0 items-center justify-center bg-search-btn hover:bg-search-btn-hover"
           >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 22 22"
-              fill="none"
-              aria-hidden="true"
-              style={{ color: "var(--color-search-icon)" }}
-            >
-              <circle cx="9.5" cy="9.5" r="7" stroke="currentColor" strokeWidth="2" />
-              <line
-                x1="14.5"
-                y1="14.5"
-                x2="20"
-                y2="20"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
+            <SearchIcon size={20} />
           </button>
         </div>
       </form>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Sprite } from "@/components/ui/Sprite";
+import { navItemClass } from "@/components/layout/navItemClass";
 import { ROUTES } from "@/lib/constants/links";
 
 type CartLinkProps = {
@@ -13,10 +14,7 @@ type CartLinkProps = {
 export function CartLink({ count, variant = "desktop" }: CartLinkProps) {
   if (variant === "mobile") {
     return (
-      <Link
-        href={ROUTES.cart}
-        className="flex items-center rounded-sm border border-transparent p-1 text-white hover:border-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-      >
+      <Link href={ROUTES.cart} className={`flex shrink-0 items-center ${navItemClass}`}>
         <span className="relative">
           <Sprite name="cart" />
           <span
@@ -32,10 +30,7 @@ export function CartLink({ count, variant = "desktop" }: CartLinkProps) {
   }
 
   return (
-    <Link
-      href={ROUTES.cart}
-      className="flex items-end rounded-sm border border-transparent px-[9px] py-1 text-white hover:border-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-    >
+    <Link href={ROUTES.cart} className={`flex shrink-0 items-end ${navItemClass}`}>
       <span className="relative">
         <Sprite name="cart" />
         <span
@@ -45,7 +40,7 @@ export function CartLink({ count, variant = "desktop" }: CartLinkProps) {
           {count}
         </span>
       </span>
-      <span className="ml-1 text-sm font-bold">
+      <span className="ml-1 whitespace-nowrap text-sm font-bold">
         Cart
         <span className="sr-only"> ({count} items)</span>
       </span>

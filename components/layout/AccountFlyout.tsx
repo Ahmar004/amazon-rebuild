@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useRef } from "react";
 import { Popover } from "@/components/ui/Popover";
 import { CaretDown } from "@/components/layout/CaretDown";
 import { NavAnchor } from "@/components/layout/NavAnchor";
+import { navItemClass } from "@/components/layout/navItemClass";
 import { useHoverPopover } from "@/hooks/useHoverPopover";
 import { ACCOUNT_FLYOUT, ROUTES } from "@/lib/constants/links";
 
@@ -12,18 +14,24 @@ import { ACCOUNT_FLYOUT, ROUTES } from "@/lib/constants/links";
 // overlay starting under the header bar, which is 60px tall).
 export function AccountFlyout() {
   const { open, onMouseEnter, onMouseLeave, toggle, close } = useHoverPopover(100);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <div className="relative" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+    <div
+      className="relative shrink-0"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
       <button
+        ref={triggerRef}
         type="button"
         onClick={toggle}
         aria-haspopup="true"
         aria-expanded={open}
-        className="flex flex-col justify-center rounded-sm border border-transparent px-[9px] py-1 text-left text-white hover:border-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        className={`flex flex-col justify-center text-left ${navItemClass}`}
       >
-        <span className="text-xs leading-[14px]">Hello, sign in</span>
-        <span className="flex items-center gap-1 text-sm font-bold leading-[15px]">
+        <span className="whitespace-nowrap text-xs leading-[14px]">Hello, sign in</span>
+        <span className="flex items-center gap-1 whitespace-nowrap text-sm font-bold leading-[15px]">
           Account &amp; Lists
           <CaretDown />
         </span>
@@ -37,7 +45,13 @@ export function AccountFlyout() {
         />
       )}
 
-      <Popover open={open} onClose={close} anchorClassName="right-0" className="w-[660px] p-5 text-text">
+      <Popover
+        open={open}
+        onClose={close}
+        triggerRef={triggerRef}
+        anchorClassName="right-0"
+        className="w-[660px] p-5 text-text"
+      >
         <div className="flex flex-col items-center border-b border-border pb-4">
           <Link
             href={ROUTES.signIn}

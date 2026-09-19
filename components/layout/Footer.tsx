@@ -1,6 +1,7 @@
 import { Sprite } from "@/components/ui/Sprite";
 import { NavAnchor } from "@/components/layout/NavAnchor";
 import { BackToTop } from "@/components/layout/BackToTop";
+import { GlobeIcon } from "@/components/layout/GlobeIcon";
 import { SafetyNotice } from "@/components/layout/SafetyNotice";
 import { FOOTER_BRANDS, FOOTER_COLUMNS, FOOTER_LEGAL } from "@/lib/constants/links";
 
@@ -41,15 +42,7 @@ export function Footer() {
                 aria-label="Language: English"
                 className="flex items-center gap-1.5 rounded-[3px] border border-footer-box-border px-3 py-1.5 text-[13px] text-footer-box-text"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
-                  <path
-                    d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    fill="none"
-                  />
-                </svg>
+                <GlobeIcon />
                 English
                 <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true" className="ml-1">
                   <path d="M0 0 L5 6 L10 0 Z" fill="currentColor" />

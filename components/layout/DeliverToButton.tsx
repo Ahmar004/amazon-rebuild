@@ -59,16 +59,16 @@ export function DeliverToButton({ location, showPrompt, variant = "desktop" }: D
   }
 
   return (
-    <div className="relative">
+    <div className="relative shrink-0">
       <button
         type="button"
         onClick={() => setModalOpen(true)}
-        className={`flex items-center gap-1 ${navItemClass}`}
+        className={`flex shrink-0 items-center gap-1 ${navItemClass}`}
       >
         <Sprite name="location" />
-        <span className="flex flex-col text-left">
-          <span className="text-xs leading-[14px] text-nav-muted">Deliver to</span>
-          <span className="text-sm font-bold leading-[15px] text-white">
+        <span className="flex min-w-0 flex-col text-left">
+          <span className="whitespace-nowrap text-xs leading-[14px] text-nav-muted">Deliver to</span>
+          <span className="block max-w-[140px] truncate text-sm font-bold leading-[15px] text-white">
             {formatLocation(location)}
           </span>
         </span>

@@ -1,6 +1,7 @@
 import { Sprite } from "@/components/ui/Sprite";
 import { NavAnchor } from "@/components/layout/NavAnchor";
 import { BackToTop } from "@/components/layout/BackToTop";
+import { GlobeIcon } from "@/components/layout/GlobeIcon";
 import { SafetyNotice } from "@/components/layout/SafetyNotice";
 import { FOOTER_LEGAL, ROUTES } from "@/lib/constants/links";
 
@@ -33,15 +34,7 @@ export function FooterMobile() {
             aria-label="Language: English"
             className="flex items-center gap-1.5 text-[13px] text-footer-box-text"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
-              <path
-                d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                fill="none"
-              />
-            </svg>
+            <GlobeIcon />
             English
           </div>
           <div
@@ -54,12 +47,12 @@ export function FooterMobile() {
           </div>
         </div>
 
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-t border-footer-border pt-4">
+        <div className="mt-6 flex w-full flex-wrap items-center justify-center gap-x-4 gap-y-1 border-t border-footer-border pt-4">
           {FOOTER_LEGAL.map((link) => (
             <NavAnchor
               key={link.label}
               link={link}
-              className="text-[11px] text-footer-link hover:underline"
+              className="min-w-0 max-w-full text-center text-[11px] text-footer-link hover:underline"
             />
           ))}
         </div>
