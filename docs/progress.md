@@ -1,6 +1,6 @@
 # Build Progress and Handoff
 
-Read this first in a new session, then `roadmap.md`, `CLAUDE.md`, and the plan for the slice you're about to build. Last updated 2026-09-19 around 09:45 UTC (14:45 PKT). The 24-hour window ends around 21:50 UTC (02:50 PKT on 2026-09-20).
+Read this first in a new session, then `roadmap.md` (including Rule-0.0A), `docs/remaining-work-finish-strategy.md` for the per-slice session plan, `CLAUDE.md`, and the plan for the slice you're about to build. Last updated 2026-09-19 around 15:55 UTC (20:55 PKT). The 24-hour window ends around 21:50 UTC (02:50 PKT on 2026-09-20) - under 6 hours left.
 
 ## Where things stand
 
@@ -9,7 +9,7 @@ Read this first in a new session, then `roadmap.md`, `CLAUDE.md`, and the plan f
 | Step-00 capture setup, recon | Done. Capture hooks log every prompt and response to `.agent-logs/` (see `CAPTURE-TEST.md`). Recon screenshots are in `docs/recon/`. |
 | Step-0 to Step-4 planning | Done: `docs/spec.md`, `docs/tech-stack.md`, `docs/design.md`, all approved by the user. |
 | Step-5 foundation | Done. The Next.js 16 app is scaffolded, the Neon database is migrated and seeded (720 products, 3,479 reviews, 12 departments), and it deploys to Vercel. |
-| Step-6 slices | In progress. See the table below. |
+| Step-6 slices | In progress. See the table below and `docs/remaining-work-finish-strategy.md` for the session-by-session plan. |
 | Step-7 hardening, Step-9 README | Not started. Step-8 is skipped (no paid domain, Rule 0.3). |
 
 **Live site:** https://amazon.ahmar9.vercel.app/ (production deploys from `main` on every push). **Repo:** https://github.com/Ahmar004/amazon-rebuild
@@ -18,15 +18,17 @@ Read this first in a new session, then `roadmap.md`, `CLAUDE.md`, and the plan f
 |---|---|---|
 | 1 Layout shell (header, sub-nav, side menu, location, footer, mobile) | `2026-09-19-slice-1-layout-shell.md` | Done and live. It got a Sonnet review and one fix round (10 findings fixed). |
 | 2 Home page | `2026-09-19-slice-2-home.md` | Done and live (commit `bfd706e`, plus the background fix in `1510314`). |
-| 3 Search | `2026-09-19-slice-3-search.md` | **Code written, not verified.** It's on branch `wip/slice-3-search` (commit `891c67a`), not on `main`. The implementer reported its tests, lint, typecheck and build clean, then was stopped before its visual check. |
-| 4 Product page to 12 History, deals and help | `...slice-4-product.md` to `...slice-12-history-deals-help.md` | Planned, not started. |
+| 3 Search | `2026-09-19-slice-3-search.md` | **Done and live** (commit `42f8e54`). Tests (68 passed), lint, typecheck and build all clean. Visual check was a DOM/structural check (curl against `next start`), not a screenshot - the Claude in Chrome extension was not connected this session. Confirmed: "N-M of X results" header, department/brand filter sidebar, sort dropdown, star ratings, FREE delivery text, working `/api/suggest` typeahead, a separate `MobileFilters` component for the mobile breakpoint. Worth a real screenshot check next time the extension is available. |
+| 4 Product page to 12 History, deals and help | `...slice-4-product.md` to `...slice-12-history-deals-help.md` | Planned, not started. Budgeted in `docs/remaining-work-finish-strategy.md`. |
 
-## How to resume Slice 3
+## How to resume (Slice 4 next)
 
-1. `git merge --ff-only wip/slice-3-search` into `main` (or cherry-pick `891c67a`), then amend the message to `Slice 3: search (typeahead, results, filters, sort, pagination, mobile)`.
-2. Run `npm test`, `npm run lint`, `npm run typecheck` and `npm run build`, and fix anything failing.
-3. Check visually: run `npx next start -p 3100` after the build, and compare `/s?k=headphones` and the typeahead with amazon.com at desktop width and at 390px (see the browser notes below).
-4. Push `main` (this deploys), then delete the branch: `git push origin --delete wip/slice-3-search`.
+1. Read `docs/remaining-work-finish-strategy.md` for the time budget and session shape.
+2. Dispatch one Sonnet implementer on `docs/superpowers/plans/2026-09-19-slice-4-product.md`.
+3. Run `npm test`, `npm run lint`, `npm run typecheck`, `npm run build`; fix anything failing.
+4. Visual check: `npx next start -p 3100`, then either Claude in Chrome (if connected - check with `tabs_context_mcp` first) or the curl/DOM fallback used for Slice 3 if it is not.
+5. Commit (code + `.agent-logs/`) and push to `main` (pre-approved, this deploys).
+6. Update this file's status table and the strategy doc's status column, then stop the session (Rule-0.0A: one slice per session).
 
 ## How the work is run (decided with the user; keep doing it this way)
 

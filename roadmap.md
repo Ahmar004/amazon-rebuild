@@ -6,6 +6,10 @@ We are building the exact clone of Amazon.com, I have a one-day window for this 
 
 ## Rules:
 
+### Rule-0.0A:
+We have only less than 6 hours remaining, we have to divide all remaining work into small sessions, only do small meaningful work per session considerable enough that we finish the system in the remaining less than 6 hours, long sessions basically consume more tokens due to high context window. use docs/progress.md doc and a new doc as "remaining-work-finish-strategy.md" under docs so that each session could understand what it needs to do, we have to finish all remaining work in the reamining 5 hours and 40 minutes time, currently its 9:00 p.m. PKT here, deadline is at 02:40 a.m.
+
+
 ### Rule-0.0:
 We have only one day window to build this (an amazon.com clone) and so you shall adopt working strategies and techniques that does efficient utilization of tokens and helps ship the clone within a one-day window time without hitting token limits.
 ### Rule-0.1:
