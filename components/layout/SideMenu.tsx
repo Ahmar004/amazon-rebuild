@@ -4,17 +4,21 @@ import Link from "next/link";
 import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { Sprite } from "@/components/ui/Sprite";
 import { NavAnchor } from "@/components/layout/NavAnchor";
+import { PersonIcon } from "@/components/layout/PersonIcon";
 import { useDismiss } from "@/hooks/useDismiss";
 import { ROUTES, SIDE_MENU_PROGRAMS, SIDE_MENU_TRENDING, type NavLink } from "@/lib/constants/links";
 import type { Department } from "@/lib/data/departments";
 
 type SideMenuProps = {
   departments: Department[];
+  /** "mobile" swaps the "All" text button for an icon-only hamburger (Task 4's HeaderMobile). */
+  variant?: "desktop" | "mobile";
 };
 
-// The "All" hamburger button and the drawer it opens: a 365px white panel sliding in from the
-// left over an 80%-black overlay. Owns its own open state so SubNav stays a server component.
-export function SideMenu({ departments }: SideMenuProps) {
+// The "All"/hamburger trigger and the drawer it opens: a 365px white panel sliding in from the
+// left over an 80%-black overlay. Owns its own open state so SubNav/HeaderMobile stay server
+// components.
+export function SideMenu({ departments, variant = "desktop" }: SideMenuProps) {
   const [open, setOpen] = useState(false);
   const [entered, setEntered] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -52,17 +56,38 @@ export function SideMenu({ departments }: SideMenuProps) {
 
   return (
     <>
-      <button
-        ref={triggerRef}
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-haspopup="dialog"
-        aria-expanded={open}
-        className="flex items-center gap-1.5 rounded-sm border border-transparent px-[9px] py-1 text-sm font-bold text-white hover:border-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-      >
-        <Sprite name="hamburger" />
-        All
-      </button>
+      {variant === "mobile" ? (
+        <button
+          ref={triggerRef}
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-haspopup="dialog"
+          aria-expanded={open}
+          aria-label="Open menu"
+          className="flex items-center justify-center rounded-sm border border-transparent p-1 text-white hover:border-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        >
+          <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M3 6h18M3 12h18M3 18h18"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          </svg>
+        </button>
+      ) : (
+        <button
+          ref={triggerRef}
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-haspopup="dialog"
+          aria-expanded={open}
+          className="flex items-center gap-1.5 rounded-sm border border-transparent px-[9px] py-1 text-sm font-bold text-white hover:border-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        >
+          <Sprite name="hamburger" />
+          All
+        </button>
+      )}
 
       {open && (
         <div className="fixed inset-0 z-50">
@@ -79,15 +104,7 @@ export function SideMenu({ departments }: SideMenuProps) {
             }`}
           >
             <div className="flex h-[50px] shrink-0 items-center gap-3 bg-subnav px-4 text-white">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.5" />
-                <path
-                  d="M4 20c0-4 3.5-6.5 8-6.5s8 2.5 8 6.5"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  fill="none"
-                />
-              </svg>
+              <PersonIcon />
               <Link href={ROUTES.signIn} id={titleId} className="text-[19px] font-bold">
                 Hello, sign in
               </Link>

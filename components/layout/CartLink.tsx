@@ -2,9 +2,35 @@ import Link from "next/link";
 import { Sprite } from "@/components/ui/Sprite";
 import { ROUTES } from "@/lib/constants/links";
 
+type CartLinkProps = {
+  count: number;
+  /** "mobile" drops the "Cart" label for HeaderMobile's compact row 1 (Task 4). */
+  variant?: "desktop" | "mobile";
+};
+
 // Cart icon with item count and "Cart" label. count is a prop for now (Slice 5 will feed the
 // real cartCount into it); this slice's layout passes 0.
-export function CartLink({ count }: { count: number }) {
+export function CartLink({ count, variant = "desktop" }: CartLinkProps) {
+  if (variant === "mobile") {
+    return (
+      <Link
+        href={ROUTES.cart}
+        className="flex items-center rounded-sm border border-transparent p-1 text-white hover:border-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+      >
+        <span className="relative">
+          <Sprite name="cart" />
+          <span
+            className="absolute left-[3px] top-[-2px] text-lg font-bold text-cart-count"
+            aria-hidden="true"
+          >
+            {count}
+          </span>
+        </span>
+        <span className="sr-only">Cart ({count} items)</span>
+      </Link>
+    );
+  }
+
   return (
     <Link
       href={ROUTES.cart}

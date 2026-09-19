@@ -7,6 +7,9 @@ export const NAV_SPRITE =
 
 export const FLAG_SPRITE = "https://m.media-amazon.com/images/S/sash/MAbi1rCjQI9H2y0.png";
 
+// Task 4: the dog illustration on Amazon's 404 page.
+export const NOT_FOUND_IMAGE = "https://m.media-amazon.com/images/G/01/error/title._TTD_.png";
+
 export type SpritePosition = {
   position: string;
   width: number;

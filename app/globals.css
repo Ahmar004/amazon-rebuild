@@ -5,7 +5,13 @@
   --color-nav: #131921;
   --color-subnav: #232f3e;
   --color-back-to-top: #37475a;
+  --color-back-to-top-hover: #485769;
   --color-footer-bottom: #131a22;
+  --color-footer-link: #dddddd;
+  --color-footer-muted: #999999;
+  --color-footer-border: #3a4553;
+  --color-footer-box-border: #848688;
+  --color-footer-box-text: #cccccc;
   --color-search-btn: #febd69;
   --color-search-btn-hover: #f3a847;
   --color-btn-yellow: #ffd814;
@@ -49,4 +55,19 @@ body {
   color: var(--color-text);
   font-family: var(--font-sans);
   line-height: 20px;
+}
+
+/* Task 4: hides the horizontally scrolling mobile quick-links row's scrollbar across browsers. */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Task 4: FooterMinimal's top divider, matching amazon.com's thin gradient rule. */
+.minimal-footer-divider {
+  height: 4px;
+  background: linear-gradient(to right, var(--color-border), white, var(--color-border));
 }

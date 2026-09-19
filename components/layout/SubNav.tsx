@@ -4,10 +4,14 @@ import { SUBNAV_LINKS } from "@/lib/constants/links";
 import type { Department } from "@/lib/data/departments";
 
 // #nav-main: 39px tall, bg-subnav. Server component; SideMenu is the only client island (it
-// owns the "All" button and the drawer it opens).
+// owns the "All" button and the drawer it opens). Hidden below 768px, where HeaderMobile's own
+// quick-links row (Task 4) takes over.
 export function SubNav({ departments }: { departments: Department[] }) {
   return (
-    <nav aria-label="Secondary" className="flex h-[39px] items-center gap-1 bg-subnav px-2.5 text-white">
+    <nav
+      aria-label="Secondary"
+      className="hidden h-[39px] items-center gap-1 bg-subnav px-2.5 text-white md:flex"
+    >
       <SideMenu departments={departments} />
       {SUBNAV_LINKS.map((link) => (
         <NavAnchor
