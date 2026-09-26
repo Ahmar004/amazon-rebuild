@@ -17,7 +17,7 @@ export const ROUTES = {
   orders: "/orders",
   cart: "/cart",
   checkout: "/checkout",
-  lists: "/lists",
+  wishlist: "/wishlist",
   history: "/history",
   deals: "/deals",
   customerService: "/customer-service",
@@ -48,6 +48,7 @@ export const SIDE_MENU_TRENDING: NavLink[] = [
 
 export const ACCOUNT_LINKS: NavLink[] = [
   { label: "Your Orders", href: ROUTES.orders },
+  { label: "Your Wishlist", href: ROUTES.wishlist },
   { label: "Your Cart", href: ROUTES.cart },
 ];
 
@@ -64,6 +65,7 @@ export const FOOTER_COLUMNS: { title: string; links: NavLink[] }[] = [
     title: "Your account",
     links: [
       { label: "Your Orders", href: ROUTES.orders },
+      { label: "Your Wishlist", href: ROUTES.wishlist },
       { label: "Your Cart", href: ROUTES.cart },
     ],
   },

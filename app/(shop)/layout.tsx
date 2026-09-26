@@ -6,6 +6,7 @@ import { SessionGuard, UserFirstName, UserIdentity } from "@/components/layout/S
 import { CartLink } from "@/components/layout/CartLink";
 import { CartCount } from "@/components/cart/CartCount";
 import { Footer } from "@/components/layout/Footer";
+import { WishlistProvider } from "@/components/wishlist/WishlistProvider";
 import { getDepartments } from "@/lib/data/departments";
 
 // Shell for every storefront page: one fluid header, the page, and the footer (C9). Departments
@@ -17,7 +18,8 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
   const departments = await getDepartments();
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <WishlistProvider>
+      <div className="flex min-h-screen flex-col">
       <Suspense fallback={null}>
         <SessionGuard />
       </Suspense>
@@ -55,6 +57,7 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
       />
       <main className="flex-1">{children}</main>
       <Footer departments={departments} />
-    </div>
+      </div>
+    </WishlistProvider>
   );
 }

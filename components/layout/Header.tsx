@@ -5,6 +5,7 @@ import { Logo } from "@/components/brand/Logo";
 import { SearchBar } from "@/components/layout/SearchBar";
 import { NavAnchor } from "@/components/layout/NavAnchor";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { WishlistLink } from "@/components/wishlist/WishlistLink";
 import { ROUTES, SUBNAV_LINKS } from "@/lib/constants/links";
 import type { Department } from "@/lib/data/departments";
 
@@ -34,6 +35,7 @@ export function Header({ departments, allMenu, accountMenu, cartLink }: HeaderPr
         <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
           <ThemeToggle className="text-fg hover:bg-surface-muted" />
           {accountMenu}
+          <WishlistLink />
           <Link href={ROUTES.orders} className="hidden h-10 items-center gap-1.5 rounded-md px-2 text-sm font-semibold text-fg hover:bg-surface-muted lg:inline-flex">
             <Package size={20} aria-hidden="true" />
             Orders

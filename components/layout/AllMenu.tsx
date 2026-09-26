@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { Menu, UserRound } from "lucide-react";
 import { Sheet } from "@/components/ui/Sheet";
@@ -17,15 +16,10 @@ type AllMenuProps = {
 
 // The "All" button and the side sheet it opens (frontend-rebuild.md point 9). Every section is
 // built from props the shop layout passes on every page, so the menu is identical wherever it is
-// opened. It closes when a link is followed or the route changes.
+// opened. Every link closes it as it navigates. (Reading usePathname here would block
+// prerendering of dynamic routes, because the menu sits outside Suspense.)
 export function AllMenu({ departments, firstName }: AllMenuProps) {
   const [open, setOpen] = useState(false);
-  const pathname = usePathname();
-  const [lastPath, setLastPath] = useState(pathname);
-  if (pathname !== lastPath) {
-    setLastPath(pathname);
-    setOpen(false);
-  }
 
   const close = () => setOpen(false);
   const departmentLinks: NavLink[] = departments.map((d) => ({ label: d.name, href: `${ROUTES.search}?i=${d.slug}` }));

@@ -15,7 +15,7 @@ export function QuantitySelect({ max }: QuantitySelectProps) {
       <select
         name="quantity"
         defaultValue={1}
-        className="rounded-xl border border-border bg-surface-muted px-2 py-1.5 text-sm text-fg"
+        className="h-10 rounded-lg border border-border-strong bg-surface px-3 text-sm text-fg"
       >
         {options.map((n) => (
           <option key={n} value={n}>

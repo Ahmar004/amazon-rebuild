@@ -2,15 +2,13 @@ import { Suspense } from "react";
 import { cacheLife, cacheTag } from "next/cache";
 import { HeroCarousel } from "@/components/home/HeroCarousel";
 import { DepartmentCard } from "@/components/home/DepartmentCard";
-import { ProductRail } from "@/components/home/ProductRail";
 import { PersonalRails } from "@/components/home/PersonalRails";
-import { ProductCard } from "@/components/product/ProductCard";
+import { ProductCardRail } from "@/components/product/ProductCardRail";
 import { Reveal } from "@/components/motion/Reveal";
 import { getDepartmentPreviews } from "@/lib/data/departments";
 import { getBestSellersRail, getDealsRail, getDepartmentRails, getHeroSlides } from "@/lib/data/home";
 import { DEALS_HREF } from "@/lib/constants/home";
 import { BEST_SELLERS_HREF, ROUTES } from "@/lib/constants/links";
-import type { ProductSummary } from "@/lib/data/products";
 
 // Home (frontend-rebuild.md points 5 and 8, C6): hero, department tiles, the shopper's own rails,
 // then deal, best-seller and department rails of real products. The catalogue sections are cached;
@@ -66,23 +64,12 @@ async function CatalogueRails() {
 
   return (
     <>
-      <Rail title="Today's Deals" subtitle="The biggest discounts right now" href={DEALS_HREF} items={deals} />
-      <Rail title="Best Sellers" subtitle="What shoppers are buying most" href={BEST_SELLERS_HREF} items={bestSellers} />
+      <ProductCardRail title="Today's Deals" subtitle="The biggest discounts right now" href={DEALS_HREF} items={deals} />
+      <ProductCardRail title="Best Sellers" subtitle="What shoppers are buying most" href={BEST_SELLERS_HREF} items={bestSellers} />
       {departmentRails.map(({ department, items }) => (
-        <Rail key={department.id} title={department.name} href={`${ROUTES.search}?i=${department.slug}`} items={items} />
+        <ProductCardRail key={department.id} title={department.name} href={`${ROUTES.search}?i=${department.slug}`} items={items} />
       ))}
     </>
   );
 }
 
-function Rail({ title, subtitle, href, items }: { title: string; subtitle?: string; href: string; items: ProductSummary[] }) {
-  return (
-    <Reveal>
-      <ProductRail title={title} subtitle={subtitle} href={href}>
-        {items.map((item) => (
-          <ProductCard key={item.asin} item={item} />
-        ))}
-      </ProductRail>
-    </Reveal>
-  );
-}

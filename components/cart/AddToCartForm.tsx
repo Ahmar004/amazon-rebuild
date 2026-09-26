@@ -11,7 +11,7 @@ type AddToCartFormProps = {
   maxQuantity: number;
 };
 
-// The buy box's "Add to cart" (yellow) and "Buy Now" (orange) buttons, one <form> so Enter
+// The purchase panel's "Add to cart" and "Buy now" buttons, one <form> so Enter
 // submits "Add to cart" (CLAUDE.md forms rule). Add to cart adds the item and goes to the
 // smart-wagon interstitial. Buy Now skips the cart entirely (docs/spec.md 5.8: "Buy Now skips
 // the cart and opens checkout with only that product and quantity; the rest of the cart stays as
@@ -50,17 +50,17 @@ export function AddToCartForm({ asin, maxQuantity }: AddToCartFormProps) {
         type="submit"
         data-intent="add-to-cart"
         disabled={pending}
-        className="w-full rounded-full border border-accent bg-accent px-3 py-1.5 text-sm text-accent-fg hover:bg-accent-hover disabled:opacity-60"
+        className="h-11 w-full rounded-full bg-accent px-3 text-sm font-semibold text-accent-fg transition hover:bg-accent-hover disabled:opacity-60"
       >
-        Add to Cart
+        Add to cart
       </button>
       <button
         type="submit"
         data-intent="buy-now"
         disabled={pending}
-        className="w-full rounded-full border border-accent-strong bg-accent-strong px-3 py-1.5 text-sm text-accent-fg hover:bg-accent-strong-hover disabled:opacity-60"
+        className="h-11 w-full rounded-full bg-accent-strong px-3 text-sm font-semibold text-accent-fg transition hover:bg-accent-strong-hover disabled:opacity-60"
       >
-        Buy Now
+        Buy now
       </button>
       {error && (
         <p role="alert" className="text-sm text-danger">

@@ -7,7 +7,7 @@ import { formatPrice } from "@/lib/pricing/money";
 import { ROUTES } from "@/lib/constants/links";
 import { imageAt } from "@/lib/assets";
 import { MiniCart } from "@/components/cart/MiniCart";
-import { Carousel } from "@/components/product/Carousel";
+import { ProductCardRail } from "@/components/product/ProductCardRail";
 
 const RELATED_CAROUSEL_SIZE = 20;
 
@@ -85,7 +85,7 @@ async function SmartWagonContent({ searchParams }: SmartWagonPageProps) {
 
           {product && related.length > 0 && (
             <div className="mt-8">
-              <Carousel title={`Products related to ${product.title}`} items={related} />
+              <ProductCardRail title="You might also like" items={related} />
             </div>
           )}
         </div>

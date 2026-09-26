@@ -23,7 +23,7 @@ export function Gallery({ images, title }: GalleryProps) {
 
   if (images.length === 0) {
     return (
-      <div className="flex h-[500px] w-full items-center justify-center bg-surface-muted text-sm text-fg-muted">
+      <div className="flex h-[340px] w-full items-center justify-center rounded-xl bg-surface-muted text-sm text-fg-muted">
         No image available
       </div>
     );
@@ -52,8 +52,8 @@ export function Gallery({ images, title }: GalleryProps) {
               onFocus={() => setSelected(i)}
               aria-label={`Image ${i + 1}`}
               aria-current={i === selected}
-              className={`h-10 w-10 shrink-0 overflow-hidden border ${
-                i === selected ? "border-2 border-accent-hover" : "border-border"
+              className={`h-12 w-12 shrink-0 overflow-hidden rounded-lg border bg-white p-0.5 transition ${
+                i === selected ? "border-2 border-accent" : "border-border hover:border-border-strong"
               }`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -69,7 +69,7 @@ export function Gallery({ images, title }: GalleryProps) {
 
           <div
             ref={imageRef}
-            className="relative flex h-[500px] w-full items-center justify-center md:cursor-crosshair"
+            className="relative flex h-[340px] w-full items-center justify-center rounded-xl bg-white sm:h-[460px] md:cursor-crosshair"
             onMouseMove={handleMouseMove}
             onMouseLeave={() => setZoom(null)}
           >
@@ -77,7 +77,7 @@ export function Gallery({ images, title }: GalleryProps) {
             <img
               src={imageAt(mainSrc, "SX500")}
               alt={title}
-              className="max-h-[500px] max-w-full object-contain"
+              className="max-h-full max-w-full object-contain p-4"
             />
 
             {zoom && (
@@ -112,7 +112,7 @@ export function Gallery({ images, title }: GalleryProps) {
               onClick={() => setSelected(i)}
               aria-label={`Image ${i + 1}`}
               aria-current={i === selected}
-              className={`h-1.5 w-1.5 rounded-full ${i === selected ? "bg-accent-hover" : "bg-border"}`}
+              className={`h-2 rounded-full transition-all ${i === selected ? "w-5 bg-accent" : "w-2 bg-border-strong"}`}
             />
           ))}
         </div>

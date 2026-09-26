@@ -3,6 +3,7 @@ import { Stars } from "@/components/product/Stars";
 import { Price } from "@/components/product/Price";
 import { Badge } from "@/components/ui/Badge";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
+import { WishlistHeart } from "@/components/wishlist/WishlistHeart";
 import { imageAt } from "@/lib/assets";
 import { discountPercent } from "@/lib/pricing/money";
 import { productHref } from "@/lib/constants/links";
@@ -10,14 +11,14 @@ import type { ProductSummary } from "@/lib/data/products";
 
 type ProductCardProps = {
   item: ProductSummary;
-  /** Optional control over the photo's top-right corner, e.g. the wishlist heart. */
-  corner?: React.ReactNode;
+  /** Optional line under the price, e.g. the wishlist's price-drop note. */
+  note?: React.ReactNode;
 };
 
 // The one product card used by rails, the search grid, deals and the wishlist (frontend-rebuild.md
 // C6, C7): photo, badges, brand, title, rating, price and Add to cart. It lifts on hover and the
 // photo zooms slightly, so a grid feels alive without moving anything around it.
-export function ProductCard({ item, corner }: ProductCardProps) {
+export function ProductCard({ item, note }: ProductCardProps) {
   const href = productHref(item.asin);
   const percent = discountPercent(item.priceCents, item.listPriceCents);
 
@@ -39,7 +40,9 @@ export function ProductCard({ item, corner }: ProductCardProps) {
           {percent !== null && <Badge tone="deal">-{percent}%</Badge>}
           {item.isBestSeller && <Badge tone="warning">Best Seller</Badge>}
         </div>
-        {corner && <div className="absolute right-2 top-2">{corner}</div>}
+        <div className="absolute right-2 top-2">
+          <WishlistHeart asin={item.asin} />
+        </div>
       </div>
 
       <p className="mt-3 truncate text-xs font-semibold uppercase tracking-wide text-fg-muted">{item.brand}</p>
@@ -55,6 +58,7 @@ export function ProductCard({ item, corner }: ProductCardProps) {
       <div className="mt-1.5">
         <Price priceCents={item.priceCents} listPriceCents={item.listPriceCents} variant="compact" />
       </div>
+      {note}
       <div className="mt-auto pt-3">
         {item.stock > 0 ? (
           <AddToCartButton asin={item.asin} full />

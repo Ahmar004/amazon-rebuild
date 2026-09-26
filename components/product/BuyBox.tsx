@@ -2,10 +2,10 @@ import { getDeliveryLocation } from "@/lib/location-server";
 import { deliveryDate, formatDeliveryDate } from "@/lib/pricing/delivery";
 import { formatPrice } from "@/lib/pricing/money";
 import { FREE_SHIPPING_THRESHOLD_CENTS, shippingCents } from "@/lib/pricing/shipping";
-import { Price } from "@/components/product/Price";
 import { BuyBoxLocationButton } from "@/components/product/BuyBoxLocationButton";
 import { DeliveryDetailsPopover } from "@/components/product/DeliveryDetailsPopover";
 import { AddToCartForm } from "@/components/cart/AddToCartForm";
+import { WishlistHeart } from "@/components/wishlist/WishlistHeart";
 import { MAX_CART_QUANTITY } from "@/lib/data/cart";
 import type { ProductDetail } from "@/lib/data/products";
 
@@ -15,11 +15,9 @@ type BuyBoxProps = {
   product: ProductDetail;
 };
 
-// The buy box (docs/spec.md 5.5): price, delivery dates for the visitor's chosen location,
-// stock, and a quantity select. Reads the deliver_to cookie (getDeliveryLocation), so it renders
-// at request time inside a <Suspense> boundary in the page, never under 'use cache'
-// (CLAUDE.md's Next.js 16 caching rule). "Add to cart" and "Buy Now" arrive in Slice 5; this
-// slice leaves their slot empty rather than shipping a dead button.
+// The request-time half of the purchase panel (frontend-rebuild.md C10): delivery dates for the
+// shopper's ZIP, stock, quantity, Add to cart, Buy now and the wishlist heart. It reads the
+// deliver_to cookie, so the page renders it inside <Suspense>, never under 'use cache'.
 export async function BuyBox({ product }: BuyBoxProps) {
   const location = await getDeliveryLocation();
   const now = new Date();
@@ -29,10 +27,8 @@ export async function BuyBox({ product }: BuyBoxProps) {
   const maxQty = Math.max(0, Math.min(product.stock, MAX_CART_QUANTITY));
 
   return (
-    <div className="rounded-xl border border-border p-[18px]">
-      <Price priceCents={product.priceCents} listPriceCents={product.listPriceCents} />
-
-      <div className="mt-3 text-sm text-fg">
+    <div>
+      <div className="rounded-lg bg-surface-muted p-3 text-sm text-fg">
         <p>
           {freeShipping ? "FREE delivery" : `${formatPrice(shippingCents(product.priceCents, "standard"))} delivery`}{" "}
           <span className="font-bold">{standardEta}</span>. <DeliveryDetailsPopover speed="standard" />
@@ -50,6 +46,9 @@ export async function BuyBox({ product }: BuyBoxProps) {
       <StockLine stock={product.stock} />
 
       {product.stock > 0 && <AddToCartForm asin={product.asin} maxQuantity={maxQty} />}
+      <div className="mt-2">
+        <WishlistHeart asin={product.asin} variant="labeled" />
+      </div>
 
       <dl className="mt-4 space-y-1 border-t border-border pt-3 text-sm text-fg">
         <InfoRow label="Ships from" value="Shopeedo" />

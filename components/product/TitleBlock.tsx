@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Stars } from "@/components/product/Stars";
 import { Price } from "@/components/product/Price";
+import { Badge } from "@/components/ui/Badge";
+import { ReviewsTabLink } from "@/components/product/ProductTabs";
 import type { ProductDetail } from "@/lib/data/products";
 import { ROUTES } from "@/lib/constants/links";
 
@@ -10,58 +12,36 @@ type TitleBlockProps = {
   ratingCount: number;
 };
 
-// The dataset stores a book's author in the same brand column the store name would otherwise
-// use (scripts/import-catalogue.ts), so the department alone tells us which label to show
-// (plan: "for books: 'by <Author> (Author)'").
+// The dataset stores a book's author in the brand column (scripts/import-catalogue.ts), so the
+// department decides whether the line reads "by <Author>" or links to the brand's products.
 const BOOKS_DEPARTMENT_SLUG = "books";
 
-// Title, brand line, rating row, best-seller badge and price block (docs/spec.md 5.5, centre
-// column). Reuses Stars and Price from Slice 3 rather than duplicating their markup.
+// Top of the purchase panel: brand, title, rating (opens the Reviews tab), badges and price.
 export function TitleBlock({ product, ratingAverage, ratingCount }: TitleBlockProps) {
   const isBook = product.departmentSlug === BOOKS_DEPARTMENT_SLUG;
   const brandHref = `${ROUTES.search}?k=${encodeURIComponent(product.brand)}`;
 
   return (
     <div>
-      <h1 className="text-2xl leading-8 text-fg">{product.title}</h1>
+      <Link href={brandHref} className="text-sm font-semibold text-accent hover:text-accent-hover hover:underline">
+        {isBook ? `by ${product.brand}` : `More from ${product.brand}`}
+      </Link>
+      <h1 className="mt-1 text-xl font-bold leading-snug text-fg sm:text-2xl">{product.title}</h1>
 
-      {isBook ? (
-        <p className="mt-1 text-sm text-fg">
-          by{" "}
-          <Link href={brandHref} className="text-accent hover:text-accent-hover hover:underline">
-            {product.brand}
-          </Link>{" "}
-          (Author)
-        </p>
-      ) : (
-        <Link
-          href={brandHref}
-          className="mt-1 inline-block text-sm text-accent hover:text-accent-hover hover:underline"
-        >
-          Visit the {product.brand} Store
-        </Link>
-      )}
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        {ratingCount > 0 && (
+          <ReviewsTabLink>
+            <span className="font-semibold text-fg">{ratingAverage}</span>
+            <Stars rating={ratingAverage} />
+            <span className="text-accent">{ratingCount.toLocaleString("en-US")} ratings</span>
+          </ReviewsTabLink>
+        )}
+        {product.isBestSeller && <Badge tone="warning">Best Seller</Badge>}
+      </div>
 
-      {ratingCount > 0 && (
-        <Link href="#reviews" className="mt-2 flex items-center gap-1 text-sm">
-          <span className="text-accent">{ratingAverage}</span>
-          <Stars rating={ratingAverage} />
-          <span aria-hidden="true" className="text-[10px] text-fg-muted">
-            &#9662;
-          </span>
-          <span className="text-accent hover:text-accent-hover">{ratingCount.toLocaleString("en-US")} ratings</span>
-        </Link>
-      )}
-
-      {product.isBestSeller && (
-        <span className="mt-2 inline-block bg-warning px-1.5 py-0.5 text-xs font-bold text-white">
-          Best Seller
-        </span>
-      )}
-
-      <hr className="my-3 border-border" />
-
-      <Price priceCents={product.priceCents} listPriceCents={product.listPriceCents} />
+      <div className="mt-4">
+        <Price priceCents={product.priceCents} listPriceCents={product.listPriceCents} size="lg" />
+      </div>
     </div>
   );
 }
