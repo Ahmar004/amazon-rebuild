@@ -22,7 +22,7 @@ type PopoverProps = {
 };
 
 // Generic positioned popover: a rounded card with a 1px border, soft shadow and an upward caret.
-// Callers supply the content.
+// It scales in from its anchor corner. Callers supply the content.
 export function Popover({ open, onClose, children, anchorClassName, className, triggerRef, align = "left" }: PopoverProps) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -32,7 +32,7 @@ export function Popover({ open, onClose, children, anchorClassName, className, t
 
   return (
     <div ref={ref} className={`absolute z-50 ${anchorClassName ?? ""}`}>
-      <div className="relative mt-2">
+      <div className={`pop-in relative mt-2 ${align === "right" ? "origin-top-right" : "origin-top-left"}`}>
         <div
           className={`absolute -top-2 ${align === "right" ? "right-4" : "left-4"} h-4 w-4 rotate-45 border-l border-t border-border bg-surface`}
           aria-hidden="true"

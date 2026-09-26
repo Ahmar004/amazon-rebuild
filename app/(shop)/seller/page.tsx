@@ -4,7 +4,6 @@ import { DollarSign, LayoutGrid, PackageCheck, PackagePlus, Store, Truck } from 
 import { requireUser } from "@/lib/auth/current-user";
 import { getSellerDashboard, SALES_CHART_DAYS } from "@/lib/data/seller";
 import { ROUTES } from "@/lib/constants/links";
-import { formatCompactPrice } from "@/lib/pricing/money";
 import { buttonClass } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { SalesChart } from "@/components/seller/SalesChart";
@@ -60,10 +59,10 @@ async function Dashboard() {
   return (
     <div className="mt-5 space-y-4">
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatTile index={0} icon={DollarSign} label="Sales" value={formatCompactPrice(stats.salesCents)} />
-        <StatTile index={1} icon={Truck} label="To ship" value={stats.toShip.toLocaleString("en-US")} />
-        <StatTile index={2} icon={PackageCheck} label="Units sold" value={stats.unitsSold.toLocaleString("en-US")} />
-        <StatTile index={3} icon={Store} label="Active listings" value={stats.activeListings.toLocaleString("en-US")} />
+        <StatTile index={0} icon={DollarSign} label="Sales" value={stats.salesCents} format="price" />
+        <StatTile index={1} icon={Truck} label="To ship" value={stats.toShip} format="count" />
+        <StatTile index={2} icon={PackageCheck} label="Units sold" value={stats.unitsSold} format="count" />
+        <StatTile index={3} icon={Store} label="Active listings" value={stats.activeListings} format="count" />
       </div>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <DashboardCard title="Daily sales" subtitle={`Last ${SALES_CHART_DAYS} days, in US dollars`}>

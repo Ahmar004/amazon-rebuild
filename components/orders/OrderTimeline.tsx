@@ -15,7 +15,7 @@ const DAY = new Intl.DateTimeFormat("en-US", { weekday: "short", month: "short",
 // Ordered > Shipped > Out for delivery > Delivered (C16), worked out by orderTimeline from the
 // order's age, or Ordered > Shipped > Delivered when a user sells an item (D3). Steps not reached
 // yet show their expected date, or that they wait on the seller. Horizontal from 640px, a vertical
-// list on phones.
+// list on phones. On load the connecting line fills step by step up to the current one.
 export function OrderTimeline({ steps }: { steps: TimelineStep[] }) {
   return (
     <ol className="flex flex-col gap-4 sm:flex-row sm:gap-0">
@@ -28,9 +28,16 @@ export function OrderTimeline({ steps }: { steps: TimelineStep[] }) {
             {index > 0 && (
               <span
                 aria-hidden="true"
-                className={`absolute top-4 hidden h-1 rounded-full sm:block ${step.reached ? "bg-accent" : "bg-surface-muted"}`}
+                className="absolute top-4 hidden h-1 overflow-hidden rounded-full bg-surface-muted sm:block"
                 style={{ left: "calc(-50% + 1.5rem)", width: "calc(100% - 3rem)" }}
-              />
+              >
+                {step.reached && (
+                  <span
+                    className="block h-full origin-left rounded-full bg-accent animate-[grow-right_450ms_cubic-bezier(0.2,0.7,0.2,1)_backwards]"
+                    style={{ animationDelay: `${150 + (index - 1) * 300}ms` }}
+                  />
+                )}
+              </span>
             )}
             <span className={`relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${tone} ${step.current ? "ring-4 ring-accent-soft" : ""}`}>
               <Icon size={17} aria-hidden="true" />

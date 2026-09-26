@@ -33,6 +33,10 @@
   --color-star: #e3a008;
   --color-deal: #c62828;
   --color-overlay: rgb(15 17 20 / 0.5);
+  /* Coloured glows drifting behind the sign-in and register pages (point 14, S6). */
+  --color-glow-teal: rgb(31 135 107 / 0.34);
+  --color-glow-violet: rgb(124 58 237 / 0.22);
+  --color-glow-amber: rgb(234 138 12 / 0.26);
 
   /* Home hero slide gradients (from/to). Deep enough in both themes for white text. */
   --color-hero-fg: #ffffff;
@@ -87,6 +91,9 @@
   --color-star: #d29922;
   --color-deal: #ff7b72;
   --color-overlay: rgb(1 4 9 / 0.7);
+  --color-glow-teal: rgb(63 182 139 / 0.3);
+  --color-glow-violet: rgb(139 92 246 / 0.26);
+  --color-glow-amber: rgb(210 153 34 / 0.18);
   --color-hero-teal-from: #0b2e26;
   --color-hero-teal-to: #1b6b56;
   --color-hero-indigo-from: #1e1b4b;
@@ -133,14 +140,41 @@ body {
 @keyframes marquee { to { transform: translateX(-50%); } }
 @keyframes grow-up { from { transform: scaleY(0); } }
 @keyframes grow-right { from { transform: scaleX(0); } }
+@keyframes page-in { from { opacity: 0; transform: translateY(10px); } }
+@keyframes pop-in { from { opacity: 0; transform: translateY(-6px) scale(0.97); } }
+@keyframes scale-in { from { opacity: 0; transform: translateY(12px) scale(0.96); } }
+@keyframes check-in { from { opacity: 0; transform: scale(0.4) rotate(-20deg); } }
+@keyframes elevate { to { box-shadow: var(--shadow-pop); } }
 
-/* Entrance for the sign-in and register card (point 14): direct children rise in one by one. */
-.stagger-in > * { animation: rise-in 550ms cubic-bezier(0.2, 0.7, 0.2, 1) both; }
-.stagger-in > :nth-child(2) { animation-delay: 70ms; }
-.stagger-in > :nth-child(3) { animation-delay: 140ms; }
-.stagger-in > :nth-child(4) { animation-delay: 210ms; }
-.stagger-in > :nth-child(5) { animation-delay: 280ms; }
-.stagger-in > :nth-child(n + 6) { animation-delay: 350ms; }
+/* Direct children rise in one by one: the sign-in and register card (point 14) and the product,
+   order and listing grids (S6). "backwards" fill drops the transform once it has played, so hover
+   lifts and fixed-position dialogs inside the children keep working. */
+.stagger-in > * { animation: rise-in 550ms cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
+.stagger-in > :nth-child(2) { animation-delay: 50ms; }
+.stagger-in > :nth-child(3) { animation-delay: 100ms; }
+.stagger-in > :nth-child(4) { animation-delay: 150ms; }
+.stagger-in > :nth-child(5) { animation-delay: 200ms; }
+.stagger-in > :nth-child(6) { animation-delay: 250ms; }
+.stagger-in > :nth-child(7) { animation-delay: 300ms; }
+.stagger-in > :nth-child(8) { animation-delay: 350ms; }
+.stagger-in > :nth-child(n + 9) { animation-delay: 400ms; }
+
+/* Page entrance (the route templates): each page's content fades up on navigation. */
+.page-in { animation: page-in 380ms cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
+
+/* Popovers, menus and modal panels scale in from their anchor instead of popping. */
+.pop-in { animation: pop-in 160ms ease-out backwards; }
+.scale-in { animation: scale-in 220ms cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
+
+/* The sticky header gains a shadow once the page scrolls (scroll-driven, no JavaScript). Browsers
+   without scroll timelines keep the flat header. */
+@supports (animation-timeline: scroll()) {
+  .header-elevate {
+    animation: elevate linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 64px;
+  }
+}
 
 /* Scroll reveal (components/motion/Reveal.tsx): content fades up once it enters the viewport.
    --reveal-delay staggers siblings. */

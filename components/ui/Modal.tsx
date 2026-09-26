@@ -14,8 +14,8 @@ type ModalProps = {
   widthClassName?: string;
 };
 
-// Generic modal dialog: dimmed overlay, centred rounded panel with a header bar and an X close
-// button. Callers supply the content.
+// Generic modal dialog: dimmed overlay fading in, centred rounded panel scaling in, with a header
+// bar and an X close button. Callers supply the content.
 export function Modal({ open, onClose, title, labelledBy, children, widthClassName }: ModalProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const previouslyFocused = useRef<HTMLElement | null>(null);
@@ -36,14 +36,14 @@ export function Modal({ open, onClose, title, labelledBy, children, widthClassNa
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 animate-[fade-in_150ms_ease-out]">
       <div
         ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={labelledBy}
         tabIndex={-1}
-        className={`w-full ${widthClassName ?? "max-w-md"} rounded-xl bg-surface shadow-pop outline-none`}
+        className={`scale-in w-full ${widthClassName ?? "max-w-md"} rounded-xl bg-surface shadow-pop outline-none`}
       >
         <div className="flex items-center justify-between rounded-t-xl border-b border-border bg-surface px-4 py-3">
           <h2 id={labelledBy} className="text-base font-bold text-fg">

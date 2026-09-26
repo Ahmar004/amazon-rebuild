@@ -19,10 +19,11 @@ const SIZES: Record<ButtonSize, string> = {
 
 type ButtonStyle = { variant?: ButtonVariant; size?: ButtonSize; full?: boolean; className?: string };
 
-// Shared button styling (C2), also used on <Link>s that look like buttons.
+// Shared button styling (C2), also used on <Link>s that look like buttons. Buttons press in
+// slightly when clicked (point 18).
 export function buttonClass({ variant = "primary", size = "md", full = false, className }: ButtonStyle = {}): string {
   return [
-    "inline-flex items-center justify-center gap-2 rounded-md font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60",
+    "inline-flex items-center justify-center gap-2 rounded-md font-semibold transition-[color,background-color,border-color,opacity,transform] duration-150 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100",
     VARIANTS[variant],
     SIZES[size],
     full ? "w-full" : "",

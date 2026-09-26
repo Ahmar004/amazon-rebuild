@@ -10,6 +10,7 @@ import { formatPrice } from "@/lib/pricing/money";
 import { productHref, ROUTES } from "@/lib/constants/links";
 import { buttonClass } from "@/components/ui/Button";
 import { OrderStatusBadge } from "@/components/orders/OrderStatusBadge";
+import { tabClass } from "@/components/ui/tabs";
 
 export type OrderListItem = OrderSummary & { status: OrderStatus };
 
@@ -59,9 +60,7 @@ export function OrdersList({ orders }: { orders: OrderListItem[] }) {
             role="tab"
             aria-selected={tab === t.id}
             onClick={() => setTab(t.id)}
-            className={`shrink-0 border-b-2 px-3 pb-2 text-sm font-semibold transition-colors ${
-              tab === t.id ? "border-accent text-fg" : "border-transparent text-fg-muted hover:text-fg"
-            }`}
+            className={tabClass(tab === t.id, "px-3 pb-2")}
           >
             {t.label}
           </button>
@@ -79,7 +78,7 @@ export function OrdersList({ orders }: { orders: OrderListItem[] }) {
           </Link>
         </div>
       ) : (
-        <ul className="mt-4 space-y-4">
+        <ul className="stagger-in mt-4 space-y-4">
           {filtered.map((order) => (
             <li key={order.id} className="overflow-hidden rounded-xl border border-border bg-surface shadow-card">
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-surface-muted px-4 py-3 text-sm">

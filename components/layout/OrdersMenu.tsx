@@ -28,7 +28,7 @@ export function OrdersMenu() {
         Orders
         <ChevronDown size={14} aria-hidden="true" className={`transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
-      <Popover open={open} onClose={() => setOpen(false)} triggerRef={triggerRef} anchorClassName="right-0" align="right" className="w-60 p-1.5 animate-[fade-in_150ms_ease-out]">
+      <Popover open={open} onClose={() => setOpen(false)} triggerRef={triggerRef} anchorClassName="right-0" align="right" className="w-60 p-1.5">
         <ul>
           {ORDERS_MENU.map((item, index) => {
             const Icon = ICONS[index];

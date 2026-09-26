@@ -8,6 +8,7 @@ import { SELLER_ORDER_TABS, type SellerOrderTab } from "@/lib/constants/seller";
 import { ROUTES } from "@/lib/constants/links";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { SoldOrderCard } from "@/components/seller/SoldOrderCard";
+import { tabClass } from "@/components/ui/tabs";
 
 export const metadata = { title: "Seller orders - Shopeedo" };
 
@@ -52,9 +53,7 @@ async function SoldOrders({ searchParams }: SellerOrdersPageProps) {
             key={t.id}
             href={`${ROUTES.sellerOrders}?tab=${t.id}`}
             aria-current={t.id === tab ? "page" : undefined}
-            className={`inline-flex shrink-0 items-center gap-1.5 border-b-2 px-3 pb-2 text-sm font-semibold transition-colors ${
-              t.id === tab ? "border-accent text-fg" : "border-transparent text-fg-muted hover:text-fg"
-            }`}
+            className={tabClass(t.id === tab, "inline-flex items-center gap-1.5 px-3 pb-2")}
           >
             {t.label}
             <span className={`rounded-full px-1.5 text-xs ${t.id === tab ? "bg-accent text-accent-fg" : "bg-surface-muted"}`}>{counts[t.id]}</span>
@@ -72,9 +71,9 @@ async function SoldOrders({ searchParams }: SellerOrdersPageProps) {
           </EmptyState>
         )
       ) : (
-        <ul className="mt-4 space-y-3">
-          {orders.map((order, index) => (
-            <SoldOrderCard key={order.orderId} orderId={order.orderId} items={order.items} index={index} />
+        <ul className="stagger-in mt-4 space-y-3">
+          {orders.map((order) => (
+            <SoldOrderCard key={order.orderId} orderId={order.orderId} items={order.items} />
           ))}
         </ul>
       )}

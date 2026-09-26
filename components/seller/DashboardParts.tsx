@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import { PackageX, Truck } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
+import { CountUp, type CountUpFormat } from "@/components/motion/CountUp";
 import { editListingHref, productHref, ROUTES } from "@/lib/constants/links";
 import { formatPrice } from "@/lib/pricing/money";
 import { formatDeliveryDate } from "@/lib/pricing/delivery";
@@ -19,7 +20,8 @@ export function DashboardCard({ title, subtitle, children, className }: { title:
   );
 }
 
-export function StatTile({ icon: Icon, label, value, index }: { icon: LucideIcon; label: string; value: string; index: number }) {
+// A headline number that counts up on load; `value` is cents for "price" and a count otherwise.
+export function StatTile({ icon: Icon, label, value, format, index }: { icon: LucideIcon; label: string; value: number; format: CountUpFormat; index: number }) {
   return (
     <div
       className="flex items-center gap-3 rounded-xl border border-border bg-surface p-4 shadow-card animate-[rise-in_500ms_cubic-bezier(0.2,0.7,0.2,1)_both]"
@@ -30,7 +32,9 @@ export function StatTile({ icon: Icon, label, value, index }: { icon: LucideIcon
       </span>
       <div className="min-w-0">
         <p className="text-xs text-fg-muted">{label}</p>
-        <p className="text-2xl font-semibold text-fg">{value}</p>
+        <p className="text-2xl font-semibold text-fg">
+          <CountUp value={value} format={format} />
+        </p>
       </div>
     </div>
   );

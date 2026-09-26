@@ -101,7 +101,7 @@ function SearchBarInner({ categories }: SearchBarProps) {
           type="button"
           aria-label="Close search suggestions"
           onClick={() => setOpen(false)}
-          className="fixed inset-0 z-30 hidden bg-overlay md:block"
+          className="fixed inset-0 z-30 hidden bg-overlay animate-[fade-in_150ms_ease-out] md:block"
         />
       )}
 
@@ -160,7 +160,7 @@ function SearchBarInner({ categories }: SearchBarProps) {
           <ul
             role="listbox"
             aria-label="Search suggestions"
-            className="absolute left-0 right-12 top-full mt-2 max-h-[400px] overflow-y-auto rounded-xl border border-border bg-surface py-1 shadow-pop"
+            className="pop-in absolute left-0 right-12 top-full mt-2 max-h-[400px] origin-top overflow-y-auto rounded-xl border border-border bg-surface py-1 shadow-pop"
           >
             {suggestions.map((suggestion, index) => {
               const matchLength = query.trim().length;

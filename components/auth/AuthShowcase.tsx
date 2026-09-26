@@ -33,8 +33,9 @@ export async function AuthShowcase() {
         aria-label="Why Shopeedo"
         className="relative hidden overflow-hidden rounded-3xl bg-linear-to-br from-hero-teal-from to-hero-teal-to p-10 text-hero-fg shadow-pop lg:block"
       >
-        <div aria-hidden="true" className="pointer-events-none absolute -left-16 -top-16 h-64 w-64 rounded-full bg-hero-fg/10 blur-3xl animate-[drift_14s_ease-in-out_infinite]" />
-        <div aria-hidden="true" className="pointer-events-none absolute -bottom-20 -right-10 h-72 w-72 rounded-full bg-hero-fg/10 blur-3xl animate-[drift_18s_ease-in-out_infinite_reverse]" />
+        <div aria-hidden="true" className="pointer-events-none absolute -left-16 -top-16 h-72 w-72 rounded-full bg-hero-fg/20 blur-3xl animate-[drift_14s_ease-in-out_infinite]" />
+        <div aria-hidden="true" className="pointer-events-none absolute -bottom-20 -right-10 h-80 w-80 rounded-full bg-glow-amber blur-3xl animate-[drift_18s_ease-in-out_infinite_reverse]" />
+        <div aria-hidden="true" className="pointer-events-none absolute right-1/4 top-1/3 h-64 w-64 rounded-full bg-glow-violet blur-3xl animate-[drift_22s_ease-in-out_infinite]" />
 
         <div className="relative animate-[rise-in_700ms_ease-out_both]">
           <p className="text-sm font-semibold uppercase tracking-wider text-hero-fg/80">Shop {categories.length} categories</p>

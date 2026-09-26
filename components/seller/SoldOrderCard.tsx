@@ -20,13 +20,12 @@ function statusOf(item: SoldItem): OrderStatus {
 
 // One order as its seller sees it (D3): where it goes and by when, and each of the seller's items
 // in it with the next step to take. Buyers' other items in the same order aren't shown.
-export function SoldOrderCard({ orderId, items, index }: { orderId: string; items: SoldItem[]; index: number }) {
+export function SoldOrderCard({ orderId, items }: { orderId: string; items: SoldItem[] }) {
   const first = items[0];
   const { address } = first;
   return (
     <li
-      className="rounded-xl border border-border bg-surface shadow-card animate-[rise-in_450ms_cubic-bezier(0.2,0.7,0.2,1)_both]"
-      style={{ animationDelay: `${Math.min(index, 8) * 40}ms` }}
+      className="rounded-xl border border-border bg-surface shadow-card"
     >
       <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border px-4 py-3 text-sm">
         <div>

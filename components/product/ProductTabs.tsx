@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore, type ReactNode } from "react";
+import { tabClass } from "@/components/ui/tabs";
 
 export const PRODUCT_TABS = [
   { id: "overview", label: "Overview" },
@@ -56,9 +57,7 @@ export function ProductTabs({ panels, reviewCount }: ProductTabsProps) {
             aria-selected={active === tab.id}
             aria-controls={`panel-${tab.id}`}
             onClick={() => selectProductTab(tab.id)}
-            className={`-mb-px border-b-2 px-4 py-2.5 text-sm font-semibold transition ${
-              active === tab.id ? "border-accent text-accent" : "border-transparent text-fg-muted hover:text-fg"
-            }`}
+            className={tabClass(active === tab.id, "px-4 py-2.5")}
           >
             {tab.label}
             {tab.id === "reviews" && reviewCount > 0 && (

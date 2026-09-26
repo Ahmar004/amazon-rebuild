@@ -61,7 +61,7 @@ async function DealsForParams({ searchParams }: { searchParams: Promise<RawParam
           </Link>
         </div>
       ) : (
-        <ul className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
+        <ul className="stagger-in mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
           {deals.items.map((item, i) => (
             <li key={item.asin} className="animate-[rise-in_450ms_ease-out_both]" style={{ animationDelay: `${Math.min(i, 11) * 35}ms` }}>
               <ProductCard item={item} />

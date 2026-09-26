@@ -12,14 +12,13 @@ const LISTED_DATE = new Intl.DateTimeFormat("en-US", { month: "short", day: "num
 // seller's actions. Paused listings are dimmed, because buyers can't see them.
 export function ListingList({ listings }: { listings: SellerListingRow[] }) {
   return (
-    <ul className="space-y-3">
-      {listings.map((listing, index) => {
+    <ul className="stagger-in space-y-3">
+      {listings.map((listing) => {
         const paused = listing.status === LISTING_STATUS.paused;
         return (
           <li
             key={listing.asin}
-            className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4 shadow-card animate-[rise-in_400ms_cubic-bezier(0.2,0.7,0.2,1)_both] sm:flex-row sm:items-center"
-            style={{ animationDelay: `${Math.min(index, 8) * 40}ms` }}
+            className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4 shadow-card sm:flex-row sm:items-center"
           >
             <Link href={productHref(listing.asin)} className={`flex min-w-0 flex-1 gap-4 ${paused ? "opacity-60" : ""}`}>
               {/* eslint-disable-next-line @next/next/no-img-element */}

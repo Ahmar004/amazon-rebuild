@@ -24,7 +24,7 @@ type HeaderProps = {
 // (a single element, re-ordered with CSS). The second row holds the Buying / Selling switch and quick links, which scroll sideways on small screens.
 export function Header({ categories, allMenu, accountMenu, cartLink, modeBar }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-surface">
+    <header className="header-elevate sticky top-0 z-40 border-b border-border bg-surface">
       <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-x-2 gap-y-2 px-3 py-2.5 sm:gap-x-3 sm:px-6">
         {allMenu}
         <Link href={ROUTES.home} aria-label="Shopeedo home" className="shrink-0 rounded-md">

@@ -74,7 +74,7 @@ async function Results({ query }: { query: SearchQuery }) {
             <EmptyResults query={query} />
           ) : (
             <>
-              <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              <ul className="stagger-in grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {result.items.map((item, i) => (
                   <li key={item.asin} className="animate-[rise-in_450ms_ease-out_both]" style={{ animationDelay: `${Math.min(i, 11) * 35}ms` }}>
                     <ProductCard item={item} />
