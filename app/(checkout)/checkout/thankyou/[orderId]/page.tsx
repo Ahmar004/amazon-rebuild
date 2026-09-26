@@ -29,35 +29,35 @@ async function ThankYouContent({ params }: { params: Promise<{ orderId: string }
 
   return (
     <div className="mx-auto max-w-[700px] px-4 py-8">
-      <div className="rounded-lg bg-white p-6">
+      <div className="rounded-lg bg-surface p-6">
         <div className="flex items-center gap-3">
-          <svg width="32" height="32" viewBox="0 0 24 24" aria-hidden="true" className="shrink-0 text-in-stock">
+          <svg width="32" height="32" viewBox="0 0 24 24" aria-hidden="true" className="shrink-0 text-success">
             <circle cx="12" cy="12" r="11" fill="currentColor" />
             <path d="M7 12.5 L10.5 16 L17 8.5" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          <h1 className="text-2xl font-bold text-text">Order placed, thank you!</h1>
+          <h1 className="text-2xl font-bold text-fg">Order placed, thank you!</h1>
         </div>
 
-        <p className="mt-2 text-sm text-text">Your order has been placed.</p>
+        <p className="mt-2 text-sm text-fg">Your order has been placed.</p>
 
         <div className="mt-6 grid grid-cols-1 gap-4 border-t border-border pt-4 sm:grid-cols-3">
           <div>
-            <p className="text-xs font-bold uppercase text-text-muted">Order date</p>
-            <p className="text-sm text-text">{formatDeliveryDate(order.placedAt)}</p>
+            <p className="text-xs font-bold uppercase text-fg-muted">Order date</p>
+            <p className="text-sm text-fg">{formatDeliveryDate(order.placedAt)}</p>
           </div>
           <div>
-            <p className="text-xs font-bold uppercase text-text-muted">Estimated delivery</p>
-            <p className="text-sm text-text">{formatDeliveryDate(order.deliveryDate)}</p>
+            <p className="text-xs font-bold uppercase text-fg-muted">Estimated delivery</p>
+            <p className="text-sm text-fg">{formatDeliveryDate(order.deliveryDate)}</p>
           </div>
           <div>
-            <p className="text-xs font-bold uppercase text-text-muted">Order total</p>
-            <p className="text-sm text-text">{formatPrice(order.totalCents)}</p>
+            <p className="text-xs font-bold uppercase text-fg-muted">Order total</p>
+            <p className="text-sm text-fg">{formatPrice(order.totalCents)}</p>
           </div>
         </div>
 
         <div className="mt-4 border-t border-border pt-4">
-          <p className="text-xs font-bold uppercase text-text-muted">Delivering to</p>
-          <p className="mt-1 text-sm text-text">
+          <p className="text-xs font-bold uppercase text-fg-muted">Delivering to</p>
+          <p className="mt-1 text-sm text-fg">
             <span className="font-bold">{order.address.fullName}</span>
             <br />
             {order.address.line1}
@@ -68,15 +68,15 @@ async function ThankYouContent({ params }: { params: Promise<{ orderId: string }
         </div>
 
         <div className="mt-4 border-t border-border pt-4">
-          <p className="text-xs font-bold uppercase text-text-muted">Order # {order.id}</p>
+          <p className="text-xs font-bold uppercase text-fg-muted">Order # {order.id}</p>
           <ul className="mt-2 divide-y divide-border">
             {order.items.map((item) => (
               <li key={item.asin} className="flex items-center gap-3 py-3">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={item.imageUrl} alt={item.title} className="h-16 w-16 shrink-0 object-contain" />
                 <div className="min-w-0 flex-1">
-                  <p className="line-clamp-2 text-sm text-text">{item.title}</p>
-                  <p className="text-sm text-text-muted">Qty: {item.quantity}</p>
+                  <p className="line-clamp-2 text-sm text-fg">{item.title}</p>
+                  <p className="text-sm text-fg-muted">Qty: {item.quantity}</p>
                 </div>
               </li>
             ))}
@@ -86,13 +86,13 @@ async function ThankYouContent({ params }: { params: Promise<{ orderId: string }
         <div className="mt-6 flex flex-col gap-2 border-t border-border pt-4 sm:flex-row sm:gap-4">
           <Link
             href={ROUTES.orders}
-            className="rounded-full border border-btn-yellow-border bg-btn-yellow px-4 py-2 text-center text-sm font-bold text-text hover:bg-btn-yellow-hover"
+            className="rounded-full border border-accent bg-accent px-4 py-2 text-center text-sm font-bold text-accent-fg hover:bg-accent-hover"
           >
             Review or edit your recent orders
           </Link>
           <Link
             href={ROUTES.home}
-            className="rounded-full border border-border bg-white px-4 py-2 text-center text-sm text-text hover:bg-modal-header"
+            className="rounded-full border border-border bg-surface px-4 py-2 text-center text-sm text-fg hover:bg-surface-muted"
           >
             Continue shopping
           </Link>
@@ -105,7 +105,7 @@ async function ThankYouContent({ params }: { params: Promise<{ orderId: string }
 function ThankYouSkeleton() {
   return (
     <div className="mx-auto max-w-[700px] px-4 py-8" aria-hidden="true">
-      <div className="h-[500px] animate-pulse rounded-lg bg-white" />
+      <div className="h-[500px] animate-pulse rounded-lg bg-surface" />
     </div>
   );
 }

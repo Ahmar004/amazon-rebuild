@@ -13,8 +13,6 @@ type PasswordFormProps = {
   returnTo: string;
 };
 
-const FORGOT_PASSWORD_URL = "https://www.amazon.com/ap/forgotpassword";
-
 // Step 2 (known email) of the sign-in flow (docs/design.md 6.6): the email with a "Change" link
 // back to step 1, the password field, and "Your password is incorrect" on failure.
 export function PasswordForm({ email, returnTo }: PasswordFormProps) {
@@ -40,25 +38,17 @@ export function PasswordForm({ email, returnTo }: PasswordFormProps) {
       {error && <AuthAlert message={error} />}
 
       <div className="mb-3">
-        <p className="text-sm font-bold text-text">{email}</p>
-        <Link href={changeHref} className="text-xs text-link hover:text-link-hover hover:underline">
+        <p className="text-sm font-bold text-fg">{email}</p>
+        <Link href={changeHref} className="text-xs text-accent hover:text-accent-hover hover:underline">
           Change
         </Link>
       </div>
 
       <form onSubmit={handleSubmit} noValidate>
         <div className="mb-1 flex items-baseline justify-between">
-          <label htmlFor="password" className="text-sm font-bold text-text">
+          <label htmlFor="password" className="text-sm font-bold text-fg">
             Password
           </label>
-          <a
-            href={FORGOT_PASSWORD_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-link hover:text-link-hover hover:underline"
-          >
-            Forgot password?
-          </a>
         </div>
         <AuthField
           id="password"

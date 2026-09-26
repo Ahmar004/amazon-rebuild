@@ -15,7 +15,7 @@ export function ProductInformation({ details, description }: ProductInformationP
 
   return (
     <section id="product-information">
-      <h2 className="text-lg font-bold text-text">Product information</h2>
+      <h2 className="text-lg font-bold text-fg">Product information</h2>
 
       {entries.length > 0 && (
         <div className="mt-3 border-t border-border">
@@ -23,17 +23,17 @@ export function ProductInformation({ details, description }: ProductInformationP
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
-            className="flex w-full items-center justify-between border-b border-border py-3 text-left text-base font-bold text-text"
+            className="flex w-full items-center justify-between border-b border-border py-3 text-left text-base font-bold text-fg"
           >
             Item details
             <CaretIcon open={open} />
           </button>
           {open && (
-            <table className="w-full text-sm text-text">
+            <table className="w-full text-sm text-fg">
               <tbody>
                 {entries.map(([key, value]) => (
                   <tr key={key} className="border-b border-border">
-                    <th scope="row" className="w-1/2 py-2 pr-4 text-left font-normal text-text-muted">
+                    <th scope="row" className="w-1/2 py-2 pr-4 text-left font-normal text-fg-muted">
                       {key}
                     </th>
                     <td className="py-2">{value}</td>
@@ -46,7 +46,7 @@ export function ProductInformation({ details, description }: ProductInformationP
       )}
 
       {description && (
-        <div className="mt-4 space-y-2 text-sm text-text">
+        <div className="mt-4 space-y-2 text-sm text-fg">
           {description.split("\n\n").map((paragraph, i) => (
             <p key={i}>{paragraph}</p>
           ))}

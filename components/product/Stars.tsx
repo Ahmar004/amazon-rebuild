@@ -32,7 +32,7 @@ function Star({ fill, size }: { fill: number; size: number }) {
   );
 }
 
-// Amazon's star rating row: full, half and empty stars in orange (--color-star).
+// The star rating row: full, half and empty stars in --color-star.
 export function Stars({ rating, size = 14 }: StarsProps) {
   const stars = Array.from({ length: STAR_COUNT }, (_, i) => {
     const fill = Math.max(0, Math.min(1, rating - i));

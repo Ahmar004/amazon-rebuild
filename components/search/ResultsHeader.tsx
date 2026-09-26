@@ -15,13 +15,13 @@ export function ResultsHeader({ query, total, departmentName }: ResultsHeaderPro
   const end = Math.min(query.page * PAGE_SIZE, total);
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border bg-white px-4 py-2 shadow-sm">
-      <p className="text-sm text-text">
+    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border bg-surface px-4 py-2 shadow-sm">
+      <p className="text-sm text-fg">
         {start}-{end} of {total.toLocaleString("en-US")} results
         {query.k ? (
           <>
             {" "}
-            for <span className="font-bold text-results-query">&quot;{query.k}&quot;</span>
+            for <span className="font-bold text-accent">&quot;{query.k}&quot;</span>
           </>
         ) : departmentName ? (
           <> in {departmentName}</>

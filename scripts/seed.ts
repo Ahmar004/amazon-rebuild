@@ -12,7 +12,7 @@ type Catalogue = {
   reviews: import("./import-catalogue").CatalogueReview[];
 };
 
-const REVIEW_AUTHOR = "Amazon Customer"; // the dataset has no reviewer names; this is Amazon's own default
+const REVIEW_AUTHOR = "Verified Customer"; // the dataset has no reviewer names
 
 function chunks<T>(items: T[], size: number): T[][] {
   const out: T[][] = [];

@@ -9,7 +9,7 @@ import { ROUTES } from "@/lib/constants/links";
 // linking to /your-account"). Reads the session, so HeaderMobile renders it inside <Suspense>.
 export async function HeaderMobileAccount() {
   const user = await getCurrentUser();
-  return <HeaderMobileAccountLink label={user ? user.firstName : "Sign in"} href={user ? ROUTES.account : ROUTES.signIn} />;
+  return <HeaderMobileAccountLink label={user ? user.firstName : "Sign in"} href={user ? ROUTES.orders : ROUTES.signIn} />;
 }
 
 export function HeaderMobileAccountFallback() {

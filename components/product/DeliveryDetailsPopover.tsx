@@ -21,7 +21,7 @@ export function DeliveryDetailsPopover({ speed }: DeliveryDetailsPopoverProps) {
         ref={triggerRef}
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="text-link hover:text-link-hover hover:underline"
+        className="text-accent hover:text-accent-hover hover:underline"
       >
         Details
       </button>
@@ -29,7 +29,7 @@ export function DeliveryDetailsPopover({ speed }: DeliveryDetailsPopoverProps) {
         open={open}
         onClose={() => setOpen(false)}
         anchorClassName="left-0 top-full"
-        className="w-64 p-3 text-xs text-text"
+        className="w-64 p-3 text-xs text-fg"
         triggerRef={triggerRef}
       >
         {speed === "standard" ? (

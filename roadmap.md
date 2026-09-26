@@ -73,7 +73,9 @@ Skipped: no paid domain under Rule 0.3; the live link is the free vercel.app add
 Write the README for submission: what is built, how to run it, the live URL, the trade-offs made, and how AI was used to build it, and a talking-point outline for the walkthrough video (five minutes at most, camera on).
 
 <hr style="height:4px; background-color:Grey; border:none;">
+
 ### Step-10: Shopeedo frontend rebuild
+
 Source: frontend-rebuild.md (points 1-13, C1-C22).
 One slice per session, in this order:
 - R0  Holding page on shopeedo.vercel.app (C5)

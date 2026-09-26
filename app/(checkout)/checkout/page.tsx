@@ -51,7 +51,7 @@ async function CheckoutForParams({ searchParams }: { searchParams: Promise<{ buy
 function CheckoutSkeleton() {
   return (
     <div className="mx-auto max-w-[1000px] px-4 py-6" aria-hidden="true">
-      <div className="h-[500px] animate-pulse rounded-lg bg-white" />
+      <div className="h-[500px] animate-pulse rounded-lg bg-surface" />
     </div>
   );
 }

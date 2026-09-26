@@ -1,8 +1,8 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { Sprite } from "@/components/ui/Sprite";
+import { Logo } from "@/components/brand/Logo";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { SearchBar } from "@/components/layout/SearchBar";
-import { LanguagePopover } from "@/components/layout/LanguagePopover";
 import { navItemClass } from "@/components/layout/navItemClass";
 import { ROUTES } from "@/lib/constants/links";
 import type { Department } from "@/lib/data/departments";
@@ -18,21 +18,21 @@ type HeaderProps = {
   accountMenu: ReactNode;
 };
 
-// #nav-belt: 60px tall, bg-nav. Server component; SearchBar, LanguagePopover and AccountFlyout
+// #nav-belt: 60px tall, bg-inverse. Server component; SearchBar, ThemeToggle and AccountFlyout
 // are the client islands it composes. Hidden below 768px, where HeaderMobile takes over
 // (app/(shop)/layout.tsx, Task 4).
 export function Header({ departments, deliverTo, cartLink, accountMenu }: HeaderProps) {
   return (
-    <header id="nav-belt" className="hidden h-[60px] items-center gap-1 bg-nav px-[10px] md:flex">
+    <header id="nav-belt" className="hidden h-[60px] items-center gap-1 bg-inverse px-[10px] md:flex">
       <Link href={ROUTES.home} className={`flex shrink-0 flex-col justify-center ${navItemClass}`}>
-        <Sprite name="logo" label="Amazon" className="mt-[10px]" />
+        <Logo tone="inverse" />
       </Link>
 
       {deliverTo}
 
       <SearchBar departments={departments} />
 
-      <LanguagePopover />
+      <ThemeToggle className="text-white hover:bg-inverse-hover" />
       {accountMenu}
 
       <Link

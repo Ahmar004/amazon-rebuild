@@ -2,14 +2,13 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
-import { Sprite } from "@/components/ui/Sprite";
+import { Menu } from "lucide-react";
 import { NavAnchor } from "@/components/layout/NavAnchor";
 import { PersonIcon } from "@/components/layout/PersonIcon";
-import { GlobeIcon } from "@/components/layout/GlobeIcon";
 import { navItemClass } from "@/components/layout/navItemClass";
 import { useDismiss } from "@/hooks/useDismiss";
 import { SignOutForm } from "@/components/layout/SignOutForm";
-import { ROUTES, SIDE_MENU_PROGRAMS, SIDE_MENU_TRENDING, type NavLink } from "@/lib/constants/links";
+import { ACCOUNT_LINKS, ROUTES, SIDE_MENU_TRENDING, type NavLink } from "@/lib/constants/links";
 import type { Department } from "@/lib/data/departments";
 import type { SessionUser } from "@/lib/auth/current-user";
 
@@ -57,7 +56,6 @@ export function SideMenu({ departments, variant = "desktop", user }: SideMenuPro
   const departmentLinks: NavLink[] = departments.map((department) => ({
     label: department.name,
     href: `${ROUTES.search}?i=${department.slug}`,
-    external: false,
   }));
 
   return (
@@ -90,7 +88,7 @@ export function SideMenu({ departments, variant = "desktop", user }: SideMenuPro
           aria-expanded={open}
           className={`flex items-center gap-1.5 text-sm font-bold ${navItemClass}`}
         >
-          <Sprite name="hamburger" />
+          <Menu size={18} aria-hidden="true" />
           All
         </button>
       )}
@@ -105,13 +103,13 @@ export function SideMenu({ departments, variant = "desktop", user }: SideMenuPro
             aria-modal="true"
             aria-labelledby={titleId}
             tabIndex={-1}
-            className={`absolute inset-y-0 left-0 flex flex-col overflow-y-auto bg-white outline-none transition-transform duration-300 ease-out ${
+            className={`absolute inset-y-0 left-0 flex flex-col overflow-y-auto bg-surface outline-none transition-transform duration-300 ease-out ${
               variant === "mobile" ? "w-[min(365px,calc(100vw-50px))]" : "w-[365px]"
             } ${entered ? "translate-x-0" : "-translate-x-full"}`}
           >
-            <div className="flex h-[50px] shrink-0 items-center gap-3 bg-subnav px-4 text-white">
+            <div className="flex h-[50px] shrink-0 items-center gap-3 bg-inverse-muted px-4 text-white">
               <PersonIcon />
-              <Link href={user ? ROUTES.account : ROUTES.signIn} id={titleId} className="text-[19px] font-bold">
+              <Link href={user ? ROUTES.orders : ROUTES.signIn} id={titleId} className="text-[19px] font-bold">
                 Hello, {user ? user.firstName : "sign in"}
               </Link>
             </div>
@@ -128,29 +126,16 @@ export function SideMenu({ departments, variant = "desktop", user }: SideMenuPro
               ))}
             </Section>
 
-            <Section title="Programs & Features" bordered>
-              {SIDE_MENU_PROGRAMS.map((link) => (
+            <Section title="Your Account">
+              {ACCOUNT_LINKS.map((link) => (
                 <Row key={link.label} link={link} />
               ))}
-            </Section>
-
-            <Section title="Help & Settings">
-              <Row link={{ label: "Your Account", href: ROUTES.account, external: false }} />
-              <div className="flex items-center gap-3 py-[13px] pl-9 pr-5 text-sm text-side-menu-text">
-                <GlobeIcon className="h-[18px] w-[18px]" />
-                English
-              </div>
-              <div className="flex items-center gap-3 py-[13px] pl-9 pr-5 text-sm text-side-menu-text">
-                <Sprite name="usFlag" />
-                United States
-              </div>
-              <Row link={{ label: "Customer Service", href: ROUTES.customerService, external: false }} />
               {user ? (
-                <SignOutForm className="block w-full py-[13px] pl-9 pr-5 text-left text-sm text-side-menu-text hover:bg-side-menu-hover">
+                <SignOutForm className="block w-full py-[13px] pl-9 pr-5 text-left text-sm text-fg hover:bg-surface-muted">
                   Sign Out
                 </SignOutForm>
               ) : (
-                <Row link={{ label: "Sign in", href: ROUTES.signIn, external: false }} />
+                <Row link={{ label: "Sign in", href: ROUTES.signIn }} />
               )}
             </Section>
           </div>
@@ -176,8 +161,8 @@ export function SideMenu({ departments, variant = "desktop", user }: SideMenuPro
 
 function Section({ title, children, bordered }: { title: string; children: ReactNode; bordered?: boolean }) {
   return (
-    <div className={bordered ? "border-b-[5px] border-side-menu-divider" : ""}>
-      <h2 className="py-[13px] pl-9 pr-5 text-lg font-bold text-side-menu-text">{title}</h2>
+    <div className={bordered ? "border-b-[5px] border-border" : ""}>
+      <h2 className="py-[13px] pl-9 pr-5 text-lg font-bold text-fg">{title}</h2>
       {children}
     </div>
   );
@@ -187,7 +172,7 @@ function Row({ link }: { link: NavLink }) {
   return (
     <NavAnchor
       link={link}
-      className="block py-[13px] pl-9 pr-5 text-sm text-side-menu-text hover:bg-side-menu-hover"
+      className="block py-[13px] pl-9 pr-5 text-sm text-fg hover:bg-surface-muted"
     />
   );
 }

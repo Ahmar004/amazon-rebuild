@@ -1,4 +1,4 @@
-// Amazon-style order id: 3 digits, 7 digits, 7 digits, separated by hyphens (docs/design.md 5.1).
+// Order id format: 3 digits, 7 digits, 7 digits, separated by hyphens (docs/design.md 5.1).
 // Random rather than sequential - nothing here needs to be unguessable, just shaped right, and
 // the `orders.id` primary key catches the astronomically unlikely collision.
 function digits(n: number): string {

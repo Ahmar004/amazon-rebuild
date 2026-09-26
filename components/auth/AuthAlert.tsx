@@ -10,19 +10,19 @@ type AuthAlertProps = {
 
 export function AuthAlert({ title = "There was a problem", message }: AuthAlertProps) {
   return (
-    <div role="alert" className="mb-3 rounded-[3px] border border-error bg-[#fdf4f2] p-2.5">
-      <p className="flex items-center gap-1.5 text-sm font-bold text-text">
+    <div role="alert" className="mb-3 rounded-[3px] border border-danger bg-danger-soft p-2.5">
+      <p className="flex items-center gap-1.5 text-sm font-bold text-fg">
         <AlertIcon />
         {title}
       </p>
-      <p className="ml-[19px] text-sm text-text">{message}</p>
+      <p className="ml-[19px] text-sm text-fg">{message}</p>
     </div>
   );
 }
 
 function AlertIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" className="shrink-0 text-error">
+    <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" className="shrink-0 text-danger">
       <path d="M8 1 L15 14 H1 Z" fill="currentColor" />
       <rect x="7.25" y="5.5" width="1.5" height="4" fill="white" />
       <rect x="7.25" y="10.2" width="1.5" height="1.5" fill="white" />

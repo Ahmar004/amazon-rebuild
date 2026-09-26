@@ -1,7 +1,6 @@
 // The 50 states plus DC, for the checkout address State select and lib/pricing/tax.ts's rate
 // table (CLAUDE.md: "DO NOT hardcode domain enum literals ... import them from a constants
-// module"). Two-letter USPS codes, in the order Amazon's own State dropdown uses (alphabetical
-// by full name).
+// module"). Two-letter USPS codes, in alphabetical order by full name.
 export const US_STATES = [
   { code: "AL", name: "Alabama" },
   { code: "AK", name: "Alaska" },

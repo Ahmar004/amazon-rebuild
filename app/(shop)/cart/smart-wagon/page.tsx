@@ -41,10 +41,10 @@ async function SmartWagonContent({ searchParams }: SmartWagonPageProps) {
   const itemsLabel = `${cart.itemCount} ${cart.itemCount === 1 ? "item" : "items"}`;
 
   return (
-    <div className="min-h-[60vh] bg-page-bg px-4 py-6">
+    <div className="min-h-[60vh] bg-bg px-4 py-6">
       <div className="mx-auto flex max-w-[1200px] gap-4">
         <div className="min-w-0 flex-1">
-          <div className="flex flex-col gap-4 rounded-lg border border-border bg-white p-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-6 sm:flex-row sm:items-center sm:justify-between">
             {product ? (
               <div className="flex items-center gap-4">
                 {product.imageUrl && (
@@ -57,26 +57,26 @@ async function SmartWagonContent({ searchParams }: SmartWagonPageProps) {
                 )}
                 <div className="flex items-center gap-2">
                   <CheckIcon />
-                  <span className="text-lg font-bold text-text">Added to cart</span>
+                  <span className="text-lg font-bold text-fg">Added to cart</span>
                 </div>
               </div>
             ) : (
-              <p className="text-lg text-text">Your Cart</p>
+              <p className="text-lg text-fg">Your Cart</p>
             )}
 
             <div className="flex flex-col gap-2 sm:w-[260px]">
-              <p className="text-sm text-text">
+              <p className="text-sm text-fg">
                 Cart Subtotal: <span className="font-bold">{formatPrice(cart.subtotalCents)}</span>
               </p>
               <Link
                 href={checkoutHref}
-                className="rounded-full border border-btn-yellow-border bg-btn-yellow px-3 py-1.5 text-center text-sm text-text hover:bg-btn-yellow-hover"
+                className="rounded-full border border-accent bg-accent px-3 py-1.5 text-center text-sm text-accent-fg hover:bg-accent-hover"
               >
                 Proceed to checkout ({itemsLabel})
               </Link>
               <Link
                 href={ROUTES.cart}
-                className="rounded-full border border-border bg-white px-3 py-1.5 text-center text-sm text-text hover:bg-search-dept"
+                className="rounded-full border border-border bg-surface px-3 py-1.5 text-center text-sm text-fg hover:bg-surface-muted"
               >
                 Go to Cart
               </Link>
@@ -99,10 +99,10 @@ async function SmartWagonContent({ searchParams }: SmartWagonPageProps) {
 function CheckIcon() {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="12" cy="12" r="10.5" fill="none" stroke="var(--color-in-stock)" strokeWidth="1.5" />
+      <circle cx="12" cy="12" r="10.5" fill="none" stroke="var(--color-success)" strokeWidth="1.5" />
       <path
         d="M7 12.5l3 3 7-7"
-        stroke="var(--color-in-stock)"
+        stroke="var(--color-success)"
         strokeWidth="2"
         fill="none"
         strokeLinecap="round"
@@ -114,8 +114,8 @@ function CheckIcon() {
 
 function SmartWagonSkeleton() {
   return (
-    <div className="min-h-[60vh] bg-page-bg px-4 py-6" aria-hidden="true">
-      <div className="mx-auto h-[300px] max-w-[1200px] animate-pulse rounded-lg bg-white" />
+    <div className="min-h-[60vh] bg-bg px-4 py-6" aria-hidden="true">
+      <div className="mx-auto h-[300px] max-w-[1200px] animate-pulse rounded-lg bg-surface" />
     </div>
   );
 }

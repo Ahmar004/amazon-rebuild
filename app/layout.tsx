@@ -1,19 +1,26 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import { SafetyNoticePopup } from "@/components/layout/SafetyNoticePopup";
+import { ToastProvider } from "@/components/ui/Toast";
+import { THEME_SCRIPT } from "@/lib/theme";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Amazon.com. Spend less. Smile more.",
-  // A demo clone must stay out of search engines (docs/spec.md section 2, safety notice).
+  title: "Shopeedo - everyday shopping, simplified",
+  // A demo store stays out of search engines (see also app/robots.ts).
   robots: { index: false, follow: false },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-us">
+    // THEME_SCRIPT sets data-theme before paint, so React must not treat that attribute as a mismatch.
+    <html lang="en-us" className={inter.variable} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body>
-        {children}
-        <SafetyNoticePopup />
+        <ToastProvider>{children}</ToastProvider>
       </body>
     </html>
   );

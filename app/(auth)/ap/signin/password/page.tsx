@@ -40,7 +40,7 @@ async function PasswordContent({ searchParams }: PasswordPageProps) {
 function AuthBoxSkeleton() {
   return (
     <div
-      className="h-[260px] w-full max-w-[350px] animate-pulse rounded-lg border border-border bg-white"
+      className="h-[260px] w-full max-w-[350px] animate-pulse rounded-xl border border-border bg-surface"
       aria-hidden="true"
     />
   );

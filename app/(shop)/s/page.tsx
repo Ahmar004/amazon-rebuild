@@ -19,7 +19,7 @@ export default function SearchPage({
   searchParams: Promise<RawSearchParams>;
 }) {
   return (
-    <div className="mx-auto max-w-[1500px] bg-white px-4 py-3 md:bg-white">
+    <div className="mx-auto max-w-[1500px] bg-surface px-4 py-3 md:bg-surface">
       <Suspense fallback={<ResultsSkeleton />}>
         <ResultsForParams searchParams={searchParams} />
       </Suspense>
@@ -44,7 +44,7 @@ async function Results({ query }: { query: SearchQuery }) {
     <>
       <div className="-mx-4 -mt-3 mb-3">
         <div className="flex items-center justify-between gap-2 px-4 py-2 md:hidden">
-          <p className="text-sm text-text">{result.total.toLocaleString("en-US")} results</p>
+          <p className="text-sm text-fg">{result.total.toLocaleString("en-US")} results</p>
           <MobileFilters query={query} brandFacets={result.brandFacets} departments={departments} total={result.total} />
         </div>
         <div className="hidden md:block">
@@ -78,16 +78,16 @@ function ResultsSkeleton() {
   return (
     <div className="flex gap-6">
       <div className="hidden w-[240px] shrink-0 md:block" aria-hidden="true">
-        <div className="h-64 animate-pulse rounded bg-tile-bg" />
+        <div className="h-64 animate-pulse rounded bg-surface-muted" />
       </div>
       <div className="min-w-0 flex-1 space-y-4" aria-hidden="true">
         {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className="flex gap-4 border-b border-border py-4">
-            <div className="h-40 w-[40%] animate-pulse rounded bg-tile-bg md:w-[240px]" />
+            <div className="h-40 w-[40%] animate-pulse rounded bg-surface-muted md:w-[240px]" />
             <div className="flex-1 space-y-2">
-              <div className="h-4 w-2/3 animate-pulse rounded bg-tile-bg" />
-              <div className="h-4 w-1/3 animate-pulse rounded bg-tile-bg" />
-              <div className="h-4 w-1/4 animate-pulse rounded bg-tile-bg" />
+              <div className="h-4 w-2/3 animate-pulse rounded bg-surface-muted" />
+              <div className="h-4 w-1/3 animate-pulse rounded bg-surface-muted" />
+              <div className="h-4 w-1/4 animate-pulse rounded bg-surface-muted" />
             </div>
           </div>
         ))}

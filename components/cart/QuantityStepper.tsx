@@ -9,7 +9,7 @@ type QuantityStepperProps = {
   maxQuantity: number;
 };
 
-// Amazon's yellow-bordered cart quantity pill: a trash icon (or a minus once quantity > 1),
+// The cart quantity pill: a trash icon (or a minus once quantity > 1),
 // the count, and a plus, each wired straight to the updateQuantity / deleteItem Server Actions
 // (docs/superpowers/plans/2026-09-19-slice-5-cart.md). Used by CartLine and MiniCart.
 export function QuantityStepper({ asin, quantity, maxQuantity }: QuantityStepperProps) {
@@ -26,17 +26,17 @@ export function QuantityStepper({ asin, quantity, maxQuantity }: QuantityStepper
 
   return (
     <div className="inline-flex flex-col gap-1">
-      <div className="inline-flex items-center gap-3 rounded-full border border-btn-yellow-border bg-search-dept px-3 py-1">
+      <div className="inline-flex items-center gap-3 rounded-full border border-accent bg-surface-muted px-3 py-1">
         <button
           type="button"
           onClick={() => change(quantity - 1)}
           disabled={pending}
           aria-label={quantity <= 1 ? "Delete" : "Decrease quantity"}
-          className="flex h-5 w-5 items-center justify-center text-text disabled:opacity-50"
+          className="flex h-5 w-5 items-center justify-center text-fg disabled:opacity-50"
         >
           {quantity <= 1 ? <TrashIcon /> : <MinusIcon />}
         </button>
-        <span aria-live="polite" className="min-w-[1ch] text-center text-sm text-text">
+        <span aria-live="polite" className="min-w-[1ch] text-center text-sm text-fg">
           {quantity}
         </span>
         <button
@@ -44,13 +44,13 @@ export function QuantityStepper({ asin, quantity, maxQuantity }: QuantityStepper
           onClick={() => change(quantity + 1)}
           disabled={pending || quantity >= maxQuantity}
           aria-label="Increase quantity"
-          className="flex h-5 w-5 items-center justify-center text-text disabled:opacity-30"
+          className="flex h-5 w-5 items-center justify-center text-fg disabled:opacity-30"
         >
           <PlusIcon />
         </button>
       </div>
       {error && (
-        <p role="alert" className="text-xs text-error">
+        <p role="alert" className="text-xs text-danger">
           {error}
         </p>
       )}

@@ -29,10 +29,10 @@ export async function BuyBox({ product }: BuyBoxProps) {
   const maxQty = Math.max(0, Math.min(product.stock, MAX_CART_QUANTITY));
 
   return (
-    <div className="rounded-lg border border-border p-[18px]">
+    <div className="rounded-xl border border-border p-[18px]">
       <Price priceCents={product.priceCents} listPriceCents={product.listPriceCents} />
 
-      <div className="mt-3 text-sm text-text">
+      <div className="mt-3 text-sm text-fg">
         <p>
           {freeShipping ? "FREE delivery" : `${formatPrice(shippingCents(product.priceCents, "standard"))} delivery`}{" "}
           <span className="font-bold">{standardEta}</span>. <DeliveryDetailsPopover speed="standard" />
@@ -51,9 +51,9 @@ export async function BuyBox({ product }: BuyBoxProps) {
 
       {product.stock > 0 && <AddToCartForm asin={product.asin} maxQuantity={maxQty} />}
 
-      <dl className="mt-4 space-y-1 border-t border-border pt-3 text-sm text-text">
-        <InfoRow label="Ships from" value="Amazon.com" />
-        <InfoRow label="Sold by" value="Amazon.com" />
+      <dl className="mt-4 space-y-1 border-t border-border pt-3 text-sm text-fg">
+        <InfoRow label="Ships from" value="Shopeedo" />
+        <InfoRow label="Sold by" value="Shopeedo" />
         <InfoRow label="Returns" value="30-day refund/replacement" />
         <InfoRow label="Payment" value="Secure transaction" />
       </dl>
@@ -63,18 +63,18 @@ export async function BuyBox({ product }: BuyBoxProps) {
 
 function StockLine({ stock }: { stock: number }) {
   if (stock === 0) {
-    return <p className="text-base text-price-deal">Currently unavailable.</p>;
+    return <p className="text-base text-deal">Currently unavailable.</p>;
   }
   if (stock <= LOW_STOCK_THRESHOLD) {
-    return <p className="text-base text-price-deal">Only {stock} left in stock - order soon.</p>;
+    return <p className="text-base text-deal">Only {stock} left in stock - order soon.</p>;
   }
-  return <p className="text-lg text-in-stock">In Stock</p>;
+  return <p className="text-lg text-success">In Stock</p>;
 }
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between gap-2">
-      <dt className="text-text-muted">{label}</dt>
+      <dt className="text-fg-muted">{label}</dt>
       <dd>{value}</dd>
     </div>
   );

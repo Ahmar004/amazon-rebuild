@@ -36,12 +36,12 @@ export function CardForm({ onReady, saveCard, onSaveCardChange }: CardFormProps)
     <div className="mt-3">
       <PaymentElement options={{ layout: "accordion" }} />
 
-      <label className="mt-3 flex items-center gap-2 text-sm text-text">
+      <label className="mt-3 flex items-center gap-2 text-sm text-fg">
         <input type="checkbox" checked={saveCard} onChange={(event) => onSaveCardChange(event.target.checked)} />
         Save this card for future purchases
       </label>
 
-      <p className="mt-2 text-xs text-text-muted">Test mode: use 4242 4242 4242 4242, any future date, any CVC.</p>
+      <p className="mt-2 text-xs text-fg-muted">Test mode: use 4242 4242 4242 4242, any future date, any CVC.</p>
     </div>
   );
 }

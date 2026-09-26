@@ -50,7 +50,7 @@ export function AddToCartForm({ asin, maxQuantity }: AddToCartFormProps) {
         type="submit"
         data-intent="add-to-cart"
         disabled={pending}
-        className="w-full rounded-full border border-btn-yellow-border bg-btn-yellow px-3 py-1.5 text-sm text-text hover:bg-btn-yellow-hover disabled:opacity-60"
+        className="w-full rounded-full border border-accent bg-accent px-3 py-1.5 text-sm text-accent-fg hover:bg-accent-hover disabled:opacity-60"
       >
         Add to Cart
       </button>
@@ -58,12 +58,12 @@ export function AddToCartForm({ asin, maxQuantity }: AddToCartFormProps) {
         type="submit"
         data-intent="buy-now"
         disabled={pending}
-        className="w-full rounded-full border border-btn-orange-border bg-btn-orange px-3 py-1.5 text-sm text-text hover:bg-btn-orange-hover disabled:opacity-60"
+        className="w-full rounded-full border border-accent-strong bg-accent-strong px-3 py-1.5 text-sm text-accent-fg hover:bg-accent-strong-hover disabled:opacity-60"
       >
         Buy Now
       </button>
       {error && (
-        <p role="alert" className="text-sm text-error">
+        <p role="alert" className="text-sm text-danger">
           {error}
         </p>
       )}

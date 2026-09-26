@@ -13,16 +13,16 @@ type MiniCartProps = {
 // red, "Go to Cart", then every current line with its own stepper.
 export function MiniCart({ cart }: MiniCartProps) {
   return (
-    <aside className="hidden w-[125px] shrink-0 flex-col gap-3 border-l border-border bg-white px-2 py-4 md:flex">
-      <p className="text-sm text-text">
+    <aside className="hidden w-[125px] shrink-0 flex-col gap-3 border-l border-border bg-surface px-2 py-4 md:flex">
+      <p className="text-sm text-fg">
         Subtotal
         <br />
-        <span className="text-lg font-bold text-price-deal">{formatPrice(cart.subtotalCents)}</span>
+        <span className="text-lg font-bold text-deal">{formatPrice(cart.subtotalCents)}</span>
       </p>
 
       <Link
         href={ROUTES.cart}
-        className="rounded-full border border-border bg-white px-2 py-1.5 text-center text-xs text-text hover:bg-search-dept"
+        className="rounded-full border border-border bg-surface px-2 py-1.5 text-center text-xs text-fg hover:bg-surface-muted"
       >
         Go to Cart
       </Link>
@@ -30,7 +30,7 @@ export function MiniCart({ cart }: MiniCartProps) {
       <div className="mt-2 flex flex-col gap-4">
         {cart.lines.map((line) => (
           <div key={line.asin} className="flex flex-col items-center gap-1 border-t border-border pt-3">
-            <Link href={`/dp/${line.asin}`} className="flex h-16 w-16 items-center justify-center bg-tile-bg">
+            <Link href={`/dp/${line.asin}`} className="flex h-16 w-16 items-center justify-center bg-surface-muted">
               {line.imageUrl && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -40,7 +40,7 @@ export function MiniCart({ cart }: MiniCartProps) {
                 />
               )}
             </Link>
-            <p className="text-xs text-text">{formatPrice(line.priceCents)}</p>
+            <p className="text-xs text-fg">{formatPrice(line.priceCents)}</p>
             <QuantityStepper asin={line.asin} quantity={line.quantity} maxQuantity={line.maxQuantity} />
           </div>
         ))}

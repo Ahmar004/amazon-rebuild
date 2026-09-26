@@ -1,49 +1,24 @@
-import { Suspense } from "react";
 import { cacheLife, cacheTag } from "next/cache";
-import { HeroCarousel } from "@/components/home/HeroCarousel";
-import { HomeCardGrid } from "@/components/home/HomeCardGrid";
-import { SignInBand } from "@/components/home/SignInBand";
-import { SignInBandSession } from "@/components/home/SignInBandSession";
-import { HomeMobile } from "@/components/home/HomeMobile";
-import { heroSlides, homeCards } from "@/lib/content/home";
-import { getDepartments } from "@/lib/data/departments";
+import { DepartmentCard } from "@/components/home/DepartmentCard";
+import { getDepartmentPreviews } from "@/lib/data/departments";
 
-// The Amazon home page (spec 5.3, 5.13; design.md 6.2): hero carousel, overlapping card grid
-// and the sign-in band (signed out only, Slice 6) on desktop; hero, sign-in band, one card per
-// row and "Explore Departments" on mobile. Home itself is not cached (the sign-in band reads the
-// session and must render inside <Suspense>, and CLAUDE.md forbids cookies() anywhere inside a
-// 'use cache' scope, Suspense boundary or not); the static catalogue content it composes is
-// cached separately in CachedHomeShell.
+// Home: every department as a card of real product photos (frontend-rebuild.md C6). The hero,
+// product rails and animations arrive with roadmap slice R4. Catalogue-only content, so the whole
+// page is cached.
 export default async function Home() {
-  const departments = await getDepartments();
-
-  return (
-    <>
-      <div className="hidden bg-page-bg md:block">
-        <CachedHomeShell />
-        <div className="mt-5">
-          <Suspense fallback={<SignInBand variant="desktop" />}>
-            <SignInBandSession variant="desktop" />
-          </Suspense>
-        </div>
-      </div>
-
-      <HomeMobile heroSlides={heroSlides} homeCards={homeCards} departments={departments} />
-    </>
-  );
-}
-
-// The desktop hero carousel and card grid: static marketing content, cached as a unit.
-async function CachedHomeShell() {
   "use cache";
   cacheLife("days");
   cacheTag("home");
+  const departments = await getDepartmentPreviews();
 
   return (
-    <>
-      <HeroCarousel slides={heroSlides} />
-      <HomeCardGrid cards={homeCards} />
-    </>
+    <div className="mx-auto max-w-[1400px] px-4 py-6 sm:px-6">
+      <h1 className="text-2xl font-bold text-fg">Shop by department</h1>
+      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {departments.map((department) => (
+          <DepartmentCard key={department.id} department={department} />
+        ))}
+      </div>
+    </div>
   );
 }
-

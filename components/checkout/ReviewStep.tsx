@@ -32,8 +32,8 @@ export function ReviewStep({
   fastShippingCents,
 }: ReviewStepProps) {
   return (
-    <section className="rounded-lg bg-white p-4">
-      <h2 className="text-lg font-bold text-text">Review items and shipping</h2>
+    <section className="rounded-lg bg-surface p-4">
+      <h2 className="text-lg font-bold text-fg">Review items and shipping</h2>
 
       <ul className="mt-3 divide-y divide-border">
         {items.map((item) => (
@@ -41,9 +41,9 @@ export function ReviewStep({
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={item.imageUrl} alt={item.title} className="h-16 w-16 shrink-0 object-contain" />
             <div className="min-w-0 flex-1">
-              <p className="line-clamp-2 text-sm text-text">{item.title}</p>
-              <p className="mt-1 text-sm font-bold text-text">{formatPrice(item.unitPriceCents)}</p>
-              <p className="text-sm text-text-muted">Qty: {item.quantity}</p>
+              <p className="line-clamp-2 text-sm text-fg">{item.title}</p>
+              <p className="mt-1 text-sm font-bold text-fg">{formatPrice(item.unitPriceCents)}</p>
+              <p className="text-sm text-fg-muted">Qty: {item.quantity}</p>
             </div>
           </li>
         ))}
@@ -51,8 +51,8 @@ export function ReviewStep({
 
       <div role="radiogroup" aria-label="Delivery speed" className="mt-3 space-y-2 border-t border-border pt-3">
         <label
-          className={`flex cursor-pointer gap-2 rounded border p-3 text-sm text-text ${
-            speed === "standard" ? "border-link" : "border-border"
+          className={`flex cursor-pointer gap-2 rounded border p-3 text-sm text-fg ${
+            speed === "standard" ? "border-accent" : "border-border"
           }`}
         >
           <input
@@ -68,8 +68,8 @@ export function ReviewStep({
         </label>
 
         <label
-          className={`flex cursor-pointer gap-2 rounded border p-3 text-sm text-text ${
-            speed === "fast" ? "border-link" : "border-border"
+          className={`flex cursor-pointer gap-2 rounded border p-3 text-sm text-fg ${
+            speed === "fast" ? "border-accent" : "border-border"
           }`}
         >
           <input

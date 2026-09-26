@@ -51,8 +51,8 @@ export function Carousel({ title, items }: CarouselProps) {
   return (
     <section>
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold text-text">{title}</h2>
-        <div className="flex items-center gap-2 text-sm text-text-muted">
+        <h2 className="text-lg font-bold text-fg">{title}</h2>
+        <div className="flex items-center gap-2 text-sm text-fg-muted">
           <span>
             Page {currentPage + 1} of {totalPages}
           </span>
@@ -88,7 +88,7 @@ function ArrowButton({
       onClick={onClick}
       disabled={disabled}
       aria-label={direction === "prev" ? "Previous page" : "Next page"}
-      className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-white hover:bg-search-dept disabled:opacity-40"
+      className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface hover:bg-surface-muted disabled:opacity-40"
     >
       <svg width="8" height="12" viewBox="0 0 8 12" aria-hidden="true">
         <path

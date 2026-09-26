@@ -5,7 +5,7 @@ export function PrimaryButton({ className, ...props }: ButtonHTMLAttributes<HTML
   return (
     <button
       type="submit"
-      className={`mt-2 flex h-8 w-full items-center justify-center rounded-lg border border-btn-yellow-border bg-btn-yellow text-sm hover:bg-btn-yellow-hover disabled:opacity-60 ${className ?? ""}`}
+      className={`mt-2 flex h-8 w-full items-center justify-center rounded-lg border border-accent bg-accent text-accent-fg text-sm hover:bg-accent-hover disabled:opacity-60 ${className ?? ""}`}
       {...props}
     />
   );

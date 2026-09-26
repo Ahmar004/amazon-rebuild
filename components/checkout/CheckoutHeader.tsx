@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
-import { Sprite } from "@/components/ui/Sprite";
+import { Logo } from "@/components/brand/Logo";
 import { Popover } from "@/components/ui/Popover";
 import { ROUTES } from "@/lib/constants/links";
 import type { ReactNode } from "react";
@@ -15,9 +15,9 @@ export function CheckoutHeader({ cartLink }: { cartLink: ReactNode }) {
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <header className="relative flex h-[60px] items-center justify-between bg-nav px-4">
+    <header className="relative flex h-[60px] items-center justify-between bg-inverse px-4">
       <Link href={ROUTES.home} className="shrink-0">
-        <Sprite name="logo" label="Amazon" />
+        <Logo tone="inverse" />
       </Link>
 
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -47,11 +47,11 @@ export function CheckoutHeader({ cartLink }: { cartLink: ReactNode }) {
           anchorClassName="left-1/2 -translate-x-1/2"
           className="w-[320px] p-4 text-left"
         >
-          <p className="text-sm text-text">
+          <p className="text-sm text-fg">
             We secure your payment and personal information when you share or save it with us. We
             don&apos;t share payment details with third-party sellers. We don&apos;t sell your
             information to others.{" "}
-            <Link href={ROUTES.customerService} className="text-link hover:text-link-hover hover:underline">
+            <Link href={ROUTES.customerService} className="text-accent hover:text-accent-hover hover:underline">
               Learn more
             </Link>
           </p>

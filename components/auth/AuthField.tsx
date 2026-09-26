@@ -10,32 +10,32 @@ type AuthFieldProps = {
   hint?: string;
 } & InputHTMLAttributes<HTMLInputElement>;
 
-// A labelled input matching Amazon's auth-form style: a bold small label, a bordered input with
+// A labelled auth-form input: a bold small label, a bordered input with
 // a blue focus ring, and an inline red error with the alert glyph directly under it
 // (docs/superpowers/plans/2026-09-19-slice-6-auth.md: "Validation messages under the fields in
-// Amazon's red with the alert icon").
+// red with the alert icon").
 export function AuthField({ id, label, hideLabel, error, hint, className, ...inputProps }: AuthFieldProps) {
   return (
     <div className="mb-3">
-      <label htmlFor={id} className={hideLabel ? "sr-only" : "mb-1 block text-sm font-bold text-text"}>
+      <label htmlFor={id} className={hideLabel ? "sr-only" : "mb-1 block text-sm font-bold text-fg"}>
         {label}
       </label>
       <input
         id={id}
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? `${id}-error` : hint ? `${id}-hint` : undefined}
-        className={`h-8 w-full rounded-[3px] border px-2 text-base outline-none focus-visible:border-[#e77600] focus-visible:ring-[3px] focus-visible:ring-[#e77600]/40 ${
-          error ? "border-error" : "border-[#a6a6a6]"
+        className={`h-8 w-full rounded-[3px] border px-2 text-base outline-none focus-visible:border-accent focus-visible:ring-[3px] focus-visible:ring-accent/40 ${
+          error ? "border-danger" : "border-border-strong"
         } ${className ?? ""}`}
         {...inputProps}
       />
       {hint && !error && (
-        <p id={`${id}-hint`} className="mt-1 text-xs text-text-muted">
+        <p id={`${id}-hint`} className="mt-1 text-xs text-fg-muted">
           {hint}
         </p>
       )}
       {error && (
-        <p id={`${id}-error`} role="alert" className="mt-1 flex items-center gap-1 text-xs text-error">
+        <p id={`${id}-error`} role="alert" className="mt-1 flex items-center gap-1 text-xs text-danger">
           <AlertIcon />
           {error}
         </p>

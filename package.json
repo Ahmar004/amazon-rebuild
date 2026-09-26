@@ -1,5 +1,5 @@
 {
-  "name": "amazon-rebuild",
+  "name": "shopeedo",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -22,6 +22,7 @@
     "@stripe/stripe-js": "^9.16.0",
     "bcryptjs": "^3.0.3",
     "drizzle-orm": "^0.45.2",
+    "lucide-react": "^1.48.0",
     "next": "16.3.5",
     "react": "19.2.8",
     "react-dom": "19.2.8",

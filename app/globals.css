@@ -1,55 +1,77 @@
 @import "tailwindcss";
 
-/* Amazon's design tokens (docs/design.md section 3). Every colour and font in the UI comes from here. */
+/* Shopeedo design tokens (frontend-rebuild.md C2). Every colour, radius and shadow in the UI comes
+   from here. Light (cream) is the default; [data-theme="dark"] on <html> swaps in the GitHub-style
+   dark palette, so components never need dark: variants. */
 @theme {
-  --color-nav: #131921;
-  --color-subnav: #232f3e;
-  --color-back-to-top: #37475a;
-  --color-back-to-top-hover: #485769;
-  --color-footer-bottom: #131a22;
-  --color-footer-link: #dddddd;
-  --color-footer-muted: #999999;
-  --color-footer-border: #3a4553;
-  --color-footer-box-border: #848688;
-  --color-footer-box-text: #cccccc;
-  --color-search-btn: #febd69;
-  --color-search-btn-hover: #f3a847;
-  --color-btn-yellow: #ffd814;
-  --color-btn-yellow-border: #fcd200;
-  --color-btn-yellow-hover: #f7ca00;
-  --color-btn-orange: #ffa41c;
-  --color-btn-orange-border: #ff8f00;
-  --color-btn-orange-hover: #fa8900;
-  --color-link: #007185;
-  --color-link-hover: #c7511f;
-  --color-text: #0f1111;
-  --color-text-muted: #565959;
-  --color-price-deal: #cc0c39;
-  --color-in-stock: #007600;
-  --color-star: #de7921;
-  --color-border: #d5d9d9;
-  --color-page-bg: #e3e6e6;
-  --color-modal-header: #f0f2f2;
-  --color-search-dept: #e6e6e6;
-  --color-search-dept-border: #cdcdcd;
-  --color-search-dept-text: #555555;
-  --color-cart-count: #f08804;
-  --color-side-menu-divider: #d5dbdb;
-  --color-side-menu-hover: #eaeded;
-  --color-flyout-link: #444444;
-  --color-side-menu-text: #111111;
-  --color-search-icon: #333333;
-  --color-nav-muted: #cccccc;
-  --color-error: #c40000;
-  /* Slice 2: background behind home-page card tile images (docs design.md 6.2). */
-  --color-tile-bg: #f7f7f7;
-  /* Slice 3: the bold orange query text in "results for <query>" (docs design.md 6.3). */
-  --color-results-query: #c45500;
-  /* Slice 3: the orange-red "Best Seller" badge (docs design.md 6.3). */
-  --color-best-seller: #e47911;
+  --color-bg: #faf6ee;
+  --color-surface: #fffdf9;
+  --color-surface-muted: #f3eee4;
+  --color-border: #e8e1d3;
+  --color-border-strong: #d3c9b6;
+  --color-fg: #1f2328;
+  --color-fg-muted: #59636e;
+  --color-accent: #1f6f5c;
+  --color-accent-hover: #185a4a;
+  --color-accent-strong: #164f42;
+  --color-accent-strong-hover: #103b31;
+  --color-accent-fg: #ffffff;
+  --color-accent-soft: #e2efe9;
+  --color-inverse: #1f2328;
+  --color-inverse-muted: #2d333b;
+  --color-inverse-hover: #3d444d;
+  --color-inverse-fg: #f0f3f6;
+  --color-inverse-fg-muted: #b7bdc8;
+  --color-inverse-border: #444c56;
+  --color-danger: #c62828;
+  --color-danger-soft: #fdecea;
+  --color-success: #1a7f37;
+  --color-warning: #b45309;
+  --color-star: #e3a008;
+  --color-deal: #c62828;
+  --color-overlay: rgb(15 17 20 / 0.5);
 
-  /* amazon.com renders its UI in Arial (checked live on 2026-09-19). */
-  --font-sans: Arial, sans-serif;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  --shadow-card: 0 1px 2px rgb(31 35 40 / 0.06), 0 4px 12px rgb(31 35 40 / 0.05);
+  --shadow-pop: 0 8px 28px rgb(31 35 40 / 0.16);
+
+  --font-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+[data-theme="dark"] {
+  --color-bg: #0d1117;
+  --color-surface: #161b22;
+  --color-surface-muted: #21262d;
+  --color-border: #30363d;
+  --color-border-strong: #484f58;
+  --color-fg: #e6edf3;
+  --color-fg-muted: #9198a1;
+  --color-accent: #3fb68b;
+  --color-accent-hover: #56d4a0;
+  --color-accent-strong: #2ea043;
+  --color-accent-strong-hover: #3fb950;
+  --color-accent-fg: #0d1117;
+  --color-accent-soft: rgb(63 182 139 / 0.15);
+  --color-inverse: #010409;
+  --color-inverse-muted: #161b22;
+  --color-inverse-hover: #21262d;
+  --color-inverse-fg: #e6edf3;
+  --color-inverse-fg-muted: #9198a1;
+  --color-inverse-border: #30363d;
+  --color-danger: #f85149;
+  --color-danger-soft: rgb(248 81 73 / 0.15);
+  --color-success: #3fb950;
+  --color-warning: #d29922;
+  --color-star: #d29922;
+  --color-deal: #ff7b72;
+  --color-overlay: rgb(1 4 9 / 0.7);
+  --shadow-card: 0 1px 2px rgb(1 4 9 / 0.4);
+  --shadow-pop: 0 8px 28px rgb(1 4 9 / 0.6);
+  color-scheme: dark;
 }
 
 html {
@@ -57,23 +79,35 @@ html {
 }
 
 body {
-  background: white;
-  color: var(--color-text);
+  background: var(--color-bg);
+  color: var(--color-fg);
   font-family: var(--font-sans);
   line-height: 20px;
 }
 
-/* Task 4: hides the horizontally scrolling mobile quick-links row's scrollbar across browsers. */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@keyframes fade-in { from { opacity: 0; } }
+@keyframes sheet-left { from { transform: translateX(-100%); } }
+@keyframes sheet-right { from { transform: translateX(100%); } }
+@keyframes sheet-bottom { from { transform: translateY(100%); } }
+@keyframes toast-in { from { opacity: 0; transform: translateY(8px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+/* Hides a horizontally scrolling row's scrollbar across browsers. */
 .scrollbar-hide {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
-}
-
-/* Task 4: FooterMinimal's top divider, matching amazon.com's thin gradient rule. */
-.minimal-footer-divider {
-  height: 4px;
-  background: linear-gradient(to right, var(--color-border), white, var(--color-border));
 }

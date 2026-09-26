@@ -43,7 +43,7 @@ export function ImageViewer({ open, onClose, images, title, initialIndex }: Imag
               onClick={() => setIndex(i)}
               aria-label={`Image ${i + 1}`}
               className={`h-12 w-12 shrink-0 overflow-hidden border ${
-                i === index ? "border-2 border-link-hover" : "border-border"
+                i === index ? "border-2 border-accent-hover" : "border-border"
               }`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}

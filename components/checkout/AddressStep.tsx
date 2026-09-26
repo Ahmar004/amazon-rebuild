@@ -20,19 +20,19 @@ export function AddressStep({ addresses, selectedId, onSelect, onAddNew, onEdit 
 
   if (!editing && selected) {
     return (
-      <section className="rounded-lg bg-white p-4">
-        <h2 className="text-lg font-bold text-text">Delivery address</h2>
-        <p className="mt-2 text-sm text-text">
+      <section className="rounded-lg bg-surface p-4">
+        <h2 className="text-lg font-bold text-fg">Delivery address</h2>
+        <p className="mt-2 text-sm text-fg">
           Delivering to <span className="font-bold">{selected.fullName}</span>
         </p>
-        <p className="text-sm text-text">
+        <p className="text-sm text-fg">
           {selected.line1}
           {selected.line2 ? `, ${selected.line2}` : ""}, {selected.city}, {selected.state} {selected.zip}
         </p>
         <button
           type="button"
           onClick={() => setEditing(true)}
-          className="mt-2 text-sm text-link hover:text-link-hover hover:underline"
+          className="mt-2 text-sm text-accent hover:text-accent-hover hover:underline"
         >
           Change
         </button>
@@ -41,17 +41,17 @@ export function AddressStep({ addresses, selectedId, onSelect, onAddNew, onEdit 
   }
 
   return (
-    <section className="rounded-lg bg-white p-4">
-      <h2 className="text-lg font-bold text-text">{addresses.length ? "Delivery address" : "Add delivery address"}</h2>
-      {addresses.length === 0 && <p className="mt-1 text-sm text-text-muted">Enter your address to see delivery options</p>}
+    <section className="rounded-lg bg-surface p-4">
+      <h2 className="text-lg font-bold text-fg">{addresses.length ? "Delivery address" : "Add delivery address"}</h2>
+      {addresses.length === 0 && <p className="mt-1 text-sm text-fg-muted">Enter your address to see delivery options</p>}
 
       {addresses.length > 0 && (
         <div role="radiogroup" aria-label="Delivery address" className="mt-3 space-y-2">
           {addresses.map((address) => (
             <label
               key={address.id}
-              className={`flex cursor-pointer gap-2 rounded border p-3 text-sm text-text ${
-                selectedId === address.id ? "border-link" : "border-border"
+              className={`flex cursor-pointer gap-2 rounded border p-3 text-sm text-fg ${
+                selectedId === address.id ? "border-accent" : "border-border"
               }`}
             >
               <input
@@ -80,7 +80,7 @@ export function AddressStep({ addresses, selectedId, onSelect, onAddNew, onEdit 
                     event.preventDefault();
                     onEdit(address);
                   }}
-                  className="mt-1 text-link hover:text-link-hover hover:underline"
+                  className="mt-1 text-accent hover:text-accent-hover hover:underline"
                 >
                   Edit address
                 </button>
@@ -95,8 +95,8 @@ export function AddressStep({ addresses, selectedId, onSelect, onAddNew, onEdit 
         onClick={onAddNew}
         className={
           addresses.length === 0
-            ? "mt-3 rounded-full border border-btn-yellow-border bg-btn-yellow px-4 py-1.5 text-sm font-bold text-text hover:bg-btn-yellow-hover"
-            : "mt-3 block text-sm text-link hover:text-link-hover hover:underline"
+            ? "mt-3 rounded-full border border-accent bg-accent px-4 py-1.5 text-sm font-bold text-accent-fg hover:bg-accent-hover"
+            : "mt-3 block text-sm text-accent hover:text-accent-hover hover:underline"
         }
       >
         Add a new delivery address

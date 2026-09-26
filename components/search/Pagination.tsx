@@ -23,7 +23,7 @@ function pageNumbers(current: number, total: number): (number | "ellipsis")[] {
   return result;
 }
 
-// Amazon's pill pagination: "< Previous", page numbers with an ellipsis, "Next >"
+// Pill pagination: "< Previous", page numbers with an ellipsis, "Next >"
 // (docs/design.md 6.3).
 export function Pagination({ query, totalPages }: PaginationProps) {
   if (totalPages <= 1) return null;
@@ -38,7 +38,7 @@ export function Pagination({ query, totalPages }: PaginationProps) {
 
       {pageNumbers(current, totalPages).map((page, index) =>
         page === "ellipsis" ? (
-          <span key={`ellipsis-${index}`} className="px-2 text-text-muted">
+          <span key={`ellipsis-${index}`} className="px-2 text-fg-muted">
             ...
           </span>
         ) : (
@@ -69,14 +69,14 @@ function PageLink({
   children: React.ReactNode;
 }) {
   if (disabled) {
-    return <span className="rounded border border-border px-3 py-1 text-text-muted">{children}</span>;
+    return <span className="rounded border border-border px-3 py-1 text-fg-muted">{children}</span>;
   }
   return (
     <Link
       href={toSearchUrl(query, { page })}
       aria-current={current ? "page" : undefined}
-      className={`rounded border px-3 py-1 hover:bg-search-dept ${
-        current ? "border-2 border-link font-bold text-text" : "border-border text-link"
+      className={`rounded border px-3 py-1 hover:bg-surface-muted ${
+        current ? "border-2 border-accent font-bold text-fg" : "border-border text-accent"
       }`}
     >
       {children}

@@ -9,7 +9,6 @@ import { CartCount } from "@/components/cart/CartCount";
 import { AccountFlyout } from "@/components/layout/AccountFlyout";
 import { Greeting } from "@/components/layout/Greeting";
 import { Footer } from "@/components/layout/Footer";
-import { FooterMobile } from "@/components/layout/FooterMobile";
 import { getDepartments } from "@/lib/data/departments";
 
 // Shell for every storefront page: header + sub-nav + page content + footer, desktop and mobile
@@ -51,8 +50,8 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
             </Suspense>
           }
           cartLink={
-            <Suspense fallback={<CartLink count={0} variant="mobile" />}>
-              <CartCount variant="mobile" />
+            <Suspense fallback={<CartLink count={0} />}>
+              <CartCount />
             </Suspense>
           }
         />
@@ -60,8 +59,7 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
 
       <main>{children}</main>
 
-      <Footer />
-      <FooterMobile />
+      <Footer departments={departments} />
     </>
   );
 }

@@ -56,7 +56,7 @@ export function RegisterForm({ email, returnTo }: RegisterFormProps) {
             alert === AUTH_ERRORS.emailTaken ? (
               <>
                 {alert}.{" "}
-                <Link href={signInHref} className="text-link hover:text-link-hover hover:underline">
+                <Link href={signInHref} className="text-accent hover:text-accent-hover hover:underline">
                   Sign in
                 </Link>
               </>
@@ -68,10 +68,10 @@ export function RegisterForm({ email, returnTo }: RegisterFormProps) {
       )}
 
       <div className="mb-3">
-        <p className="text-sm font-bold text-text">Email</p>
-        <p className="text-sm text-text">
+        <p className="text-sm font-bold text-fg">Email</p>
+        <p className="text-sm text-fg">
           {email}{" "}
-          <Link href={changeHref} className="text-xs text-link hover:text-link-hover hover:underline">
+          <Link href={changeHref} className="text-xs text-accent hover:text-accent-hover hover:underline">
             Change
           </Link>
         </p>
@@ -112,9 +112,9 @@ export function RegisterForm({ email, returnTo }: RegisterFormProps) {
 
       <hr className="my-4 border-border" />
 
-      <p className="text-sm text-text">
+      <p className="text-sm text-fg">
         Already a customer?{" "}
-        <Link href={signInHref} className="text-link hover:text-link-hover hover:underline">
+        <Link href={signInHref} className="text-accent hover:text-accent-hover hover:underline">
           Sign in instead
         </Link>
       </p>

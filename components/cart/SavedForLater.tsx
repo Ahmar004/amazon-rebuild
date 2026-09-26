@@ -14,14 +14,14 @@ export function SavedForLater({ items }: SavedForLaterProps) {
   if (items.length === 0) return null;
 
   return (
-    <div className="mt-6 rounded-lg border border-border bg-white p-4">
-      <h2 className="border-b border-border pb-3 text-lg font-bold text-text">
+    <div className="mt-6 rounded-xl border border-border bg-surface p-4">
+      <h2 className="border-b border-border pb-3 text-lg font-bold text-fg">
         Saved for later ({items.length} {items.length === 1 ? "item" : "items"})
       </h2>
 
       {items.map((item) => (
         <div key={item.asin} className="flex gap-4 border-b border-border py-4 last:border-b-0">
-          <Link href={`/dp/${item.asin}`} className="flex w-[100px] shrink-0 items-center justify-center bg-tile-bg">
+          <Link href={`/dp/${item.asin}`} className="flex w-[100px] shrink-0 items-center justify-center bg-surface-muted">
             {item.imageUrl && (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -33,10 +33,10 @@ export function SavedForLater({ items }: SavedForLaterProps) {
           </Link>
 
           <div className="min-w-0 flex-1">
-            <Link href={`/dp/${item.asin}`} className="text-sm text-text hover:text-link-hover">
+            <Link href={`/dp/${item.asin}`} className="text-sm text-fg hover:text-accent-hover">
               {item.title}
             </Link>
-            <p className="mt-1 font-bold text-text">{formatPrice(item.priceCents)}</p>
+            <p className="mt-1 font-bold text-fg">{formatPrice(item.priceCents)}</p>
             <div className="mt-2 flex gap-3 text-sm">
               <MoveToCartButton asin={item.asin} />
               <DeleteLineButton asin={item.asin} />

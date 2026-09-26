@@ -111,9 +111,9 @@ function SearchBarInner({ departments }: SearchBarProps) {
         action={ROUTES.search}
         method="get"
         onSubmit={handleSubmit}
-        className="relative z-40 flex h-10 flex-1 rounded focus-within:ring-[3px] focus-within:ring-search-btn"
+        className="relative z-40 flex h-10 flex-1 rounded focus-within:ring-[3px] focus-within:ring-accent"
       >
-        <div className="relative flex shrink-0 items-center rounded-l border-r border-search-dept-border bg-search-dept pl-3 pr-5 text-xs text-search-dept-text">
+        <div className="relative flex shrink-0 items-center rounded-l border-r border-border bg-surface-muted pl-3 pr-5 text-xs text-fg-muted">
           <span className="whitespace-nowrap">{selectedLabel}</span>
           <CaretDown className="ml-1.5" />
           <select
@@ -134,7 +134,7 @@ function SearchBarInner({ departments }: SearchBarProps) {
         </div>
 
         <label htmlFor="search-input" className="sr-only">
-          Search Amazon
+          Search Shopeedo
         </label>
         <input
           id="search-input"
@@ -145,14 +145,14 @@ function SearchBarInner({ departments }: SearchBarProps) {
           onChange={(event) => setQuery(event.target.value)}
           onFocus={() => setOpen(true)}
           onKeyDown={handleKeyDown}
-          placeholder="Search Amazon"
-          className="min-w-0 flex-1 border-0 bg-white pl-[10px] text-[15px] text-text placeholder:text-text-muted outline-none"
+          placeholder="Search Shopeedo"
+          className="min-w-0 flex-1 border-0 bg-surface pl-[10px] text-[15px] text-fg placeholder:text-fg-muted outline-none"
         />
 
         <button
           type="submit"
           aria-label="Go"
-          className="flex h-10 w-[45px] shrink-0 items-center justify-center rounded-r bg-search-btn hover:bg-search-btn-hover"
+          className="flex h-10 w-[45px] shrink-0 items-center justify-center rounded-r bg-accent text-accent-fg hover:bg-accent-hover"
         >
           <SearchIcon size={22} />
         </button>
@@ -161,7 +161,7 @@ function SearchBarInner({ departments }: SearchBarProps) {
           <ul
             role="listbox"
             aria-label="Search suggestions"
-            className="absolute left-0 right-[45px] top-full mt-1 max-h-[400px] overflow-y-auto rounded border border-search-dept-border bg-white shadow-lg"
+            className="absolute left-0 right-[45px] top-full mt-1 max-h-[400px] overflow-y-auto rounded border border-border bg-surface shadow-lg"
           >
             {suggestions.map((suggestion, index) => {
               const matchLength = query.trim().length;
@@ -174,8 +174,8 @@ function SearchBarInner({ departments }: SearchBarProps) {
                     onMouseDown={(event) => event.preventDefault()}
                     onClick={() => submitWith(suggestion)}
                     onMouseEnter={() => setActiveIndex(index)}
-                    className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-text ${
-                      index === activeIndex ? "bg-search-dept" : ""
+                    className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-fg ${
+                      index === activeIndex ? "bg-surface-muted" : ""
                     }`}
                   >
                     <SearchIcon size={14} />
@@ -202,9 +202,9 @@ function SearchBarFallback({ departments }: SearchBarProps) {
     <form
       action={ROUTES.search}
       method="get"
-      className="flex h-10 flex-1 rounded focus-within:ring-[3px] focus-within:ring-search-btn"
+      className="flex h-10 flex-1 rounded focus-within:ring-[3px] focus-within:ring-accent"
     >
-      <div className="relative flex shrink-0 items-center rounded-l border-r border-search-dept-border bg-search-dept pl-3 pr-5 text-xs text-search-dept-text">
+      <div className="relative flex shrink-0 items-center rounded-l border-r border-border bg-surface-muted pl-3 pr-5 text-xs text-fg-muted">
         <span className="whitespace-nowrap">All</span>
         <CaretDown className="ml-1.5" />
         <select name="i" aria-label="Search in department" defaultValue="" className="absolute inset-0 h-full w-full cursor-pointer opacity-0">
@@ -218,20 +218,20 @@ function SearchBarFallback({ departments }: SearchBarProps) {
       </div>
 
       <label htmlFor="search-input" className="sr-only">
-        Search Amazon
+        Search Shopeedo
       </label>
       <input
         id="search-input"
         name="k"
         type="text"
-        placeholder="Search Amazon"
-        className="min-w-0 flex-1 border-0 bg-white pl-[10px] text-[15px] text-text placeholder:text-text-muted outline-none"
+        placeholder="Search Shopeedo"
+        className="min-w-0 flex-1 border-0 bg-surface pl-[10px] text-[15px] text-fg placeholder:text-fg-muted outline-none"
       />
 
       <button
         type="submit"
         aria-label="Go"
-        className="flex h-10 w-[45px] shrink-0 items-center justify-center rounded-r bg-search-btn hover:bg-search-btn-hover"
+        className="flex h-10 w-[45px] shrink-0 items-center justify-center rounded-r bg-accent text-accent-fg hover:bg-accent-hover"
       >
         <SearchIcon size={22} />
       </button>

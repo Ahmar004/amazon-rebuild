@@ -22,7 +22,7 @@ const PRICE_RANGES: { label: string; pminCents?: number; pmaxCents?: number }[] 
   { label: "$200 & above", pminCents: 20000 },
 ];
 
-// Amazon's left filter rail: Customer Reviews, Brands, Price, Department and Deals & Discounts
+// The left filter rail: Customer Reviews, Brands, Price, Department and Deals & Discounts
 // (docs/design.md 6.3). A "See more"/"See less" toggle is the only client state; every filter
 // itself is a plain link built with toSearchUrl so it works without JavaScript.
 export function FilterSidebar({ query, brandFacets, departments }: FilterSidebarProps) {
@@ -36,8 +36,8 @@ export function FilterSidebar({ query, brandFacets, departments }: FilterSidebar
           <Link
             key={threshold}
             href={toSearchUrl(query, { minRating: threshold })}
-            className={`flex items-center gap-1 py-1 hover:text-link-hover ${
-              query.minRating === threshold ? "font-bold text-text" : "text-text"
+            className={`flex items-center gap-1 py-1 hover:text-accent-hover ${
+              query.minRating === threshold ? "font-bold text-fg" : "text-fg"
             }`}
           >
             <Stars rating={threshold} size={12} />
@@ -55,7 +55,7 @@ export function FilterSidebar({ query, brandFacets, departments }: FilterSidebar
               <Link
                 key={facet.name}
                 href={toSearchUrl(query, { brands })}
-                className="flex items-center gap-2 py-1 text-text hover:text-link-hover"
+                className="flex items-center gap-2 py-1 text-fg hover:text-accent-hover"
               >
                 <input type="checkbox" checked={checked} readOnly className="pointer-events-none" />
                 <span>
@@ -68,7 +68,7 @@ export function FilterSidebar({ query, brandFacets, departments }: FilterSidebar
             <button
               type="button"
               onClick={() => setShowAllBrands((v) => !v)}
-              className="py-1 text-link hover:text-link-hover hover:underline"
+              className="py-1 text-accent hover:text-accent-hover hover:underline"
             >
               {showAllBrands ? "See less" : "See more"}
             </button>
@@ -86,10 +86,10 @@ export function FilterSidebar({ query, brandFacets, departments }: FilterSidebar
           <Link
             key={range.label}
             href={toSearchUrl(query, { pminCents: range.pminCents, pmaxCents: range.pmaxCents })}
-            className={`py-1 hover:text-link-hover ${
+            className={`py-1 hover:text-accent-hover ${
               query.pminCents === range.pminCents && query.pmaxCents === range.pmaxCents
-                ? "font-bold text-text"
-                : "text-text"
+                ? "font-bold text-fg"
+                : "text-fg"
             }`}
           >
             {range.label}
@@ -104,7 +104,7 @@ export function FilterSidebar({ query, brandFacets, departments }: FilterSidebar
             <Link
               key={department.slug}
               href={toSearchUrl(query, { dept: department.slug })}
-              className="py-1 text-text hover:text-link-hover"
+              className="py-1 text-fg hover:text-accent-hover"
             >
               {department.name}
             </Link>
@@ -115,7 +115,7 @@ export function FilterSidebar({ query, brandFacets, departments }: FilterSidebar
       <FilterGroup title="Deals & Discounts" active={query.dealsOnly} query={query} clearPatch={{ dealsOnly: false }}>
         <Link
           href={toSearchUrl(query, { dealsOnly: !query.dealsOnly })}
-          className={`py-1 hover:text-link-hover ${query.dealsOnly ? "font-bold text-text" : "text-text"}`}
+          className={`py-1 hover:text-accent-hover ${query.dealsOnly ? "font-bold text-fg" : "text-fg"}`}
         >
           All Discounts
         </Link>
@@ -136,9 +136,9 @@ function FilterGroup({ title, active, query, clearPatch, children }: FilterGroup
   return (
     <div className="mb-4 border-b border-border pb-3">
       <div className="mb-1 flex items-center justify-between">
-        <h3 className="font-bold text-text">{title}</h3>
+        <h3 className="font-bold text-fg">{title}</h3>
         {active && clearPatch && (
-          <Link href={toSearchUrl(query, clearPatch)} className="text-xs text-link hover:text-link-hover hover:underline">
+          <Link href={toSearchUrl(query, clearPatch)} className="text-xs text-accent hover:text-accent-hover hover:underline">
             Clear
           </Link>
         )}
@@ -156,7 +156,7 @@ function PriceForm({ query }: { query: SearchQuery }) {
       <label className="sr-only" htmlFor="pmin">
         Minimum price
       </label>
-      <span className="text-text-muted">$</span>
+      <span className="text-fg-muted">$</span>
       <input
         id="pmin"
         name="pmin"
@@ -166,11 +166,11 @@ function PriceForm({ query }: { query: SearchQuery }) {
         placeholder="Min"
         className="w-14 rounded border border-border px-1 py-1"
       />
-      <span className="text-text-muted">-</span>
+      <span className="text-fg-muted">-</span>
       <label className="sr-only" htmlFor="pmax">
         Maximum price
       </label>
-      <span className="text-text-muted">$</span>
+      <span className="text-fg-muted">$</span>
       <input
         id="pmax"
         name="pmax"
@@ -180,7 +180,7 @@ function PriceForm({ query }: { query: SearchQuery }) {
         placeholder="Max"
         className="w-14 rounded border border-border px-1 py-1"
       />
-      <button type="submit" className="rounded border border-border bg-modal-header px-2 py-1 text-xs hover:bg-search-dept">
+      <button type="submit" className="rounded border border-border bg-surface-muted px-2 py-1 text-xs hover:bg-surface-muted">
         Go
       </button>
     </form>

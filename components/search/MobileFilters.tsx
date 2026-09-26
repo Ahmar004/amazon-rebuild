@@ -27,13 +27,13 @@ export function MobileFilters({ query, brandFacets, departments, total }: Mobile
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex items-center gap-1 rounded border border-border bg-white px-3 py-1.5 text-sm font-bold text-text md:hidden"
+        className="flex items-center gap-1 rounded border border-border bg-surface px-3 py-1.5 text-sm font-bold text-fg md:hidden"
       >
         Filters
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 flex flex-col bg-white md:hidden">
+        <div className="fixed inset-0 z-50 flex flex-col bg-surface md:hidden">
           <div
             ref={panelRef}
             role="dialog"
@@ -43,8 +43,8 @@ export function MobileFilters({ query, brandFacets, departments, total }: Mobile
             className="flex h-full flex-col outline-none"
           >
             <div className="flex items-center justify-between border-b border-border px-4 py-3">
-              <h2 className="text-base font-bold text-text">Filters</h2>
-              <button type="button" aria-label="Close filters" onClick={() => setOpen(false)} className="p-1 text-text">
+              <h2 className="text-base font-bold text-fg">Filters</h2>
+              <button type="button" aria-label="Close filters" onClick={() => setOpen(false)} className="p-1 text-fg">
                 <svg width="18" height="18" viewBox="0 0 16 16" aria-hidden="true">
                   <path d="M1 1 L15 15 M15 1 L1 15" stroke="currentColor" strokeWidth="1.5" fill="none" />
                 </svg>
@@ -53,7 +53,7 @@ export function MobileFilters({ query, brandFacets, departments, total }: Mobile
 
             <div className="flex-1 overflow-y-auto px-4 py-3">
               <div className="mb-4 border-b border-border pb-3">
-                <h3 className="mb-1 font-bold text-text">Sort</h3>
+                <h3 className="mb-1 font-bold text-fg">Sort</h3>
                 <SortSelect query={query} />
               </div>
               <FilterSidebar query={query} brandFacets={brandFacets} departments={departments} />
@@ -63,7 +63,7 @@ export function MobileFilters({ query, brandFacets, departments, total }: Mobile
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="w-full rounded-full border border-btn-yellow-border bg-btn-yellow py-2 text-sm font-bold text-text hover:bg-btn-yellow-hover"
+                className="w-full rounded-full border border-accent bg-accent py-2 text-sm font-bold text-accent-fg hover:bg-accent-hover"
               >
                 Show {total.toLocaleString("en-US")} results
               </button>

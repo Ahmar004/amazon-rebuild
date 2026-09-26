@@ -23,7 +23,7 @@ export function Gallery({ images, title }: GalleryProps) {
 
   if (images.length === 0) {
     return (
-      <div className="flex h-[500px] w-full items-center justify-center bg-tile-bg text-sm text-text-muted">
+      <div className="flex h-[500px] w-full items-center justify-center bg-surface-muted text-sm text-fg-muted">
         No image available
       </div>
     );
@@ -53,7 +53,7 @@ export function Gallery({ images, title }: GalleryProps) {
               aria-label={`Image ${i + 1}`}
               aria-current={i === selected}
               className={`h-10 w-10 shrink-0 overflow-hidden border ${
-                i === selected ? "border-2 border-link-hover" : "border-border"
+                i === selected ? "border-2 border-accent-hover" : "border-border"
               }`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -82,7 +82,7 @@ export function Gallery({ images, title }: GalleryProps) {
 
             {zoom && (
               <div
-                className="pointer-events-none absolute left-full top-0 z-40 hidden h-[500px] w-[500px] shrink-0 border border-border bg-white shadow-lg md:block"
+                className="pointer-events-none absolute left-full top-0 z-40 hidden h-[500px] w-[500px] shrink-0 overflow-hidden rounded-xl border border-border bg-surface shadow-pop md:block"
                 style={{
                   backgroundImage: `url(${imageAt(mainSrc, "SX1500")})`,
                   backgroundSize: "200% 200%",
@@ -96,7 +96,7 @@ export function Gallery({ images, title }: GalleryProps) {
           <button
             type="button"
             onClick={() => setViewerOpen(true)}
-            className="mt-2 block w-full text-center text-sm text-link hover:text-link-hover hover:underline"
+            className="mt-2 block w-full text-center text-sm text-accent hover:text-accent-hover hover:underline"
           >
             Click to see full view
           </button>
@@ -112,7 +112,7 @@ export function Gallery({ images, title }: GalleryProps) {
               onClick={() => setSelected(i)}
               aria-label={`Image ${i + 1}`}
               aria-current={i === selected}
-              className={`h-1.5 w-1.5 rounded-full ${i === selected ? "bg-link-hover" : "bg-border"}`}
+              className={`h-1.5 w-1.5 rounded-full ${i === selected ? "bg-accent-hover" : "bg-border"}`}
             />
           ))}
         </div>

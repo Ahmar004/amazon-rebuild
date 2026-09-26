@@ -22,12 +22,12 @@ export function TitleBlock({ product, ratingAverage, ratingCount }: TitleBlockPr
 
   return (
     <div>
-      <h1 className="text-2xl leading-8 text-text">{product.title}</h1>
+      <h1 className="text-2xl leading-8 text-fg">{product.title}</h1>
 
       {isBook ? (
-        <p className="mt-1 text-sm text-text">
+        <p className="mt-1 text-sm text-fg">
           by{" "}
-          <Link href={brandHref} className="text-link hover:text-link-hover hover:underline">
+          <Link href={brandHref} className="text-accent hover:text-accent-hover hover:underline">
             {product.brand}
           </Link>{" "}
           (Author)
@@ -35,7 +35,7 @@ export function TitleBlock({ product, ratingAverage, ratingCount }: TitleBlockPr
       ) : (
         <Link
           href={brandHref}
-          className="mt-1 inline-block text-sm text-link hover:text-link-hover hover:underline"
+          className="mt-1 inline-block text-sm text-accent hover:text-accent-hover hover:underline"
         >
           Visit the {product.brand} Store
         </Link>
@@ -43,17 +43,17 @@ export function TitleBlock({ product, ratingAverage, ratingCount }: TitleBlockPr
 
       {ratingCount > 0 && (
         <Link href="#reviews" className="mt-2 flex items-center gap-1 text-sm">
-          <span className="text-link">{ratingAverage}</span>
+          <span className="text-accent">{ratingAverage}</span>
           <Stars rating={ratingAverage} />
-          <span aria-hidden="true" className="text-[10px] text-text-muted">
+          <span aria-hidden="true" className="text-[10px] text-fg-muted">
             &#9662;
           </span>
-          <span className="text-link hover:text-link-hover">{ratingCount.toLocaleString("en-US")} ratings</span>
+          <span className="text-accent hover:text-accent-hover">{ratingCount.toLocaleString("en-US")} ratings</span>
         </Link>
       )}
 
       {product.isBestSeller && (
-        <span className="mt-2 inline-block bg-best-seller px-1.5 py-0.5 text-xs font-bold text-white">
+        <span className="mt-2 inline-block bg-warning px-1.5 py-0.5 text-xs font-bold text-white">
           Best Seller
         </span>
       )}

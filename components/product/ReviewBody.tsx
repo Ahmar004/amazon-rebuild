@@ -15,14 +15,14 @@ export function ReviewBody({ body }: ReviewBodyProps) {
 
   return (
     <div>
-      <p className={`whitespace-pre-line text-sm text-text ${!expanded && needsClamp ? "line-clamp-4" : ""}`}>
+      <p className={`whitespace-pre-line text-sm text-fg ${!expanded && needsClamp ? "line-clamp-4" : ""}`}>
         {body}
       </p>
       {needsClamp && (
         <button
           type="button"
           onClick={() => setExpanded((v) => !v)}
-          className="mt-1 text-sm text-link hover:text-link-hover hover:underline"
+          className="mt-1 text-sm text-accent hover:text-accent-hover hover:underline"
         >
           {expanded ? "Show less" : "Read more"}
         </button>

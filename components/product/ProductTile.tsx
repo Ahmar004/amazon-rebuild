@@ -18,7 +18,7 @@ export function ProductTile({ item }: ProductTileProps) {
 
   return (
     <div className="shrink-0" style={{ width: TILE_WIDTH }}>
-      <Link href={href} className="flex h-[160px] items-center justify-center bg-tile-bg">
+      <Link href={href} className="flex h-[160px] items-center justify-center bg-surface-muted">
         {item.imageUrl && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -29,12 +29,12 @@ export function ProductTile({ item }: ProductTileProps) {
         )}
       </Link>
       <Link href={href} className="mt-2 block">
-        <p className="line-clamp-3 text-sm text-link hover:text-link-hover">{item.title}</p>
+        <p className="line-clamp-3 text-sm text-accent hover:text-accent-hover">{item.title}</p>
       </Link>
       {item.ratingCount > 0 && (
         <div className="mt-1 flex items-center gap-1">
           <Stars rating={item.ratingAvg} size={12} />
-          <span className="text-xs text-link">{item.ratingCount.toLocaleString("en-US")}</span>
+          <span className="text-xs text-accent">{item.ratingCount.toLocaleString("en-US")}</span>
         </div>
       )}
       <div className="mt-1">

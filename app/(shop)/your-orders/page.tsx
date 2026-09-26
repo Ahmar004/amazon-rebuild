@@ -21,8 +21,8 @@ async function OrdersContent() {
 
   return (
     <div className="mx-auto max-w-[900px] px-4 py-6">
-      <p className="text-xs text-text-muted">
-        Your Account {"›"} <span className="text-text">Your Orders</span>
+      <p className="text-xs text-fg-muted">
+        Your Account {"›"} <span className="text-fg">Your Orders</span>
       </p>
       <div className="mt-2">
         <OrdersList orders={orders} />
@@ -34,8 +34,8 @@ async function OrdersContent() {
 function OrdersSkeleton() {
   return (
     <div className="mx-auto max-w-[900px] px-4 py-6" aria-hidden="true">
-      <div className="h-8 w-40 animate-pulse rounded bg-white" />
-      <div className="mt-4 h-[200px] animate-pulse rounded-lg bg-white" />
+      <div className="h-8 w-40 animate-pulse rounded bg-surface" />
+      <div className="mt-4 h-[200px] animate-pulse rounded-lg bg-surface" />
     </div>
   );
 }

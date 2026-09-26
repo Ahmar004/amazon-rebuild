@@ -38,12 +38,12 @@ export function AddToCartButton({ asin }: AddToCartButtonProps) {
         type="button"
         onClick={handleClick}
         disabled={pending}
-        className="rounded-full border border-btn-yellow-border bg-btn-yellow px-3 py-1 text-xs text-text hover:bg-btn-yellow-hover disabled:opacity-70"
+        className="rounded-full border border-accent bg-accent px-3 py-1 text-xs text-accent-fg hover:bg-accent-hover disabled:opacity-70"
       >
         {pending ? "Adding..." : status === "added" ? "Added" : "Add to cart"}
       </button>
       {error && (
-        <p role="alert" className="mt-1 text-xs text-error">
+        <p role="alert" className="mt-1 text-xs text-danger">
           {error}
         </p>
       )}

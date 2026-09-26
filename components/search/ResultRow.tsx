@@ -24,7 +24,7 @@ export function ResultRow({ item, now }: ResultRowProps) {
 
   return (
     <div className="flex gap-4 border-b border-border py-4 md:gap-6">
-      <Link href={href} className="flex w-[40%] shrink-0 items-center justify-center bg-tile-bg md:w-[240px]">
+      <Link href={href} className="flex w-[40%] shrink-0 items-center justify-center bg-surface-muted md:w-[240px]">
         {item.imageUrl && (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={imageAt(item.imageUrl, "UL320")} alt={item.title} className="h-full max-h-[240px] w-full object-contain" />
@@ -33,21 +33,21 @@ export function ResultRow({ item, now }: ResultRowProps) {
 
       <div className="min-w-0 flex-1">
         {item.isBestSeller && (
-          <span className="mb-1 inline-block bg-best-seller px-1.5 py-0.5 text-xs font-bold text-white">
+          <span className="mb-1 inline-block bg-warning px-1.5 py-0.5 text-xs font-bold text-white">
             Best Seller
           </span>
         )}
 
         <Link href={href} className="block">
-          <p className="text-sm font-bold text-text">{item.brand}</p>
-          <h2 className="line-clamp-2 text-base text-text hover:text-link-hover md:text-lg">{item.title}</h2>
+          <p className="text-sm font-bold text-fg">{item.brand}</p>
+          <h2 className="line-clamp-2 text-base text-fg hover:text-accent-hover md:text-lg">{item.title}</h2>
         </Link>
 
         {item.ratingCount > 0 && (
           <Link href={`${href}#reviews`} className="mt-1 flex items-center gap-1 text-sm">
-            <span className="text-text">{item.ratingAvg}</span>
+            <span className="text-fg">{item.ratingAvg}</span>
             <Stars rating={item.ratingAvg} />
-            <span className="text-link hover:text-link-hover">{item.ratingCount.toLocaleString("en-US")}</span>
+            <span className="text-accent hover:text-accent-hover">{item.ratingCount.toLocaleString("en-US")}</span>
           </Link>
         )}
 
@@ -55,13 +55,13 @@ export function ResultRow({ item, now }: ResultRowProps) {
           <Price priceCents={item.priceCents} listPriceCents={item.listPriceCents} />
         </div>
 
-        <p className="mt-1 text-sm text-text">
+        <p className="mt-1 text-sm text-fg">
           {freeShipping ? "FREE delivery" : `${formatPrice(shippingCents(item.priceCents, "standard"))} delivery`}{" "}
           <span className="font-bold">{eta}</span>
         </p>
 
         {item.stock <= LOW_STOCK_THRESHOLD && item.stock > 0 && (
-          <p className="mt-1 text-sm text-price-deal">Only {item.stock} left in stock - order soon.</p>
+          <p className="mt-1 text-sm text-deal">Only {item.stock} left in stock - order soon.</p>
         )}
 
         {item.stock > 0 && (

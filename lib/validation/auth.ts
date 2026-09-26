@@ -1,9 +1,9 @@
 // Input schemas and the identify-step parser for actions/auth.ts (docs/design.md 6.6). Every
-// user-facing message here is Amazon's own wording (or the design.md-resolved substitute) so
+// user-facing message here is the exact wording from docs/design.md so
 // TDD can assert on the exact string the UI shows.
 import { z } from "zod";
 
-// Amazon's own phone-detection heuristic for the identify step (docs/superpowers/plans/
+// The phone-detection heuristic for the identify step (docs/superpowers/plans/
 // 2026-09-19-slice-6-auth.md): digits, spaces, parens and hyphens, optionally +-prefixed, 7+ chars.
 export const PHONE_PATTERN = /^\+?[\d\s()-]{7,}$/;
 

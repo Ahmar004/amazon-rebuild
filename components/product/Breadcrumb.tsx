@@ -12,7 +12,7 @@ export function Breadcrumb({ categoryPath, departmentSlug }: BreadcrumbProps) {
   if (categoryPath.length === 0) return null;
 
   return (
-    <nav aria-label="Breadcrumb" className="text-xs text-text-muted">
+    <nav aria-label="Breadcrumb" className="text-xs text-fg-muted">
       {categoryPath.map((segment, i) => {
         const href =
           i === 0
@@ -21,7 +21,7 @@ export function Breadcrumb({ categoryPath, departmentSlug }: BreadcrumbProps) {
         return (
           <span key={`${segment}-${i}`}>
             {i > 0 && <span className="mx-1">&rsaquo;</span>}
-            <Link href={href} className="text-link hover:text-link-hover hover:underline">
+            <Link href={href} className="text-accent hover:text-accent-hover hover:underline">
               {segment}
             </Link>
           </span>

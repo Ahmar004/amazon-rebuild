@@ -9,7 +9,7 @@ type ShareButtonProps = {
   path?: string;
 };
 
-// Copies a product URL and shows Amazon's small "Copied" tooltip (docs/spec.md 5.5: "a share
+// Copies a product URL and shows a small "Copied" tooltip (docs/spec.md 5.5: "a share
 // button that copies the link"). Defaults to the current page (the product page's own Gallery);
 // components/cart/CartLine.tsx passes `path` to share the product it's showing instead.
 export function ShareButton({ path }: ShareButtonProps) {
@@ -32,7 +32,7 @@ export function ShareButton({ path }: ShareButtonProps) {
         type="button"
         onClick={handleClick}
         aria-label="Share"
-        className="rounded p-1 text-text hover:bg-black/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
+        className="rounded p-1 text-fg hover:bg-surface-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <circle cx="18" cy="5" r="3" stroke="currentColor" strokeWidth="1.5" />
@@ -44,7 +44,7 @@ export function ShareButton({ path }: ShareButtonProps) {
       {copied && (
         <div
           role="status"
-          className="absolute right-0 top-full z-10 mt-1 whitespace-nowrap rounded border border-border bg-white px-2 py-1 text-xs text-text shadow"
+          className="absolute right-0 top-full z-10 mt-1 whitespace-nowrap rounded border border-border bg-surface px-2 py-1 text-xs text-fg shadow"
         >
           Copied
         </div>

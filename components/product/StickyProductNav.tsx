@@ -38,14 +38,14 @@ export function StickyProductNav({ sentinelId, title, imageUrl }: StickyProductN
   if (!visible) return null;
 
   return (
-    <div className="sticky top-0 z-30 hidden border-b border-border bg-white md:block">
-      <nav className="mx-auto flex max-w-[1500px] items-center gap-6 px-4 py-2 text-sm text-text">
-        <a href="#top" className="flex items-center gap-1 text-link hover:text-link-hover">
+    <div className="sticky top-0 z-30 hidden border-b border-border bg-surface md:block">
+      <nav className="mx-auto flex max-w-[1500px] items-center gap-6 px-4 py-2 text-sm text-fg">
+        <a href="#top" className="flex items-center gap-1 text-accent hover:text-accent-hover">
           <ArrowUpIcon />
           Top
         </a>
         {SECTIONS.map((section) => (
-          <a key={section.id} href={`#${section.id}`} className="text-link hover:text-link-hover">
+          <a key={section.id} href={`#${section.id}`} className="text-accent hover:text-accent-hover">
             {section.label}
           </a>
         ))}

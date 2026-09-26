@@ -39,8 +39,7 @@ async function finishSignIn(userId: string): Promise<void> {
 
 // Step 1: identifies whether the email is known (-> password step) or not (-> register),
 // carrying the email and a validated return_to along. Never reveals which without the visitor
-// first passing basic format checks (CLAUDE.md: "Error messages never reveal more than
-// Amazon's do").
+// first passing basic format checks.
 export async function identify(input: { identifier: string; returnTo: string }): Promise<IdentifyResult> {
   const parsed = parseIdentifier(input.identifier);
   if (!parsed.ok) return { ok: false, error: parsed.error };

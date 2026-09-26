@@ -8,7 +8,7 @@ type DeleteLineButtonProps = {
 };
 
 // The plain-text "Delete" link next to the quantity stepper (recon: "Delete | Save for later |
-// Share"), redundant with the stepper's own trash icon but matching amazon.com's row exactly.
+// Share"), redundant with the stepper's own trash icon but easier to find.
 export function DeleteLineButton({ asin }: DeleteLineButtonProps) {
   const [pending, startTransition] = useTransition();
 
@@ -17,7 +17,7 @@ export function DeleteLineButton({ asin }: DeleteLineButtonProps) {
       type="button"
       disabled={pending}
       onClick={() => startTransition(async () => void (await deleteItem(asin)))}
-      className="text-link hover:text-link-hover hover:underline disabled:opacity-60"
+      className="text-accent hover:text-accent-hover hover:underline disabled:opacity-60"
     >
       Delete
     </button>

@@ -22,13 +22,13 @@ const LINK_BASE = { star: undefined, page: 1 } as const;
 export function ReviewSummary({ asin, average, count, percents }: ReviewSummaryProps) {
   return (
     <div className="md:w-[300px] md:shrink-0">
-      <h2 className="text-xl font-bold text-text">Customer reviews</h2>
+      <h2 className="text-xl font-bold text-fg">Customer reviews</h2>
 
       <div className="mt-3 flex items-center gap-2">
         <Stars rating={average} size={20} />
-        <span className="text-base text-text">{average} out of 5</span>
+        <span className="text-base text-fg">{average} out of 5</span>
       </div>
-      <p className="mt-1 text-sm text-text-muted">{count.toLocaleString("en-US")} global ratings</p>
+      <p className="mt-1 text-sm text-fg-muted">{count.toLocaleString("en-US")} global ratings</p>
 
       {count > 0 && (
         <div className="mt-4 space-y-1">
@@ -38,22 +38,22 @@ export function ReviewSummary({ asin, average, count, percents }: ReviewSummaryP
               href={reviewsUrl(LINK_BASE, { star })}
               className="flex items-center gap-2 text-sm hover:underline"
             >
-              <span className="w-10 text-link">{star} star</span>
-              <span className="h-[10px] flex-1 overflow-hidden rounded border border-border bg-search-dept">
+              <span className="w-10 text-accent">{star} star</span>
+              <span className="h-[10px] flex-1 overflow-hidden rounded border border-border bg-surface-muted">
                 <span className="block h-full bg-star" style={{ width: `${percents[star]}%` }} />
               </span>
-              <span className="w-10 text-right text-text-muted">{percents[star]}%</span>
+              <span className="w-10 text-right text-fg-muted">{percents[star]}%</span>
             </Link>
           ))}
         </div>
       )}
 
       <div className="mt-6 border-t border-border pt-4">
-        <p className="text-base font-bold text-text">Review this product</p>
-        <p className="text-sm text-text-muted">Share your thoughts with other customers</p>
+        <p className="text-base font-bold text-fg">Review this product</p>
+        <p className="text-sm text-fg-muted">Share your thoughts with other customers</p>
         <Link
           href={`/review/create-review/${asin}`}
-          className="mt-3 block w-full rounded-lg border border-border bg-white px-4 py-1.5 text-center text-sm hover:bg-search-dept"
+          className="mt-3 block w-full rounded-xl border border-border bg-surface px-4 py-1.5 text-center text-sm hover:bg-surface-muted"
         >
           Write a customer review
         </Link>

@@ -1,10 +1,8 @@
-// The demo disclaimer CLAUDE.md requires on the footer and every auth/checkout box: keeps the
-// live link from being flagged as phishing. Text is exact and must never be edited or removed.
+// Demo-store notice (decided with the user on 2026-09-26, replacing the old clone disclaimer):
+// shown in the footer and the checkout box so nobody mistakes the store for a real shop.
+export const DEMO_NOTICE =
+  "Shopeedo is a demo store built for an 8x assessment. No real orders are placed; use Stripe test cards.";
+
 export function SafetyNotice({ className }: { className?: string }) {
-  return (
-    <p className={`text-center text-[11px] text-text-muted ${className ?? ""}`}>
-      Demo clone built for an 8x assessment. Not affiliated with Amazon. Do not enter real Amazon
-      credentials.
-    </p>
-  );
+  return <p className={`text-xs text-fg-muted ${className ?? ""}`}>{DEMO_NOTICE}</p>;
 }

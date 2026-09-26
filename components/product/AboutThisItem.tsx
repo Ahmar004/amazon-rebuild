@@ -8,8 +8,8 @@ export function AboutThisItem({ features }: AboutThisItemProps) {
 
   return (
     <div>
-      <h2 className="text-base font-bold text-text">About this item</h2>
-      <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-text">
+      <h2 className="text-base font-bold text-fg">About this item</h2>
+      <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-fg">
         {features.map((feature, i) => (
           <li key={i}>{feature}</li>
         ))}

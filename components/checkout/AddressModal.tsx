@@ -81,13 +81,13 @@ export function AddressModal({ open, onClose, onSaved, address }: AddressModalPr
       labelledBy={titleId}
       widthClassName="max-w-lg"
     >
-      <h2 id={titleId} className="mb-3 text-xl font-bold text-text">
+      <h2 id={titleId} className="mb-3 text-xl font-bold text-fg">
         {address ? "Edit shipping address" : "Enter a new shipping address"}
       </h2>
 
       <form onSubmit={handleSubmit} noValidate>
         <Field label="Country/Region">
-          <select disabled defaultValue="US" className="h-9 w-full rounded-[3px] border border-[#a6a6a6] bg-search-dept px-2 text-base">
+          <select disabled defaultValue="US" className="h-9 w-full rounded-md border border-border-strong bg-surface-muted px-2 text-base">
             <option value="US">United States</option>
           </select>
         </Field>
@@ -151,7 +151,7 @@ export function AddressModal({ open, onClose, onSaved, address }: AddressModalPr
           </Field>
         </div>
 
-        <label className="mb-3 flex items-center gap-2 text-sm text-text">
+        <label className="mb-3 flex items-center gap-2 text-sm text-fg">
           <input type="checkbox" name="isDefault" defaultChecked={address?.isDefault ?? false} />
           Make this my default address
         </label>
@@ -160,7 +160,7 @@ export function AddressModal({ open, onClose, onSaved, address }: AddressModalPr
           <button
             type="button"
             onClick={() => setInstructionsOpen((v) => !v)}
-            className="text-sm font-bold text-link hover:text-link-hover hover:underline"
+            className="text-sm font-bold text-accent hover:text-accent-hover hover:underline"
           >
             Delivery instructions (optional) {instructionsOpen ? "−" : "+"}
           </button>
@@ -169,14 +169,14 @@ export function AddressModal({ open, onClose, onSaved, address }: AddressModalPr
               name="instructions"
               defaultValue={address?.instructions ?? ""}
               placeholder="Add preferences, notes, access codes and more"
-              className="mt-2 w-full rounded-[3px] border border-[#a6a6a6] p-2 text-sm outline-none focus-visible:border-[#e77600] focus-visible:ring-[3px] focus-visible:ring-[#e77600]/40"
+              className="mt-2 w-full rounded-md border border-border-strong p-2 text-sm outline-none focus-visible:border-accent focus-visible:ring-[3px] focus-visible:ring-accent/40"
               rows={2}
             />
           )}
         </div>
 
         {formError && (
-          <p role="alert" className="mb-3 text-sm text-error">
+          <p role="alert" className="mb-3 text-sm text-danger">
             {formError}
           </p>
         )}
@@ -184,7 +184,7 @@ export function AddressModal({ open, onClose, onSaved, address }: AddressModalPr
         <button
           type="submit"
           disabled={pending}
-          className="h-9 rounded-full border border-btn-yellow-border bg-btn-yellow px-6 text-sm font-bold text-text hover:bg-btn-yellow-hover disabled:opacity-60"
+          className="h-9 rounded-full border border-accent bg-accent px-6 text-sm font-bold text-accent-fg hover:bg-accent-hover disabled:opacity-60"
         >
           {pending ? "Saving..." : "Use this address"}
         </button>
@@ -194,8 +194,8 @@ export function AddressModal({ open, onClose, onSaved, address }: AddressModalPr
 }
 
 function inputClass(error?: string): string {
-  return `h-9 w-full rounded-[3px] border px-2 text-base outline-none focus-visible:border-[#e77600] focus-visible:ring-[3px] focus-visible:ring-[#e77600]/40 ${
-    error ? "border-error" : "border-[#a6a6a6]"
+  return `h-9 w-full rounded-[3px] border px-2 text-base outline-none focus-visible:border-accent focus-visible:ring-[3px] focus-visible:ring-accent/40 ${
+    error ? "border-danger" : "border-border-strong"
   }`;
 }
 
@@ -220,13 +220,13 @@ function Field({
 
   return (
     <div className={`mb-3 ${className ?? ""}`}>
-      <label htmlFor={id} className="mb-1 block text-sm font-bold text-text">
+      <label htmlFor={id} className="mb-1 block text-sm font-bold text-fg">
         {label}
       </label>
       {withId}
-      {hint && <p className="mt-1 text-xs text-text-muted">{hint}</p>}
+      {hint && <p className="mt-1 text-xs text-fg-muted">{hint}</p>}
       {error && (
-        <p role="alert" className="mt-1 text-xs text-error">
+        <p role="alert" className="mt-1 text-xs text-danger">
           {error}
         </p>
       )}

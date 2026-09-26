@@ -4,7 +4,9 @@
 
 **Rebuild slices (roadmap Step-10):**
 - **R0 done.** The live URL is https://shopeedo.vercel.app/ (the old amazon.ahmar9 domain now returns 404). `proxy.ts` rewrites every request to `public/coming-soon.html` when `VERCEL_ENV === "production"`; local dev and preview deploys still serve the full app. R12 deletes `proxy.ts` to go live.
-- **Next: R1** (rebrand, tokens, primitives, themes, remove Amazon links).
+- **R1 done.** Tokens in `app/globals.css` (cream light default, GitHub-dark via `<html data-theme="dark">`, teal accent chosen by the user), theme script in `lib/theme.ts` + `ThemeToggle`, primitives in `components/ui/` (Button, Input, Card, Badge, Sheet, Toast), `components/brand/Logo.tsx`, lucide-react icons. `lib/constants/links.ts` is internal-only, and new pages add their own nav entries when they ship (no link to a missing page). Amazon sprites, CDN creatives, footer brands and legal links are gone. Home is an interim department-card grid (`getDepartmentPreviews`) until R4. The demo notice is the neutral wording the user chose (`SafetyNotice.tsx`). Still pointing at pages to come: `/customer-service` (cart, checkout) and `/deals` (none), built in R10-R11.
+- **Visual checks without the Chrome extension:** `scripts/_shots.mjs` (git-excluded) screenshots light/dark at 1280 and 390 px via system Chrome: `MSYS_NO_PATHCONV=1 node scripts/_shots.mjs <outDir> / /s?k=a`. In Git Bash, `MSYS_NO_PATHCONV=1` stops `/` being rewritten to a Windows path.
+- **Next: R2** (layout shell, sign-in gate, one-screen auth, clean URLs).
 
 Read this first in a new session, then `roadmap.md` (including Rule-0.0A), `docs/remaining-work-finish-strategy.md` for the per-slice session plan, `CLAUDE.md`, and the plan for the slice you're about to build. Last updated 2026-09-19 around 15:55 UTC (20:55 PKT). The 24-hour window ends around 21:50 UTC (02:50 PKT on 2026-09-20) - under 6 hours left.
 

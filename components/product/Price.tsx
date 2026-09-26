@@ -5,7 +5,7 @@ type PriceProps = {
   listPriceCents: number | null;
 };
 
-// Amazon's price block: superscript "$", large whole number, superscript cents, then the
+// The price block: superscript "$", large whole number, superscript cents, then the
 // struck-through list price and a discount badge when there is one (docs/design.md 6.3).
 export function Price({ priceCents, listPriceCents }: PriceProps) {
   const { whole, fraction } = splitPrice(priceCents);
@@ -13,8 +13,8 @@ export function Price({ priceCents, listPriceCents }: PriceProps) {
 
   return (
     <div className="flex items-baseline gap-2">
-      <div className="flex items-baseline text-text">
-        {percent !== null && <span className="mr-1 text-price-deal">-{percent}%</span>}
+      <div className="flex items-baseline text-fg">
+        {percent !== null && <span className="mr-1 text-deal">-{percent}%</span>}
         <span className="text-xl leading-none">
           <sup className="relative -top-[0.9em] text-xs">$</sup>
           {whole}
@@ -22,7 +22,7 @@ export function Price({ priceCents, listPriceCents }: PriceProps) {
         </span>
       </div>
       {listPriceCents !== null && listPriceCents > priceCents && (
-        <span className="text-sm text-text-muted">
+        <span className="text-sm text-fg-muted">
           List: <span className="line-through">{formatPrice(listPriceCents)}</span>
         </span>
       )}

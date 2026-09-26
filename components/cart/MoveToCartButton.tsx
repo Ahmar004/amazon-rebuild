@@ -15,7 +15,7 @@ export function MoveToCartButton({ asin }: MoveToCartButtonProps) {
       type="button"
       disabled={pending}
       onClick={() => startTransition(async () => void (await moveToCart(asin)))}
-      className="text-link hover:text-link-hover hover:underline disabled:opacity-60"
+      className="text-accent hover:text-accent-hover hover:underline disabled:opacity-60"
     >
       Move to cart
     </button>

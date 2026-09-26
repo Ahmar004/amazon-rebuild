@@ -41,15 +41,15 @@ export function PaymentStep({
   error,
 }: PaymentStepProps) {
   return (
-    <section className="rounded-lg bg-white p-4">
-      <h2 className="text-lg font-bold text-text">Payment method</h2>
+    <section className="rounded-lg bg-surface p-4">
+      <h2 className="text-lg font-bold text-fg">Payment method</h2>
 
       <div role="radiogroup" aria-label="Payment method" className="mt-3 space-y-2">
         {paymentMethods.map((pm) => (
           <label
             key={pm.id}
-            className={`flex cursor-pointer gap-2 rounded border p-3 text-sm text-text ${
-              selectedId === pm.id ? "border-link" : "border-border"
+            className={`flex cursor-pointer gap-2 rounded border p-3 text-sm text-fg ${
+              selectedId === pm.id ? "border-accent" : "border-border"
             }`}
           >
             <input
@@ -70,8 +70,8 @@ export function PaymentStep({
         ))}
 
         <label
-          className={`flex cursor-pointer gap-2 rounded border p-3 text-sm text-text ${
-            selectedId === NEW_CARD_ID ? "border-link" : "border-border"
+          className={`flex cursor-pointer gap-2 rounded border p-3 text-sm text-fg ${
+            selectedId === NEW_CARD_ID ? "border-accent" : "border-border"
           }`}
         >
           <input
@@ -88,19 +88,19 @@ export function PaymentStep({
       {selectedId === NEW_CARD_ID && (
         <>
           {!addressChosen ? (
-            <p className="mt-3 text-sm text-text-muted">Choose a delivery address to enter card details.</p>
+            <p className="mt-3 text-sm text-fg-muted">Choose a delivery address to enter card details.</p>
           ) : clientSecret ? (
             <Elements key={clientSecret} stripe={stripePromise} options={{ clientSecret }}>
               <CardForm onReady={onCardReady} saveCard={saveCard} onSaveCardChange={onSaveCardChange} />
             </Elements>
           ) : (
-            <p className="mt-3 text-sm text-text-muted">Loading payment form...</p>
+            <p className="mt-3 text-sm text-fg-muted">Loading payment form...</p>
           )}
         </>
       )}
 
       {error && (
-        <p role="alert" className="mt-3 text-sm text-error">
+        <p role="alert" className="mt-3 text-sm text-danger">
           {error}
         </p>
       )}

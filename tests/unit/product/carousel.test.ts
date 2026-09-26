@@ -8,7 +8,7 @@ function item(asin: string, priceCents: number, ratingCount: number): ProductSum
     title: `Product ${asin}`,
     brand: "Brand",
     departmentSlug: "electronics",
-    imageUrl: "https://m.media-amazon.com/images/I/example.jpg",
+    imageUrl: "https://images.example.com/I/example.jpg",
     priceCents,
     listPriceCents: null,
     ratingAvg: 4.5,

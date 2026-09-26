@@ -17,7 +17,7 @@ export function ScrollHideHeader({ children }: { children: ReactNode }) {
     <div
       className={
         active
-          ? `sticky top-0 z-20 bg-white transition-transform duration-200 ${hidden ? "-translate-y-full" : "translate-y-0"}`
+          ? `sticky top-0 z-20 bg-surface transition-transform duration-200 ${hidden ? "-translate-y-full" : "translate-y-0"}`
           : undefined
       }
     >

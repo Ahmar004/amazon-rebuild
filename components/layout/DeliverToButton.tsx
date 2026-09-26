@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Sprite } from "@/components/ui/Sprite";
+import { MapPin } from "lucide-react";
 import { navItemClass } from "@/components/layout/navItemClass";
 import { LocationPrompt } from "@/components/layout/LocationPrompt";
 import { LocationModal } from "@/components/layout/LocationModal";
@@ -42,9 +42,9 @@ export function DeliverToButton({ location, showPrompt, variant = "desktop" }: D
         <button
           type="button"
           onClick={() => setModalOpen(true)}
-          className="flex w-full items-center gap-2 bg-back-to-top px-4 py-2 text-white focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white"
+          className="flex w-full items-center gap-2 bg-inverse-muted px-4 py-2 text-white focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white"
         >
-          <Sprite name="location" />
+          <MapPin size={16} aria-hidden="true" />
           <span className="text-sm">
             Deliver to {formatLocation(location)}
           </span>
@@ -65,9 +65,9 @@ export function DeliverToButton({ location, showPrompt, variant = "desktop" }: D
         onClick={() => setModalOpen(true)}
         className={`flex shrink-0 items-center gap-1 ${navItemClass}`}
       >
-        <Sprite name="location" />
+        <MapPin size={18} aria-hidden="true" />
         <span className="flex min-w-0 flex-col text-left">
-          <span className="whitespace-nowrap text-xs leading-[14px] text-nav-muted">Deliver to</span>
+          <span className="whitespace-nowrap text-xs leading-[14px] text-inverse-fg-muted">Deliver to</span>
           <span className="block max-w-[140px] truncate text-sm font-bold leading-[15px] text-white">
             {formatLocation(location)}
           </span>

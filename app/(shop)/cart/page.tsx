@@ -28,7 +28,7 @@ async function CartPageContent() {
 
   if (isCompletelyEmpty) {
     return (
-      <div className="min-h-[60vh] bg-page-bg px-4 py-8">
+      <div className="min-h-[60vh] bg-bg px-4 py-8">
         <div className="mx-auto max-w-[600px]">
           <EmptyCart signedIn={signedIn} />
         </div>
@@ -39,15 +39,15 @@ async function CartPageContent() {
   const itemsLabel = `${cart.itemCount} ${cart.itemCount === 1 ? "item" : "items"}`;
 
   return (
-    <div className="min-h-[60vh] bg-page-bg px-4 py-6">
+    <div className="min-h-[60vh] bg-bg px-4 py-6">
       {cart.lines.length > 0 && (
-        <div className="mb-4 rounded-lg border border-border bg-white p-4 md:hidden">
-          <p className="text-lg text-text">
+        <div className="mb-4 rounded-xl border border-border bg-surface p-4 md:hidden">
+          <p className="text-lg text-fg">
             Subtotal <span className="font-bold">{formatPrice(cart.subtotalCents)}</span>
           </p>
           <Link
             href={checkoutHref}
-            className="mt-3 block w-full rounded-full border border-btn-yellow-border bg-btn-yellow px-3 py-2 text-center text-sm text-text hover:bg-btn-yellow-hover"
+            className="mt-3 block w-full rounded-full border border-accent bg-accent px-3 py-2 text-center text-sm text-accent-fg hover:bg-accent-hover"
           >
             Proceed to checkout ({itemsLabel})
           </Link>
@@ -56,10 +56,10 @@ async function CartPageContent() {
 
       <div className="mx-auto flex max-w-[1000px] flex-col gap-4 md:flex-row md:items-start">
         <div className="min-w-0 flex-1">
-          <div className="rounded-lg border border-border bg-white p-4">
+          <div className="rounded-xl border border-border bg-surface p-4">
             <div className="flex items-baseline justify-between border-b border-border pb-3">
-              <h1 className="text-[28px] text-text">Shopping Cart</h1>
-              {cart.lines.length > 0 && <span className="hidden text-sm text-text-muted md:inline">Price</span>}
+              <h1 className="text-[28px] text-fg">Shopping Cart</h1>
+              {cart.lines.length > 0 && <span className="hidden text-sm text-fg-muted md:inline">Price</span>}
             </div>
 
             {cart.lines.length === 0 ? (
@@ -69,7 +69,7 @@ async function CartPageContent() {
                 {cart.lines.map((line) => (
                   <CartLine key={line.asin} line={line} />
                 ))}
-                <p className="pt-4 text-right text-lg text-text">
+                <p className="pt-4 text-right text-lg text-fg">
                   Subtotal ({itemsLabel}): <span className="font-bold">{formatPrice(cart.subtotalCents)}</span>
                 </p>
               </>
@@ -77,10 +77,10 @@ async function CartPageContent() {
           </div>
 
           {cart.lines.length > 0 && (
-            <p className="mt-4 text-xs text-text-muted">
-              The price and availability of items at Amazon.com are subject to change. The Cart is a temporary
+            <p className="mt-4 text-xs text-fg-muted">
+              Prices and availability are subject to change. The Cart is a temporary
               place to store a list of your items and reflects each item&apos;s most recent price.{" "}
-              <Link href={ROUTES.customerService} className="text-link hover:text-link-hover">
+              <Link href={ROUTES.customerService} className="text-accent hover:text-accent-hover">
                 Learn more
               </Link>
               . Do you have a gift card or promotional code? We&apos;ll ask you to enter your claim code when
@@ -103,9 +103,9 @@ async function CartPageContent() {
 
 function CartPageSkeleton() {
   return (
-    <div className="min-h-[60vh] bg-page-bg px-4 py-6" aria-hidden="true">
+    <div className="min-h-[60vh] bg-bg px-4 py-6" aria-hidden="true">
       <div className="mx-auto max-w-[1000px]">
-        <div className="h-[400px] animate-pulse rounded-lg bg-white" />
+        <div className="h-[400px] animate-pulse rounded-lg bg-surface" />
       </div>
     </div>
   );

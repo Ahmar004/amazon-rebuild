@@ -18,7 +18,7 @@ export function BuyBoxLocationButton({ location }: BuyBoxLocationButtonProps) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="mt-3 flex items-center gap-1 text-sm text-text hover:text-link-hover"
+        className="mt-3 flex items-center gap-1 text-sm text-fg hover:text-accent-hover"
       >
         <PinIcon />
         Deliver to {formatLocation(location)}

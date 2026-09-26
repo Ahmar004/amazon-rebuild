@@ -51,18 +51,6 @@ export function IdentifyForm({ returnTo }: IdentifyFormProps) {
       </form>
 
       <AuthSmallPrint />
-
-      <hr className="my-4 border-border" />
-
-      <p className="text-xs font-bold text-text">Buying for work?</p>
-      <a
-        href="https://www.amazon.com/business"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-xs text-link hover:text-link-hover hover:underline"
-      >
-        Create a free business account
-      </a>
     </div>
   );
 }

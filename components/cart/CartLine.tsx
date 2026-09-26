@@ -23,7 +23,7 @@ export function CartLine({ line }: CartLineProps) {
 
   return (
     <div className="flex flex-col gap-3 border-b border-border py-4 sm:flex-row sm:gap-4">
-      <Link href={href} className="flex w-full shrink-0 items-center justify-center bg-tile-bg sm:w-[180px]">
+      <Link href={href} className="flex w-full shrink-0 items-center justify-center bg-surface-muted sm:w-[180px]">
         {line.imageUrl && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -36,16 +36,16 @@ export function CartLine({ line }: CartLineProps) {
 
       <div className="flex flex-1 flex-col gap-1 sm:flex-row sm:justify-between">
         <div className="min-w-0 flex-1">
-          <Link href={href} className="text-base text-text hover:text-link-hover">
+          <Link href={href} className="text-base text-fg hover:text-accent-hover">
             {line.title}
           </Link>
 
           <StockLine stock={line.stock} />
 
-          <p className="mt-1 text-sm text-text">Shipped from: Amazon.com</p>
-          <p className="mt-1 text-sm text-text">
+          <p className="mt-1 text-sm text-fg">Ships from and sold by Shopeedo</p>
+          <p className="mt-1 text-sm text-fg">
             Gift options not available.{" "}
-            <Link href={ROUTES.customerService} className="text-link hover:text-link-hover">
+            <Link href={ROUTES.customerService} className="text-accent hover:text-accent-hover">
               Learn more
             </Link>
           </p>
@@ -58,7 +58,7 @@ export function CartLine({ line }: CartLineProps) {
           </div>
         </div>
 
-        <div className="text-left font-bold text-text sm:text-right">{formatPrice(line.lineTotalCents)}</div>
+        <div className="text-left font-bold text-fg sm:text-right">{formatPrice(line.lineTotalCents)}</div>
       </div>
     </div>
   );
@@ -66,10 +66,10 @@ export function CartLine({ line }: CartLineProps) {
 
 function StockLine({ stock }: { stock: number }) {
   if (stock === 0) {
-    return <p className="mt-1 text-sm text-price-deal">Currently unavailable</p>;
+    return <p className="mt-1 text-sm text-deal">Currently unavailable</p>;
   }
   if (stock <= LOW_STOCK_THRESHOLD) {
-    return <p className="mt-1 text-sm text-price-deal">Only {stock} left in stock - order soon.</p>;
+    return <p className="mt-1 text-sm text-deal">Only {stock} left in stock - order soon.</p>;
   }
-  return <p className="mt-1 text-sm text-in-stock">In Stock</p>;
+  return <p className="mt-1 text-sm text-success">In Stock</p>;
 }

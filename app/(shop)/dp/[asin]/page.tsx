@@ -49,7 +49,7 @@ async function ProductPageForParams({ params, searchParams }: ProductPageProps) 
   const { alsoViewed, related } = splitRelatedCarousels(relatedItems, product.priceCents);
 
   return (
-    <div id="top" className="mx-auto max-w-[1500px] bg-white px-4 py-3">
+    <div id="top" className="mx-auto max-w-[1500px] bg-surface px-4 py-3">
       <StickyProductNav sentinelId="buy-box-column" title={product.title} imageUrl={product.imageUrl} />
 
       <Breadcrumb categoryPath={product.categoryPath} departmentSlug={product.departmentSlug} />
@@ -109,20 +109,20 @@ async function ReviewsForParams({ asin, searchParams }: { asin: string; searchPa
 function ProductPageSkeleton() {
   return (
     <div className="mx-auto max-w-[1500px] px-4 py-6" aria-hidden="true">
-      <div className="h-4 w-1/3 animate-pulse rounded bg-tile-bg" />
+      <div className="h-4 w-1/3 animate-pulse rounded bg-surface-muted" />
       <div className="mt-4 flex flex-col gap-6 md:flex-row">
-        <div className="h-[500px] animate-pulse rounded bg-tile-bg md:w-[42%]" />
-        <div className="h-[500px] flex-1 animate-pulse rounded bg-tile-bg" />
-        <div className="h-[400px] animate-pulse rounded bg-tile-bg md:w-[245px]" />
+        <div className="h-[500px] animate-pulse rounded bg-surface-muted md:w-[42%]" />
+        <div className="h-[500px] flex-1 animate-pulse rounded bg-surface-muted" />
+        <div className="h-[400px] animate-pulse rounded bg-surface-muted md:w-[245px]" />
       </div>
     </div>
   );
 }
 
 function BuyBoxSkeleton() {
-  return <div className="h-[320px] animate-pulse rounded-lg border border-border bg-tile-bg" aria-hidden="true" />;
+  return <div className="h-[320px] animate-pulse rounded-xl border border-border bg-surface-muted" aria-hidden="true" />;
 }
 
 function ReviewListSkeleton() {
-  return <div className="h-[400px] flex-1 animate-pulse rounded bg-tile-bg" aria-hidden="true" />;
+  return <div className="h-[400px] flex-1 animate-pulse rounded bg-surface-muted" aria-hidden="true" />;
 }

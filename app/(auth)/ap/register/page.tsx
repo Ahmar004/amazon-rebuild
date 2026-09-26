@@ -39,7 +39,7 @@ async function RegisterContent({ searchParams }: RegisterPageProps) {
 function AuthBoxSkeleton() {
   return (
     <div
-      className="h-[420px] w-full max-w-[350px] animate-pulse rounded-lg border border-border bg-white"
+      className="h-[420px] w-full max-w-[350px] animate-pulse rounded-xl border border-border bg-surface"
       aria-hidden="true"
     />
   );
