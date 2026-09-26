@@ -90,4 +90,4 @@ One slice per session, in this order:
 - **[completed]** R9  Orders details/timeline/cancel, Account tabs (C15,C16)
 - **[completed]** R10 Reviews (buyers only), browsing history, deals (C19)
 - **[completed]** R11 Customer Service (11,C18)
-- R12 CLAUDE.md/spec rewrite, README Design decisions, hardening, deploy (C21,C22)
+- **[completed]** R12 CLAUDE.md/spec rewrite, README Design decisions, hardening, deploy (C21,C22)

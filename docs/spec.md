@@ -1,288 +1,122 @@
-# Amazon Rebuild - Product Spec
+# Shopeedo - Product Spec
 
-This is the single source of truth for what we build. It replaces `docs/requirements.md` for day-to-day work; that file stays only as the verbatim record of the brief. How things are built (stack, rendering, database, hosting) is decided in `docs/tech-stack.md` (Step-1), and how each feature is built lives in `docs/design.md` (Step-3).
+This is the single source of truth for what the product does. `docs/requirements.md` is the verbatim original brief, and `frontend-rebuild.md` (root) holds the client's changed brief and the approved rebuild points (1-13, C1-C22) this spec is written from. How things are built lives in `docs/tech-stack.md` and `docs/design.md`.
 
 ## 1. The assignment
 
-- Rebuild amazon.com as a working product in 24 hours (clock started 2026-09-19, about 20.5 hours left at the start of this spec). The clock is tracked, not enforced.
-- Judged on three things: **speed** (how much working product ships in the time), **product judgement** (what was built first and what was left out), and **UX and UI** (whether it is good to use).
-- Hand-in:
-  - A **live link**, deployed and open to someone who is not signed in as the author.
-  - A **public GitHub repo**: https://github.com/Ahmar004/amazon-rebuild
-  - A **walkthrough video**: five minutes at most, camera on, with voiceover, recorded by the user.
-- **Agent capture:** `.agent-logs/` must stay in the repo and be committed as we go, together with the code it produced, never in one lump. Log entries are never edited or deleted. This is already running, see `CAPTURE-TEST.md`.
-- The brief allows "better than the original". We do not add features Amazon does not have; the aim is fidelity.
+- Built for an 8x technical assessment. The first brief was a working amazon.com rebuild in 24 hours. On 2026-09-26 the client changed it: keep the idea and the backend, but design the interface ourselves and show which parts of the reference we would change, cut or improve. The product is called **Shopeedo** and never names Amazon in its code or UI.
+- Judged on **speed**, **product judgement** and **UX and UI**.
+- Hand-in: the live link (https://shopeedo.vercel.app/), the public repo (https://github.com/Ahmar004/amazon-rebuild), and a walkthrough video of five minutes at most, camera on. `README.md` has the design decisions that the video follows.
+- **Agent capture:** `.agent-logs/` stays in the repo and is committed together with the code it produced. Log entries are never edited or deleted (`CAPTURE-TEST.md`).
 
-## 2. Product decisions (locked with the user)
+## 2. Product decisions
 
 | Topic | Decision |
 |---|---|
-| Market | amazon.com as seen by a US visitor: prices in USD, US addresses (State, ZIP code), and a default "Deliver to" of New York 10001 until the user picks a location. |
-| Catalogue | A curated subset of about 500 to 1000 products from a public Amazon product dataset: real titles, prices, ratings and review counts, with images served from Amazon's image CDN. It covers the departments shown on the home page. The dataset is confirmed in Step-1, and DummyJSON is the fallback if no usable dataset exists. |
-| Sign-up | Email and password only, on Amazon's own screens. No puzzle, no email code, no phone code. The README explains the omission. |
-| Payment | Stripe in test mode. Card entry uses Stripe's hosted card field, so card numbers never touch our server. Judges pay with test card 4242 4242 4242 4242. |
-| Unbuilt links | Amazon's header, footer and account links all stay visible. Links to pages we build go to our pages; links to other Amazon businesses and sister sites (Prime Video, Registry, Sell, Careers, IMDb and so on) open the real public site in a new tab. |
-| Order status | Status comes from the order's age (section 6.4). Orders can be cancelled until they ship. |
-| Extras | Lists, writing reviews, Buy Again, browsing history, and Your Addresses / Your Payments in the account area are all must-haves. |
-| Brand assets | Amazon's own logo, icon sprites, and hero and home-card images are loaded from Amazon's CDN for an exact match (details in `docs/tech-stack.md`). |
-| Safety notice | One small line in the footer and under the sign-in, create account and checkout boxes: "Demo clone built for an 8x assessment. Not affiliated with Amazon. Do not enter real Amazon credentials." Every page is noindex. This protects the live link from being flagged as phishing, and it is the only visible difference from amazon.com. |
-| Live URL | The free `vercel.app` address; no paid domain (roadmap Rule 0.3). |
-| Ads | No sponsored placements or "Sponsored" labels. We have no advertisers, so labelling anything as sponsored would be a fake state. Amazon's related-product carousels stay, filled with real catalogue items. |
+| Market | US shoppers: prices in USD, US addresses (State, ZIP code). English only, so there is no language or locale picker. |
+| Catalogue | About 12,000 real products in 24 departments with 36k reviews, from the public Amazon Reviews 2023 dataset, filtered to items with a price and an image. Product photos load from the dataset's image URLs. The marketplace name is scrubbed from all catalogue text (`lib/catalogue/store-name.ts`). |
+| Accounts | Every page except sign-in and register needs an account, so checkout never interrupts a purchase with a sign-in step and the free database tier isn't spent on anonymous traffic. Email and password only. |
+| Payment | Stripe in test mode, cards only. Card entry is Stripe's own field, so card numbers never touch our server. Test card 4242 4242 4242 4242. |
+| Links | Every link goes to a Shopeedo page. There are no links to other sites and no placeholder links. |
+| Brand | Our own "Shopeedo" SVG wordmark and lucide icons. A "clean modern retail" design system: cream light theme (default) and a GitHub-style dark theme, one teal accent, rounded cards, soft shadows. |
+| Demo notice | One line in the footer and at checkout: "Shopeedo is a demo store built for an 8x assessment. No real orders are placed; use Stripe test cards." Every page is noindex. |
+| Order status | Worked out from the order's age (section 6.4). Orders can be cancelled until they ship. |
+| Ads | No sponsored placements; rails show real catalogue items. |
+| Live URL | The free `vercel.app` address (roadmap Rule 0.3). |
 
-## 3. Scope ranking
+## 3. Scope
 
-Build order follows this ranking. **M** = must-have, **N** = nice-to-have (only if time remains after every M works end to end and is deployed), **O** = out of scope.
+Built (every item works end to end): layout shell with the All menu and theme toggle; home; search; product page; wishlist; cart drawer and cart page; one-page checkout; orders list and order details with cancel; account with profile, addresses, cards and orders; buyer-only reviews; browsing history; Today's Deals; Customer Service with contact requests.
 
-| # | Feature | Rank |
-|---|---|---|
-| 1 | Global header, sub-nav bar, "All" side menu, footer (desktop and mobile web) | M |
-| 2 | Home page: hero carousel, category card grid, sign-in band | M |
-| 3 | Search: typeahead suggestions, department filter, results page with filters, sort and pagination | M |
-| 4 | Product page: gallery, buy box, carousels, product information, reviews | M |
-| 5 | Cart: guest and signed-in, added-to-cart page, mini-cart, save for later | M |
-| 6 | Sign in, create account, sign out | M |
-| 7 | Secure checkout with Stripe test payments, Buy Now, order confirmation | M |
-| 8 | Your Orders: list, time filter, order details, cancel, Buy Again tab, Not Yet Shipped tab | M |
-| 9 | Your Account hub, Login & security, Your Addresses, Your Payments | M |
-| 10 | Lists: Add to List, Your Lists | M |
-| 11 | Write a review (star rating, headline, text) | M |
-| 12 | Browsing history strip and page | M |
-| 13 | "Deliver to" location popup and ZIP code modal | M |
-| 14 | Today's Deals page, Customer Service help page | M |
-| 15 | Language popover (English only) and footer locale selectors | M |
-| 16 | Mobile web layouts for every M page | M |
-| 17 | Demo account with example orders in every status, so judges can see the full order lifecycle without waiting | N |
-| 18 | Spanish language, other currencies and countries | N |
-| 19 | Order confirmation emails | N |
-| 20 | Returns and refunds | O |
-| 21 | Puzzle captcha, email and phone verification codes | O |
-| 22 | Prime, Prime Video, Registry, Gift Cards, Coupons, Sell, Amazon Business, Alexa (linked out to the real sites) | O |
-| 23 | Sellers, seller accounts, multiple offers per product ("2 used & new offers") | O |
-| 24 | Sponsored ads and paid placements | O |
-| 25 | Uploading review videos or images | O |
+Cut on purpose: multiple lists (one wishlist instead), the language and locale pickers, the header "Deliver to" popup (ZIP is chosen on the product page and at checkout), the full-page "Added to cart" interstitial (replaced by the drawer), links out to sister businesses, sellers and multiple offers, sponsored ads, returns processing (a return is requested through Customer Service), review photos and videos, email and phone verification codes, and adding a card outside checkout (cards are saved at checkout).
 
 ## 4. Domain vocabulary
 
-Use these terms in code, UI copy and docs, and no synonyms: **product, department, brand, review, rating, cart, cart item, saved item, order, order item, address, payment method, list, list item, browsing history, deal, user**.
+Use these terms in code, UI copy and docs, and no synonyms: **product, department, brand, review, rating, cart, cart item, saved item, order, order item, address, payment method, wishlist, browsing history, deal, support request, user**.
 
 ## 5. Screens and behaviour
 
-The reference for each screen is the matching file in `docs/recon/`. Where the recon does not cover a detail (for example mobile layouts beyond the home page, or the "All" side menu), the live amazon.com page is the reference, checked before building it.
+One fluid, desktop-first layout scales down to phones; there are no separate mobile components and no fixed minimum width. Every screen has skeleton loading, empty and error states, labelled inputs, visible focus, and keyboard use (Enter submits, Esc closes dialogs and sheets).
 
-### 5.1 Global header (desktop)
+### 5.1 Layout shell
 
-- **Top bar, left to right:**
-  - The amazon logo, linking to home.
-  - "Deliver to" with the location. It shows the selected ZIP code and city, or the default.
-  - The search bar: the "All" department dropdown, the query field, and the orange search button.
-  - The language control (US flag and "EN").
-  - "Hello, sign in" or "Hello, <first name>" over "Account & Lists".
-  - "Returns & Orders".
-  - Cart with the item count.
-- **Search bar:**
-  - Focusing it dims the page below the header (desktop only).
-  - Typing shows up to 10 suggestions that match the query, with the matching part in normal weight and the rest bold.
-  - Enter or the search button runs the search.
-  - The department dropdown lists "All Departments" plus only departments that have products.
-- **"Deliver to" popup:** on a first visit, a small popup under "Deliver to" explains which location items are shown for, with "Dismiss" and "Change Address". The choice is remembered.
-- **Location modal ("Choose your location"):**
-  - A signed-in user picks one of their saved addresses.
-  - Anyone can enter a US ZIP code and press "Apply".
-  - The chosen location sets the delivery estimates shown on product and search pages.
-- **Language popover:** opens on hover or click. It shows "Change language" with English selected, "You are shopping on Amazon.com", and "Change country/region." (links out).
-- **Account & Lists flyout (hover):**
-  - Signed out: a yellow "Sign in" button and "New customer? Start here."
-  - Always shows "Your Lists" and "Your Account" link columns.
-  - Signed in: also shows "Sign Out".
-- **Sub-nav bar:**
-  - The "All" menu button, then these links:
-    - Signed out: Today's Deals, Customer Service, and departments.
-    - Signed in: the longer set, with Buy Again and departments.
-  - Links that aren't built open the real Amazon page.
-- **"All" side menu:**
-  - Slides in from the left over a dimmed page, with "Hello, <name>" at the top.
-  - Sections: Shop by Department (our departments), Programs and Features (Today's Deals, linked-out items), Help & Settings (Your Account, Customer Service, Sign in or Sign out).
-  - Esc or the close button dismisses it.
-- **Scroll behaviour:** on search results, scrolling down hides the header and scrolling up shows it again.
+- **Sticky header:** All menu, logo, search bar (its own row under 768px), theme toggle, account menu (name, email, account links, Sign out), wishlist with count, Orders, and the cart button with count.
+- **Quick links row:** Today's Deals, Best Sellers, New Releases, Your Orders, Customer Service.
+- **All menu:** a left sheet with the same content on every page: Trending, every department, and the account links.
+- **Footer:** Shop, Your account and Departments columns, "Back to top", and the demo notice. Checkout has a minimal header ("Secure checkout") and a compact footer.
+- **Search suggestions:** typing shows matching product titles; Enter or the search button runs the search in the chosen department.
 
-### 5.2 Footer
+### 5.2 Sign in and register
 
-- A "Back to top" band that scrolls to the top.
-- **Four link columns:** Get to Know Us, Make Money with Us, Amazon Payment Products, Let Us Help You.
-  - Your Account, Your Orders, Shipping Rates & Policies, Returns & Replacements and Help go to our pages.
-  - The rest link out.
-- **Locale row:** the logo, then "English", "$ USD - U.S. Dollar" and "United States". They show the current settings; there are no alternatives to pick (section 3, #18).
-- **Sister-brand grid** (Amazon Music, AbeBooks, IMDb and so on), all linking out.
-- Conditions of Use, Privacy Notice, and the copyright line.
-- **Auth and checkout pages** use Amazon's minimal footer instead: Conditions of Use, Privacy Notice, Help, and the copyright line.
+- One screen each: `/signin` (email and password) and `/register` (name, email, password). Show-password toggles replace a "confirm password" field. Errors show per field.
+- After signing in, the shopper returns to the page that sent them (`return_to`).
 
 ### 5.3 Home
 
-- **Hero carousel:** full-width, with left and right arrows and automatic rotation. Each slide links to a department or search.
-- **Category card grid**, overlapping the bottom of the hero:
-  - Four cards per row on desktop, two-column tiles on mobile.
-  - Each card has a title (for example "Plug in with our electronics"), four image tiles with labels, and a chevron.
-  - Tiles link to filtered search results.
-- **"See personalized recommendations" band** (signed out only): "Sign in" and "New customer? Start here."
-- **Signed-in users** see their browsing-history strip instead of the sign-in band.
+- An animated hero carousel of designed slides: clicking the left or right 25% of the slide moves to the previous or next slide, the middle opens it; swipe, autoplay with a progress dot, and a pause button (no autoplay under reduced motion).
+- Department tiles, then "Recently viewed" and "Buy again" rails (hidden when empty), then Today's Deals, Best Sellers and one rail per department. Every card has Add to cart and a wishlist heart. Sections fade in as they scroll into view.
 
-### 5.4 Search results
+### 5.4 Search
 
-- **Results header:** "<count> results for "<query>"" and a "Sort by" dropdown with these options: Featured, Price: Low to High, Price: High to Low, Avg. Customer Review, Newest Arrivals, Best Sellers.
-- **Left filter sidebar:**
-  - Customer Reviews ("4 stars & Up" and so on).
-  - Brands (checkboxes, with "See more" and "See less").
-  - Price (ranges plus min/max inputs).
-  - Department.
-  - Deals (only discounted items).
-  - Filters combine and are reflected in the URL, so results can be shared and reloaded.
-- **Result row:**
-  - Image, brand, and a title linking to the product page.
-  - Rating stars with the rating count.
-  - The price in Amazon's split format (superscript cents), with a struck-through "List" or "Typical" price when discounted.
-  - A delivery line ("FREE delivery <date>" or "$x.xx delivery <date>").
-  - "Only N left in stock - order soon." when stock is low.
-  - A yellow "Add to cart" button that adds without leaving the page and updates the cart count.
-- **Below the results:** pagination, "Need help?" links, and the recommendations band.
-- **Empty results:** Amazon's "No results for <query>" message with suggestions.
+- A responsive product-card grid, 24 per page, with sort (Featured, Price low to high and high to low, Avg. Customer Review, Newest Arrivals, Best Sellers).
+- A filter rail (rating, brand, price range, department, deals only) beside the grid; on phones the filters open in a bottom sheet. An "applied filters" chip bar with "Clear all" sits above the results. Filters live in the URL.
 
 ### 5.5 Product page
 
-- Breadcrumb of the department path.
-- **Gallery:** thumbnail strip on the left, main image, zoom on hover (desktop), "Click to see full view" opens an image viewer, and a share button that copies the link.
-- **Centre column:** title, brand link, rating and count (clicking scrolls to reviews), price block (current price, list price struck through, savings percentage), "About this item" bullets.
-- **Buy box:**
-  - Price.
-  - Delivery line and fastest delivery, both based on the chosen location.
-  - "Deliver to <location>".
-  - Stock status.
-  - Quantity dropdown (1 up to the stock count, at most 30).
-  - "Add to cart" (yellow) and "Buy Now" (orange).
-  - Ships from / Sold by "Amazon.com", Returns "30-day refund/replacement", Payment "Secure transaction".
-  - "Add to List" with a dropdown of the user's lists and "Create a List" (see recon `2-search-result-product-page-scroll-1.png`).
-- **Carousels:** "Customers also viewed these products" and "Products related to this item". Both show real items from the same department, with paging arrows and "Page x of y".
-- **Product information:** collapsible sections, "Features & Specs" and "Item details".
-- **Sticky sub-nav:** appears once scrolled past the buy box (Top, About this item, Similar, Product information, Reviews), with a mini image and title.
-- **Customer reviews:**
-  - Average stars, "x out of 5", global rating count, and a 5-to-1 star histogram with percentages (each bar filters the reviews).
-  - "Review this product" with "Write a customer review".
-  - The review list: reviewer name, stars, headline, date, "Verified Purchase" badge, text, and a "Helpful" button.
-  - "See more reviews".
+- Gallery on the left (thumbnails, zoom, full-screen viewer, share link) and a sticky purchase panel on the right: price and savings, delivery estimate for the chosen ZIP, stock, quantity, Add to cart, Buy now, wishlist heart.
+- Overview / Specs / Reviews tabs; the tab lives in the URL hash. Reviews have a star histogram that filters the list.
+- "You might also like" and related-product rails.
 
-### 5.6 Cart
+### 5.6 Wishlist
 
-- **Adding to cart** (from the product page) goes to the added-to-cart page:
-  - A green check with "Added to cart", a thumbnail, and the cart subtotal.
-  - "Proceed to checkout (n items)" and "Go to Cart".
-  - A carousel of related products.
-  - A right-side mini-cart panel: subtotal, "Go to Cart", item thumbnails with a trash / quantity / plus stepper.
-- **Shopping Cart page:**
-  - Each line has: image, title, stock status, "Gift options not available", the quantity stepper (trash at 1), Delete, Save for later, and Share (copies the product link).
-  - "Saved for later" section, with "Move to cart" and Delete.
-  - Subtotal (n items) and "Proceed to checkout".
-  - A right-hand rail of related products.
-  - An empty-cart state with "Your Amazon Cart is empty" and links to Today's Deals and sign-in.
-- **Guest cart rules:** guests have a cart. On sign-in, the guest cart merges into the user's cart: quantities add up, capped at stock.
-- **Signed-out checkout:** "Proceed to checkout" while signed out goes to sign-in, then returns to checkout.
+- One wishlist. The heart on every card and the product page toggles it instantly and rolls back with a toast if the server refuses. `/wishlist` lists the items with price-drop notes and Add to cart.
 
-### 5.7 Sign in and create account
+### 5.7 Cart
 
-- **"Sign in or create account":** a single field, "Enter mobile number or email", and "Continue". This is Amazon's own flow.
-  - A known email moves to the password step: the email with "Change", then "Password" and "Sign in".
-  - An unknown email moves to "Create account": the email with "Change", then "Your name", "Password (at least 6 characters)" with the hint, "Re-enter password", and "Continue".
-  - A mobile number gets Amazon's "We cannot find an account with that mobile number" message, because accounts are email-only.
-- **Errors inline, in Amazon's alert style:** wrong password, passwords that don't match, a password under 6 characters, a missing name, an invalid email.
-- **After sign-in or sign-up,** the user returns to the page that sent them there (for example checkout).
-- **Sign Out** is in the Account flyout and the side menu.
+- **Cart drawer:** Add to cart on the product page slides the drawer open; quick-add on a card shows a toast with "View cart". The drawer shows the free-shipping progress bar, each line with a quantity stepper and Remove, the subtotal, Checkout and "View full cart". Quantities and the header count change instantly and roll back if the server refuses.
+- **`/cart`:** lines with stepper, Delete, Save for later and Share; the free-shipping bar; "Saved for later" with Move to cart; the subtotal box and Proceed to checkout.
 
-### 5.8 Secure checkout
+### 5.8 Checkout
 
-- **Layout:** a minimal header with the logo, "Secure checkout" (a dropdown that explains how payment data is protected), and the cart link. It has no search bar.
-- **Step 1, Delivery address:**
-  - Pick a saved address, or use "Add a new delivery address".
-  - The address modal has: Country/Region (United States), full name, phone number, street address, unit, city, State dropdown, ZIP code, "Make this my default address", and "Use this address".
-  - Every field is validated.
-- **Step 2, Payment method:** pick a saved card, or add a card through Stripe's card field (name on card, number, expiry, CVC). The card can be saved for later use.
-- **Step 3, Review items and shipping:**
-  - Each item with its image, title, price and quantity.
-  - Delivery speed options per order: FREE Standard or paid Fast (section 6.2), each with its delivery date.
-- **Order summary box:**
-  - Items, Shipping & handling, "Total before tax", "Estimated tax to be collected", and Order total.
-  - A yellow "Place your order" button.
-  - All amounts come from the server.
-- **The small-print block** as on Amazon ("Why has sales tax been applied?" and so on), plus "Back to cart".
-- **Placing an order:**
-  - The payment is confirmed through Stripe.
-  - Only after a successful payment does the server create the order, reduce stock and clear the purchased items from the cart.
-  - A declined card shows Stripe's error inline, and no order is created.
-- **Buy Now** skips the cart and opens checkout with only that product and quantity; the rest of the cart stays as it was.
-- **Confirmation page:** "Order placed, thank you!", the delivery date, the shipping address, and links to "Review or edit your recent orders".
+- One page: **1 Delivery address** (saved addresses or the address form), **2 Delivery speed** (Standard or Fast, each with its date and fee), **3 Payment** (saved cards or Stripe's card field with "Save this card"), beside a sticky **order summary** with the items, the quoted totals and "Place order - $X". The summary says what is still missing when the order can't be placed yet.
+- **Buy now** opens checkout for that product and quantity only; the rest of the cart stays.
+- **Placing the order:** Stripe confirms the payment; only then does the server re-read the PaymentIntent and create the order, reduce stock and clear the purchased cart items in one transaction. A declined card shows Stripe's message and no order is created.
+- **Confirmation page** with the delivery date, address, items and "View order details".
 
-### 5.9 Your Orders
+### 5.9 Orders
 
-- Breadcrumb "Your Account > Your Orders", a "Search all orders" field, and these tabs:
-  - **Orders.**
-  - **Buy Again:** products from past delivered orders, each with Add to cart.
-  - **Not Yet Shipped.**
-  - Amazon's other tabs (Digital Orders, Amazon Pay) link out.
-- Filter: "<n> orders placed in" with "past 30 days", "past 3 months", and each year that has orders.
-- **Order card:**
-  - Header: Order placed date, Total, Ship to (name, with the full address on hover), Order # and "View order details".
-  - Body: status headline ("Arriving Tuesday", "Delivered Sep 22", "Cancelled"), the items, and the actions "Buy it again", "View your item", "Cancel items" (only before shipping) and "Write a product review" (after delivery).
-- **Order details page:** addresses, the payment card's last 4 digits, the item list, and the order summary.
-- **Empty state:** "Looks like you haven't placed an order in the last 3 months."
+- **`/orders`:** tabs for All orders, Not yet delivered and Cancelled, a search by product or order number, and cards with the date, total, recipient, order number, a status badge and the items.
+- **`/orders/[id]`:** the Ordered > Shipped > Out for delivery > Delivered timeline with dates (expected dates for steps not reached), "Cancel order" with an inline confirmation while it hasn't shipped, the items with "Buy it again" (and "Write a review" once delivered), the address, the card's last 4 digits and the totals.
 
-### 5.10 Your Account and its pages
+### 5.10 Account
 
-- **Hub grid, built:** Your Orders, Login & security, Your Addresses, Your Payments, Your Lists, Customer Service.
-- **Hub grid, linked out:** Prime, Your business account, Gift cards, Your Amazon Family, Digital Services and Device Support, Your Messages. The link-list sections below the grid also link out, except items we build.
-- **Login & security:** edit name, email and password. A password change needs the current password.
-- **Your Addresses:** an "Add address" tile, and address cards with Edit, Remove and "Set as Default". The default is marked.
-- **Your Payments:** saved cards with brand, last 4 digits, expiry, name and default status. Add a card through Stripe, remove, set as default.
-- **Your Lists:** the default "Shopping List" is created on first use. Users can create, rename and delete lists; move items to cart; and remove items. Each item shows the price and the date added.
+- **`/account`** with tabs in the URL: **Profile & security** (name, email, password change that needs the current password), **Addresses** (Add address tile, Edit, Remove, Set as default), **Payment methods** (saved cards with Remove and Set as default), **Orders** (the five latest orders).
 
-### 5.11 Browsing history
+### 5.11 Reviews, browsing history, deals
 
-- Product pages a user opens are recorded: for guests on this device, for signed-in users on their account. Guest history merges on sign-in.
-- The "Your browsing history" strip sits above the footer on most pages, with "View or edit your browsing history".
-- **History page:** a grid of viewed products, newest first, with remove per item and "Remove all items".
+- **Reviews:** the Reviews tab shows the form only to a shopper with a non-cancelled order containing the product and no earlier review of it. New reviews carry "Verified purchase" and update the rating on the server.
+- **Browsing history:** product views are recorded (the latest 100 per user), shown as the home "Recently viewed" rail and on `/history` with remove per item and a two-step "Clear all".
+- **Today's Deals:** discounted products with the discount badge, department chips and paging.
 
-### 5.12 Today's Deals and Customer Service
+### 5.12 Customer Service
 
-- **Today's Deals:** a grid of discounted products (list price above current price) with the discount badge, a department filter and sorting.
-- **Customer Service:** Amazon's help hub layout, with topic tiles (Your Orders, Returns and Refunds, Manage Addresses, Payment Settings, Account Settings) that link to the matching pages, plus a searchable help-topics list with static articles covering our policies (section 6).
-
-### 5.13 Mobile web
-
-- Every M page gets a deliberate mobile layout (CLAUDE.md), not a squeezed desktop.
-- **Mobile home, from the recon:**
-  - Top row: hamburger, logo, "Sign in >", person icon, cart with count.
-  - A full-width search bar.
-  - A horizontally scrolling link row (Deals, Lists, Video, Music, Best Sellers, New Releases).
-  - A "Deliver to" row.
-  - The location notice with Dismiss and Change Address.
-  - A hero carousel, then the "Sign in for the best experience" band with "Create an account".
-  - One category card per row, each with a 2x2 image grid.
-  - "Explore Departments", then a "TOP OF PAGE" bar.
-- **Not covered by the recon:** other mobile pages follow the live mobile amazon.com, checked before building.
+- Shortcuts for the three latest orders (Track, Get help, Cancel while allowed); searchable help topics with topic chips; a "Contact us" form (topic, optional order, subject, message) saved as a support request; and the shopper's own requests with Open or Resolved status and "Mark as resolved".
 
 ## 6. Business rules
 
 ### 6.1 Money
 
 - All money is stored in integer cents and calculated on the server only. The client displays server values and never computes a charged amount.
-- Display format is US dollars, split into dollars and superscript cents on product surfaces (for example $24.99).
 
 ### 6.2 Shipping and delivery dates
 
-These follow Amazon US's standard non-Prime rules:
-- **FREE Standard delivery** on orders with an items subtotal of $35 or more. Below $35, Standard costs $6.99 per order.
+- **Free Standard delivery** on orders with an items subtotal of $35 or more. Below $35, Standard costs $6.99 per order. The cart shows how far the shopper is from the threshold.
 - **Fast delivery** costs $9.99 per order, whatever the subtotal.
-- Standard arrives 5 days after the order date and Fast arrives 2 days after. Dates are shown as weekday names in the Amazon style ("Tuesday, Sep 29"). Product and search pages show the Standard date and, when relevant, "Or fastest delivery <Fast date>".
+- Standard arrives 5 days after the order date and Fast arrives 2 days after, shown as weekday names ("Tuesday, Sep 29").
 
 ### 6.3 Tax
 
-"Estimated tax to be collected" is the items subtotal multiplied by the shipping state's base sales tax rate, taken from a fixed per-state table. This approximates Amazon's real tax calculation and is labelled "Estimated" the same way.
+Estimated tax is the items subtotal multiplied by the delivery state's base sales tax rate from a fixed per-state table, labelled "Estimated".
 
 ### 6.4 Order status timeline
 
@@ -295,35 +129,25 @@ Status comes from the time since the order was placed, so nothing runs in the ba
 | On the delivery date, before 6 pm | Out for delivery | No |
 | From 6 pm on the delivery date | Delivered | No |
 
-Times use the server's clock in UTC.
-
-Cancelling sets the status to Cancelled, refunds the Stripe test payment, and puts the stock back.
+Times use the server's clock in UTC. Cancelling refunds the Stripe payment first, then marks the order cancelled and puts the stock back in one transaction.
 
 ### 6.5 Accounts and auth
 
 - Email is unique and case-insensitive. The password is at least 6 characters and stored hashed.
-- The session lives in a secure, http-only cookie. Account, orders, checkout, lists and review pages require sign-in and redirect to sign-in with a return path.
-- Authorisation is enforced on the server for every user-owned resource: a user can only read or change their own cart, orders, addresses, payment methods, lists, reviews and browsing history.
+- The session lives in a secure, http-only cookie. Signed-out visitors are sent to `/signin` with a return path; API routes answer 401.
+- Authorisation is enforced on the server for every user-owned resource: a user can only read or change their own cart, orders, addresses, payment methods, wishlist, reviews, browsing history and support requests.
 
 ### 6.6 Stock
 
-- Each product has a stock count. "Only N left in stock - order soon." shows when stock is 10 or fewer.
-- Quantity selectors are capped at stock (and at 30). Out-of-stock products show "Currently unavailable." and cannot be added to the cart.
+- "Only N left in stock - order soon." shows when stock is 10 or fewer. Quantity selectors are capped at stock and at 30. Out-of-stock products show "Currently unavailable" and can't be added to the cart.
 
 ### 6.7 Reviews
 
-- Signed-in users can review any product, one review per product, which they can edit or delete.
-- "Verified Purchase" is shown when the reviewer has a delivered order containing that product.
-- A product's average rating and rating count combine the dataset's figures with our users' reviews, so a new review moves the numbers.
+- Only buyers can review: the server checks for a non-cancelled order containing the product, allows one review per product, and marks it "Verified purchase". A product's rating combines the dataset's figures with our users' reviews.
 
 ## 7. Quality bar
 
-- The live site works for anyone, signed out or signed up, with no localhost dependency.
-- **Every visible control works:** it goes to a built page, links out to the real site, or runs its action. There are no dead links and no placeholder buttons.
-- **Every screen has proper empty, loading and error states** in Amazon's style, plus labelled inputs, visible focus and keyboard use (Enter submits, Esc closes dialogs).
-- **Pages load fast.** Catalogue pages must feel instant (Step-1 picks the rendering strategy to achieve this).
-
-## 8. Open items for later steps
-
-- **Step-1:** confirm the product dataset and its licence; pick the stack, rendering strategy, database, hosting and Stripe integration; decide where hero and category-card images come from.
-- **Step-3:** exact routes, data model, API contracts, and the ordered slice plan.
+- The live site works for anyone who registers, with no localhost dependency.
+- **Every visible control works:** it goes to a built page or runs its action. There are no dead links and no placeholder buttons.
+- **Actions feel instant:** cart and wishlist changes are optimistic with rollback, and every action confirms with a toast.
+- **Pages load fast:** catalogue pages are cached and personal data streams in behind skeletons.
