@@ -19,7 +19,7 @@ export type HeroSlideConfig = {
 
 const departmentHref = (slug: string) => `${ROUTES.search}?i=${slug}`;
 
-export const DEALS_HREF = `${ROUTES.search}?deals=1`;
+export const DEALS_HREF = ROUTES.deals;
 
 export const HERO_SLIDES: HeroSlideConfig[] = [
   {

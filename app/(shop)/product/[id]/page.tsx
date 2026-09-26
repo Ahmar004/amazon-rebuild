@@ -12,6 +12,8 @@ import { ProductOverview } from "@/components/product/ProductOverview";
 import { SpecsTable } from "@/components/product/SpecsTable";
 import { ReviewSummary } from "@/components/product/ReviewSummary";
 import { ReviewList } from "@/components/product/ReviewList";
+import { ReviewComposer } from "@/components/reviews/ReviewComposer";
+import { ViewTracker } from "@/components/history/ViewTracker";
 import { ProductCardRail } from "@/components/product/ProductCardRail";
 import { ROUTES } from "@/lib/constants/links";
 
@@ -47,6 +49,7 @@ async function ProductPageForParams({ params, searchParams }: ProductPageProps) 
 
   return (
     <div className="mx-auto max-w-[1400px] px-3 py-4 sm:px-6 sm:py-6">
+      <ViewTracker asin={asin} />
       <Breadcrumb categoryPath={product.categoryPath} departmentSlug={product.departmentSlug} />
 
       {/* Phones stack gallery, purchase panel, tabs; from 1024px the panel spans both rows on the
@@ -72,7 +75,12 @@ async function ProductPageForParams({ params, searchParams }: ProductPageProps) 
               specs: <SpecsTable details={product.details} />,
               reviews: (
                 <div className="grid gap-8 md:grid-cols-[260px_minmax(0,1fr)]">
-                  <ReviewSummary average={reviewSummary.average} count={reviewSummary.count} percents={reviewSummary.percents} />
+                  <div>
+                    <ReviewSummary average={reviewSummary.average} count={reviewSummary.count} percents={reviewSummary.percents} />
+                    <Suspense fallback={null}>
+                      <ReviewComposer asin={asin} />
+                    </Suspense>
+                  </div>
                   <Suspense fallback={<div className="skeleton h-[400px] rounded-xl" aria-hidden="true" />}>
                     <ReviewsForParams asin={asin} searchParams={searchParams} />
                   </Suspense>

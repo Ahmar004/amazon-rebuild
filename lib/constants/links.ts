@@ -33,15 +33,17 @@ export function productHref(asin: string): string {
 export const BEST_SELLERS_HREF = `${ROUTES.search}?sort=bestsellers`;
 export const NEW_RELEASES_HREF = `${ROUTES.search}?sort=newest`;
 
-// The quick links next to the All menu. Pages still to come (deals, customer service) are added
-// here by the slice that builds them, so no link ever points at a missing page.
+// The quick links next to the All menu. Pages still to come (customer service) are added here by
+// the slice that builds them, so no link ever points at a missing page.
 export const SUBNAV_LINKS: NavLink[] = [
+  { label: "Today's Deals", href: ROUTES.deals },
   { label: "Best Sellers", href: BEST_SELLERS_HREF },
   { label: "New Releases", href: NEW_RELEASES_HREF },
   { label: "Your Orders", href: ROUTES.orders },
 ];
 
 export const SIDE_MENU_TRENDING: NavLink[] = [
+  { label: "Today's Deals", href: ROUTES.deals },
   { label: "Best Sellers", href: BEST_SELLERS_HREF },
   { label: "New Releases", href: NEW_RELEASES_HREF },
 ];
@@ -49,6 +51,7 @@ export const SIDE_MENU_TRENDING: NavLink[] = [
 export const ACCOUNT_LINKS: NavLink[] = [
   { label: "Your Orders", href: ROUTES.orders },
   { label: "Your Wishlist", href: ROUTES.wishlist },
+  { label: "Browsing history", href: ROUTES.history },
   { label: "Your Cart", href: ROUTES.cart },
 ];
 
@@ -56,6 +59,7 @@ export const FOOTER_COLUMNS: { title: string; links: NavLink[] }[] = [
   {
     title: "Shop",
     links: [
+      { label: "Today's Deals", href: ROUTES.deals },
       { label: "Best Sellers", href: BEST_SELLERS_HREF },
       { label: "New Releases", href: NEW_RELEASES_HREF },
       { label: "All products", href: ROUTES.search },

@@ -1,6 +1,6 @@
 import { sql, type SQL } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
-import { db } from "@/lib/db/client";
+import { db, withTransaction } from "@/lib/db/client";
 import { averageRating, histogramPercents, totalRatings, type StarPercents } from "@/lib/reviews/histogram";
 
 export const REVIEWS_PAGE_SIZE = 8;
@@ -94,4 +94,58 @@ export async function getReviews(asin: string, opts: GetReviewsOptions): Promise
   }));
 
   return { items, total: Number(total) };
+}
+
+// Writing reviews (frontend-rebuild.md C19): only a user with a non-cancelled order containing the
+// product may review it, once. The check, the insert and the rating roll-up run in one
+// transaction, so a product's rating_counts always matches its reviews.
+
+export type ReviewEligibility = "eligible" | "not-purchased" | "already-reviewed";
+
+export const REVIEW_NOT_ALLOWED: Record<Exclude<ReviewEligibility, "eligible">, string> = {
+  "not-purchased": "Only customers who bought this item can review it.",
+  "already-reviewed": "You have already reviewed this product.",
+};
+
+export class ReviewNotAllowedError extends Error {}
+
+const purchased = (userId: string, asin: string) => sql`exists (
+  select 1 from order_items oi join orders o on o.id = oi.order_id
+  where o.user_id = ${userId} and o.cancelled_at is null and oi.asin = ${asin})`;
+const reviewed = (userId: string, asin: string) => sql`exists (
+  select 1 from reviews where user_id = ${userId} and asin = ${asin})`;
+
+type EligibilityRow = { purchased: boolean; reviewed: boolean };
+
+function eligibilityOf(row: EligibilityRow | undefined): ReviewEligibility {
+  if (row?.reviewed) return "already-reviewed";
+  if (!row?.purchased) return "not-purchased";
+  return "eligible";
+}
+
+export async function getReviewEligibility(userId: string, asin: string): Promise<ReviewEligibility> {
+  const result = await db.execute<EligibilityRow>(
+    sql`select ${purchased(userId, asin)} as purchased, ${reviewed(userId, asin)} as reviewed`,
+  );
+  return eligibilityOf(result.rows[0]);
+}
+
+export type NewReview = { userId: string; authorName: string; asin: string; rating: number; title: string; body: string };
+
+export async function createReview(review: NewReview): Promise<void> {
+  await withTransaction(async (tx) => {
+    const check = await tx.execute<EligibilityRow>(
+      sql`select ${purchased(review.userId, review.asin)} as purchased, ${reviewed(review.userId, review.asin)} as reviewed`,
+    );
+    const eligibility = eligibilityOf(check.rows[0]);
+    if (eligibility !== "eligible") throw new ReviewNotAllowedError(REVIEW_NOT_ALLOWED[eligibility]);
+
+    // The unique (asin, user_id) index backs up the check above if two submits race.
+    await tx.execute(sql`
+      insert into reviews (asin, user_id, author_name, rating, title, body, verified, source)
+      values (${review.asin}, ${review.userId}, ${review.authorName}, ${review.rating}, ${review.title}, ${review.body}, true, 'user')`);
+    await tx.execute(sql`
+      update products set rating_counts[${review.rating}::int] = rating_counts[${review.rating}::int] + 1
+      where asin = ${review.asin}`);
+  });
 }

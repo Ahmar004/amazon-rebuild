@@ -2,6 +2,7 @@ import { getCurrentUser } from "@/lib/auth/current-user";
 import { getRecentlyViewed } from "@/lib/data/history";
 import { getBuyAgain } from "@/lib/data/orders";
 import { ProductCardRail } from "@/components/product/ProductCardRail";
+import { ROUTES } from "@/lib/constants/links";
 
 // The signed-in rails on the home page (frontend-rebuild.md C6). They read the session, so the
 // page renders them inside <Suspense>, outside the cached catalogue sections. A rail with nothing
@@ -13,8 +14,8 @@ export async function PersonalRails() {
 
   return (
     <>
-      <ProductCardRail title="Recently viewed" subtitle={`Pick up where you left off, ${user.firstName}`} items={recent} />
-      <ProductCardRail title="Buy again" subtitle="Items from your past orders" items={buyAgain} />
+      <ProductCardRail title="Recently viewed" href={ROUTES.history} subtitle={`Pick up where you left off, ${user.firstName}`} items={recent} />
+      <ProductCardRail title="Buy again" href={ROUTES.orders} subtitle="Items from your past orders" items={buyAgain} />
     </>
   );
 }
