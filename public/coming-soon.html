@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Shopeedo - coming soon</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231f6f5c'/%3E%3Ctext x='16' y='22' font-family='Arial' font-size='18' font-weight='700' fill='%23fff' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E"
+    />
+    <style>
+      :root {
+        --bg: #faf6ee;
+        --card: #fffdf9;
+        --text: #1f2328;
+        --muted: #59636e;
+        --accent: #1f6f5c;
+        --border: #e8e1d3;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0d1117;
+          --card: #161b22;
+          --text: #e6edf3;
+          --muted: #9198a1;
+          --accent: #3fb68b;
+          --border: #30363d;
+        }
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 16px;
+        background: var(--bg);
+        color: var(--text);
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      }
+      main {
+        width: 100%;
+        max-width: 440px;
+        padding: 40px 32px;
+        text-align: center;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+      }
+      .mark {
+        font-size: 34px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin: 0 0 12px;
+      }
+      .mark span { color: var(--accent); }
+      h1 { font-size: 20px; font-weight: 600; margin: 0 0 8px; }
+      p { margin: 0; color: var(--muted); line-height: 1.5; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="mark">Shop<span>eedo</span></div>
+      <h1>Coming soon</h1>
+      <p>We are putting the finishing touches on a new place to shop. Check back shortly.</p>
+    </main>
+  </body>
+</html>

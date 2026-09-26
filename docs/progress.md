@@ -1,5 +1,11 @@
 # Build Progress and Handoff
 
+**2026-09-26: frontend rebuild as Shopeedo.** The client changed the brief. Read `frontend-rebuild.md` (root) first: it has the new requirements, the user's points 1-13 and the approved points C1-C22. The slice history below covers the original Amazon clone build.
+
+**Rebuild slices (roadmap Step-10):**
+- **R0 done.** The live URL is https://shopeedo.vercel.app/ (the old amazon.ahmar9 domain now returns 404). `proxy.ts` rewrites every request to `public/coming-soon.html` when `VERCEL_ENV === "production"`; local dev and preview deploys still serve the full app. R12 deletes `proxy.ts` to go live.
+- **Next: R1** (rebrand, tokens, primitives, themes, remove Amazon links).
+
 Read this first in a new session, then `roadmap.md` (including Rule-0.0A), `docs/remaining-work-finish-strategy.md` for the per-slice session plan, `CLAUDE.md`, and the plan for the slice you're about to build. Last updated 2026-09-19 around 15:55 UTC (20:55 PKT). The 24-hour window ends around 21:50 UTC (02:50 PKT on 2026-09-20) - under 6 hours left.
 
 ## Where things stand
