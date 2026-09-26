@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { formatPrice } from "@/lib/pricing/money";
+import { countLabel } from "@/lib/format/count";
 
 type SubtotalBoxProps = {
   itemCount: number;
@@ -15,7 +16,7 @@ export function SubtotalBox({ itemCount, subtotalCents, checkoutHref }: Subtotal
   return (
     <div className="rounded-xl border border-border bg-surface p-4">
       <p className="text-lg text-fg">
-        Subtotal ({itemCount} {itemCount === 1 ? "item" : "items"}):{" "}
+        Subtotal ({countLabel(itemCount, "item")}):{" "}
         <span className="font-bold">{formatPrice(subtotalCents)}</span>
       </p>
       <Link

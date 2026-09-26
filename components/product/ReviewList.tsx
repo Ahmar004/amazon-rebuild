@@ -3,6 +3,7 @@ import { Stars } from "@/components/product/Stars";
 import { ReviewBody } from "@/components/product/ReviewBody";
 import { REVIEWS_PAGE_SIZE, type Review } from "@/lib/data/reviews";
 import { reviewsUrl, type ReviewsQuery } from "@/lib/reviews/query";
+import { countLabel } from "@/lib/format/count";
 
 type ReviewListProps = {
   reviews: Review[];
@@ -56,7 +57,7 @@ export function ReviewList({ reviews, total, query }: ReviewListProps) {
               </div>
               {review.helpfulCount > 0 && (
                 <p className="mt-2 text-xs text-fg-muted">
-                  {review.helpfulCount} {review.helpfulCount === 1 ? "person" : "people"} found this helpful
+                  {countLabel(review.helpfulCount, "person", "people")} found this helpful
                 </p>
               )}
             </li>

@@ -29,7 +29,8 @@ export type SellerDashboard = {
   recentSales: RecentSale[];
   outOfStock: { asin: string; title: string }[];
   toShip: { orderId: string; asin: string; title: string; quantity: number }[];
-  hasListings: boolean;
+  // False only for someone who has never listed anything, so the page offers "Start selling".
+  hasHistory: boolean;
 };
 
 // The seller's order items on orders that weren't cancelled.
@@ -42,10 +43,11 @@ const SALES = (sellerId: string) => sql`
 export async function getSellerDashboard(sellerId: string, now: Date): Promise<SellerDashboard> {
   const since = new Date(now.getTime() - SALES_CHART_DAYS * 86_400_000);
   const [stats, daily, top, recent, outOfStock, toShip] = await Promise.all([
-    db.execute<{ active_listings: number; any_listing: boolean; units_sold: number; sales_cents: number; to_ship: number }>(sql`
+    db.execute<{ active_listings: number; any_product: boolean; units_sold: number; sales_cents: number; to_ship: number }>(sql`
       select
         (select count(*)::int from products where seller_id = ${sellerId} and status = 'active') as active_listings,
-        exists (select 1 from products where seller_id = ${sellerId} and status <> 'removed') as any_listing,
+        -- Removed listings count: a deleted listing only keeps its row when it has orders.
+        exists (select 1 from products where seller_id = ${sellerId}) as any_product,
         coalesce(sum(oi.quantity), 0)::int as units_sold,
         coalesce(sum(oi.quantity * oi.unit_price_cents), 0)::int as sales_cents,
         (count(*) filter (where oi.shipped_at is null))::int as to_ship
@@ -86,7 +88,7 @@ export async function getSellerDashboard(sellerId: string, now: Date): Promise<S
   const s = stats.rows[0];
   return {
     stats: { activeListings: s.active_listings, unitsSold: s.units_sold, salesCents: s.sales_cents, toShip: s.to_ship },
-    hasListings: s.any_listing,
+    hasHistory: s.any_product,
     daily: dailySeries(daily.rows.map((r) => ({ day: r.day, cents: Number(r.cents), units: Number(r.units) })), SALES_CHART_DAYS, now),
     topListings: top.rows.map((r) => ({ asin: r.asin, title: r.title, imageUrl: r.image ?? "", units: Number(r.units), cents: Number(r.cents) })),
     recentSales: recent.rows.map((r) => ({

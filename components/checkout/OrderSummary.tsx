@@ -2,6 +2,7 @@ import { Lock } from "lucide-react";
 import type { OrderTotals } from "@/lib/pricing/totals";
 import type { CheckoutSourceLine } from "@/lib/checkout/source";
 import { formatPrice } from "@/lib/pricing/money";
+import { countLabel } from "@/lib/format/count";
 
 type OrderSummaryProps = {
   items: CheckoutSourceLine[];
@@ -23,7 +24,7 @@ export function OrderSummary({ items, totals, blocker, placing, updating, error,
   return (
     <aside aria-label="Order summary" className="rounded-xl border border-border bg-surface p-4 shadow-card sm:p-5">
       <h2 className="text-lg font-bold text-fg">
-        Order summary <span className="text-sm font-normal text-fg-muted">({count} {count === 1 ? "item" : "items"})</span>
+        Order summary <span className="text-sm font-normal text-fg-muted">({countLabel(count, "item")})</span>
       </h2>
 
       <ul className="mt-3 max-h-[260px] divide-y divide-border overflow-y-auto">

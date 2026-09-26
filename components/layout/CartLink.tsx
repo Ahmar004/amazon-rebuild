@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
 import { ROUTES } from "@/lib/constants/links";
 import { useCart } from "@/components/cart/CartProvider";
+import { countLabel } from "@/lib/format/count";
 
 const WRAPPER = "relative flex shrink-0 items-center gap-2 rounded-md px-2 py-1.5 text-fg hover:bg-surface-muted";
 
@@ -22,8 +23,8 @@ function CartIcon({ count }: { count: number }) {
           </span>
         )}
       </span>
-      <span className="hidden text-sm font-semibold sm:inline">Cart</span>
-      <span className="sr-only">({count} items)</span>
+      <span className="sr-only text-sm font-semibold sm:not-sr-only">Cart</span>
+      <span className="sr-only">({countLabel(count, "item")})</span>
     </>
   );
 }

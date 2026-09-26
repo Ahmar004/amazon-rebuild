@@ -72,7 +72,8 @@ MUST follow rule-0.0A now to avoid high token usage, we have to broke all remain
 | `npm run build` | Production build (needs `DATABASE_URL`, because cached catalogue pages prerender from the database) |
 | `npm run lint` / `npm run typecheck` | ESLint / route type generation plus `tsc --noEmit` |
 | `npm test` | Vitest unit tests (`tests/unit`); one file: `npx vitest run tests/unit/<path>.test.ts` |
-| `npm run e2e` | Playwright (`tests/e2e`), desktop and mobile projects; set `E2E_BASE_URL` to test a deployment |
+| `npm run e2e` | Playwright (`tests/e2e`) in the installed Chrome, desktop and mobile projects, real Stripe test payments; set `E2E_BASE_URL` to test a deployment or a `next start` build. Each test registers an `e2e-` account and the global teardown deletes them with their orders and listings |
+| `npm run load:check -- <baseUrl> [concurrency] [perRoute]` | Concurrent signed-in requests at the main read paths, printing status codes and p50/p95 |
 | `npm run db:generate` / `npm run db:migrate` | Create a migration from `lib/db/schema.ts` / apply migrations to `DATABASE_URL` |
 | `npm run catalogue:import` | Rebuild `data/catalogue.json.gz` (12k products, 24 categories) from the Hugging Face dataset (streams several GB, about 20 minutes) |
 | `npm run db:seed` | Load `data/catalogue.json.gz` into an empty database (`-- --reset` reloads the catalogue and empties carts and lists) |

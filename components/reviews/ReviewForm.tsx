@@ -7,6 +7,7 @@ import { Input, inputClass } from "@/components/ui/Input";
 import { useToast } from "@/components/ui/Toast";
 import { useReviewForm } from "@/hooks/useReviewForm";
 import { REVIEW_LIMITS } from "@/lib/constants/reviews";
+import { countLabel } from "@/lib/format/count";
 
 const STARS = [1, 2, 3, 4, 5] as const;
 const STAR_LABELS = ["", "Poor", "Fair", "Good", "Very good", "Excellent"];
@@ -39,7 +40,7 @@ export function ReviewForm({ asin }: { asin: string }) {
               <input type="radio" name="rating" value={n} checked={rating === n} onChange={() => setRating(n)} className="sr-only" />
               <Star size={26} aria-hidden="true" className={`transition ${n <= shown ? "fill-star text-star" : "text-border-strong"}`} />
               <span className="sr-only">
-                {n} {n === 1 ? "star" : "stars"}
+                {countLabel(n, "star")}
               </span>
             </label>
           ))}

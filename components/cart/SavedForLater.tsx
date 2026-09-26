@@ -4,6 +4,7 @@ import { formatPrice } from "@/lib/pricing/money";
 import { SavedItemActions } from "@/components/cart/CartLineActions";
 import type { CartLine } from "@/lib/data/cart";
 import { productHref } from "@/lib/constants/links";
+import { countLabel } from "@/lib/format/count";
 
 type SavedForLaterProps = {
   items: CartLine[];
@@ -16,7 +17,7 @@ export function SavedForLater({ items }: SavedForLaterProps) {
   return (
     <div className="mt-6 rounded-xl border border-border bg-surface p-4">
       <h2 className="border-b border-border pb-3 text-lg font-bold text-fg">
-        Saved for later ({items.length} {items.length === 1 ? "item" : "items"})
+        Saved for later ({countLabel(items.length, "item")})
       </h2>
 
       {items.map((item) => (

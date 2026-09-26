@@ -47,7 +47,7 @@ async function Dashboard() {
   const user = await requireUser(ROUTES.sellerDashboard);
   const data = await getSellerDashboard(user.id, new Date());
 
-  if (!data.hasListings) {
+  if (!data.hasHistory) {
     return (
       <EmptyState icon={Store} title="Start selling on Shopeedo" action={{ label: "Sell your first item", href: ROUTES.sellItem }}>
         List something in a couple of minutes. Your sales, best sellers and orders to ship will show up here.

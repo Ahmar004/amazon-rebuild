@@ -7,6 +7,7 @@ import { ROUTES } from "@/lib/constants/links";
 import { buttonClass } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ListingList } from "@/components/listings/ListingList";
+import { countLabel } from "@/lib/format/count";
 
 export const metadata = { title: "Your listings - Shopeedo" };
 
@@ -44,7 +45,7 @@ async function Listings() {
   return (
     <>
       <p className="mb-4 mt-0.5 text-sm text-fg-muted">
-        {listings.length} {listings.length === 1 ? "listing" : "listings"}
+        {countLabel(listings.length, "listing")}
       </p>
       <ListingList listings={listings} />
     </>

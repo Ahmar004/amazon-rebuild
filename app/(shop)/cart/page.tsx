@@ -10,6 +10,7 @@ import { SubtotalBox } from "@/components/cart/SubtotalBox";
 import { EmptyCart } from "@/components/cart/EmptyCart";
 import { FreeShippingBar } from "@/components/cart/FreeShippingBar";
 import { freeShippingProgress } from "@/lib/pricing/shipping";
+import { countLabel } from "@/lib/format/count";
 
 // /cart (recon docs/recon/4-shopping-cart-scroll-*.png). Reads the cart_token cookie via
 // getCartOwner, so it renders inside <Suspense> rather than under 'use cache' (CLAUDE.md).
@@ -38,7 +39,7 @@ async function CartPageContent() {
     );
   }
 
-  const itemsLabel = `${cart.itemCount} ${cart.itemCount === 1 ? "item" : "items"}`;
+  const itemsLabel = countLabel(cart.itemCount, "item");
 
   return (
     <div className="min-h-[60vh] bg-bg px-4 py-6">

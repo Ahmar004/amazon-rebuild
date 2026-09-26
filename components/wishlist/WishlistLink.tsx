@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Heart } from "lucide-react";
 import { useWishlist } from "@/components/wishlist/WishlistProvider";
 import { ROUTES } from "@/lib/constants/links";
+import { countLabel } from "@/lib/format/count";
 
 // Header heart with the wishlist count, linking to /wishlist.
 export function WishlistLink() {
@@ -21,8 +22,8 @@ export function WishlistLink() {
           </span>
         )}
       </span>
-      <span className="hidden lg:inline">Wishlist</span>
-      <span className="sr-only">({count} items)</span>
+      <span className="sr-only lg:not-sr-only">Wishlist</span>
+      <span className="sr-only">({countLabel(count, "item")})</span>
     </Link>
   );
 }

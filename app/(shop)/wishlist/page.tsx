@@ -7,6 +7,7 @@ import { formatPrice } from "@/lib/pricing/money";
 import { ROUTES } from "@/lib/constants/links";
 import { ProductCard } from "@/components/product/ProductCard";
 import { buttonClass } from "@/components/ui/Button";
+import { countLabel } from "@/lib/format/count";
 
 export const metadata = { title: "Your Wishlist - Shopeedo" };
 
@@ -43,7 +44,7 @@ async function WishlistItems() {
   return (
     <>
       <p className="mt-0.5 text-sm text-fg-muted">
-        {items.length} {items.length === 1 ? "item" : "items"}
+        {countLabel(items.length, "item")}
       </p>
       <ul className="stagger-in mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
         {items.map((item) => (

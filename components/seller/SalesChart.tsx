@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { niceTicks, type DayTotal } from "@/lib/seller/chart";
 import { formatCompactPrice, formatPrice } from "@/lib/pricing/money";
+import { countLabel } from "@/lib/format/count";
 
 const SHORT_DATE = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
 const LONG_DATE = new Intl.DateTimeFormat("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" });
@@ -37,7 +38,7 @@ export function SalesChart({ days }: { days: DayTotal[] }) {
           <ol className="absolute inset-0 flex items-end" aria-label="Sales per day">
             {days.map((day, index) => {
               const height = topCents > 0 ? (day.cents / topCents) * 100 : 0;
-              const label = `${LONG_DATE.format(dateOf(day.day))}: ${formatPrice(day.cents)}, ${day.units} ${day.units === 1 ? "unit" : "units"}`;
+              const label = `${LONG_DATE.format(dateOf(day.day))}: ${formatPrice(day.cents)}, ${countLabel(day.units, "unit")}`;
               return (
                 <li key={day.day} className="relative flex h-full flex-1 justify-center">
                   <button
@@ -70,7 +71,7 @@ export function SalesChart({ days }: { days: DayTotal[] }) {
                       <span className="block text-fg-muted">{LONG_DATE.format(dateOf(day.day))}</span>
                       <span className="block font-semibold">{formatPrice(day.cents)}</span>
                       <span className="block text-fg-muted">
-                        {day.units} {day.units === 1 ? "unit" : "units"} sold
+                        {countLabel(day.units, "unit")} sold
                       </span>
                     </span>
                   )}
