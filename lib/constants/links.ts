@@ -6,13 +6,15 @@ export type NavLink = {
   href: string;
 };
 
+// Clean, readable paths (frontend-rebuild.md C13).
 export const ROUTES = {
   home: "/",
-  search: "/s",
-  signIn: "/ap/signin",
-  register: "/ap/register",
-  account: "/your-account",
-  orders: "/your-orders",
+  search: "/search",
+  product: "/product",
+  signIn: "/signin",
+  register: "/register",
+  account: "/account",
+  orders: "/orders",
   cart: "/cart",
   checkout: "/checkout",
   lists: "/lists",
@@ -20,6 +22,13 @@ export const ROUTES = {
   deals: "/deals",
   customerService: "/customer-service",
 } as const;
+
+// Pages anyone can open without signing in (point 12: everything else needs an account).
+export const PUBLIC_PATHS: string[] = [ROUTES.signIn, ROUTES.register];
+
+export function productHref(asin: string): string {
+  return `${ROUTES.product}/${encodeURIComponent(asin)}`;
+}
 
 export const BEST_SELLERS_HREF = `${ROUTES.search}?sort=bestsellers`;
 export const NEW_RELEASES_HREF = `${ROUTES.search}?sort=newest`;

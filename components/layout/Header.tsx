@@ -1,49 +1,53 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { Package } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
-import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { SearchBar } from "@/components/layout/SearchBar";
-import { navItemClass } from "@/components/layout/navItemClass";
-import { ROUTES } from "@/lib/constants/links";
+import { NavAnchor } from "@/components/layout/NavAnchor";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { ROUTES, SUBNAV_LINKS } from "@/lib/constants/links";
 import type { Department } from "@/lib/data/departments";
 
 type HeaderProps = {
   departments: Department[];
-  /** Delivery-location slot; Task 3 fills it. */
-  deliverTo: ReactNode;
-  /** Cart slot; app/(shop)/layout.tsx fills it (Slice 5 will stream the real count). */
-  cartLink: ReactNode;
-  /** "Hello, sign in / Account & Lists" slot (Slice 6): app/(shop)/layout.tsx fills it with a
-   * Suspense-wrapped Greeting, since it reads the session. */
+  /** The All menu, account menu and cart read the session or cart cookie, so the layout passes
+   * them in wrapped in <Suspense>. */
+  allMenu: ReactNode;
   accountMenu: ReactNode;
+  cartLink: ReactNode;
 };
 
-// #nav-belt: 60px tall, bg-inverse. Server component; SearchBar, ThemeToggle and AccountFlyout
-// are the client islands it composes. Hidden below 768px, where HeaderMobile takes over
-// (app/(shop)/layout.tsx, Task 4).
-export function Header({ departments, deliverTo, cartLink, accountMenu }: HeaderProps) {
+// One fluid, sticky header for every screen size (C9): menu, logo, search, theme, account, orders
+// and cart. The search bar sits inline from 768px and wraps onto its own full-width row below it
+// (a single element, re-ordered with CSS). The quick-links row scrolls sideways on small screens.
+export function Header({ departments, allMenu, accountMenu, cartLink }: HeaderProps) {
   return (
-    <header id="nav-belt" className="hidden h-[60px] items-center gap-1 bg-inverse px-[10px] md:flex">
-      <Link href={ROUTES.home} className={`flex shrink-0 flex-col justify-center ${navItemClass}`}>
-        <Logo tone="inverse" />
-      </Link>
-
-      {deliverTo}
-
-      <SearchBar departments={departments} />
-
-      <ThemeToggle className="text-white hover:bg-inverse-hover" />
-      {accountMenu}
-
-      <Link
-        href={ROUTES.orders}
-        className={`flex shrink-0 flex-col justify-center ${navItemClass}`}
-      >
-        <span className="whitespace-nowrap text-xs leading-[14px] text-white">Returns</span>
-        <span className="whitespace-nowrap text-sm font-bold leading-[15px] text-white">&amp; Orders</span>
-      </Link>
-
-      {cartLink}
+    <header className="sticky top-0 z-40 border-b border-border bg-surface">
+      <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-x-2 gap-y-2 px-3 py-2.5 sm:gap-x-3 sm:px-6">
+        {allMenu}
+        <Link href={ROUTES.home} aria-label="Shopeedo home" className="shrink-0 rounded-md">
+          <Logo />
+        </Link>
+        <div className="order-last flex w-full md:order-none md:w-auto md:flex-1">
+          <SearchBar departments={departments} />
+        </div>
+        <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
+          <ThemeToggle className="text-fg hover:bg-surface-muted" />
+          {accountMenu}
+          <Link href={ROUTES.orders} className="hidden h-10 items-center gap-1.5 rounded-md px-2 text-sm font-semibold text-fg hover:bg-surface-muted lg:inline-flex">
+            <Package size={20} aria-hidden="true" />
+            Orders
+          </Link>
+          {cartLink}
+        </div>
+      </div>
+      <nav aria-label="Quick links" className="border-t border-border">
+        <div className="scrollbar-hide mx-auto flex max-w-[1400px] gap-1 overflow-x-auto px-3 py-1.5 sm:px-6">
+          {SUBNAV_LINKS.map((link) => (
+            <NavAnchor key={link.href} link={link} className="shrink-0 rounded-full px-3 py-1 text-sm text-fg-muted hover:bg-surface-muted hover:text-fg" />
+          ))}
+        </div>
+      </nav>
     </header>
   );
 }

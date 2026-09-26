@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Stars } from "@/components/product/Stars";
 import { Price } from "@/components/product/Price";
 import type { ProductDetail } from "@/lib/data/products";
+import { ROUTES } from "@/lib/constants/links";
 
 type TitleBlockProps = {
   product: ProductDetail;
@@ -18,7 +19,7 @@ const BOOKS_DEPARTMENT_SLUG = "books";
 // column). Reuses Stars and Price from Slice 3 rather than duplicating their markup.
 export function TitleBlock({ product, ratingAverage, ratingCount }: TitleBlockProps) {
   const isBook = product.departmentSlug === BOOKS_DEPARTMENT_SLUG;
-  const brandHref = `/s?k=${encodeURIComponent(product.brand)}`;
+  const brandHref = `${ROUTES.search}?k=${encodeURIComponent(product.brand)}`;
 
   return (
     <div>

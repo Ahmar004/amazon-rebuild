@@ -1,23 +1,17 @@
-import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Footer } from "@/components/layout/Footer";
-import { ROUTES } from "@/lib/constants/links";
 
-// Shared shell for /ap/signin, /ap/signin/password and /ap/register (docs/design.md 6.6: "The
-// auth layout shows the logo, the box, the minimal footer, and SafetyNotice under the box").
-// Mobile is the same centred box at full width minus 16px margins (plan's Mobile note), which
-// falls out of `px-4` on the wrapper plus each page's own `max-w-[350px]` box.
+// Shell for /signin and /register: the logo and theme switch on top, the centred auth card, and
+// the compact footer with the demo notice. No links into the store, since it needs an account.
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col bg-bg">
-      <div className="flex flex-1 flex-col items-center px-4 py-8">
-        <Link href={ROUTES.home} className="mb-6">
-          <Logo />
-        </Link>
-
-        {children}
-      </div>
-
+      <header className="mx-auto flex w-full max-w-[1400px] items-center justify-between px-4 py-4 sm:px-6">
+        <Logo />
+        <ThemeToggle className="text-fg hover:bg-surface-muted" />
+      </header>
+      <main className="flex flex-1 items-start justify-center px-4 py-6 sm:items-center">{children}</main>
       <Footer compact />
     </div>
   );

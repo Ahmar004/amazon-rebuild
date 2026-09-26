@@ -4,6 +4,7 @@ import { Price } from "@/components/product/Price";
 import { imageAt } from "@/lib/assets";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import type { ProductSummary } from "@/lib/data/products";
+import { productHref } from "@/lib/constants/links";
 
 type ProductTileProps = {
   item: ProductSummary;
@@ -14,7 +15,7 @@ const TILE_WIDTH = 180;
 // One carousel card: image, a title link clamped to 3 lines, stars + count, price and an
 // "Add to cart" button (docs/spec.md 5.5). No "Sponsored" label (CLAUDE.md).
 export function ProductTile({ item }: ProductTileProps) {
-  const href = `/dp/${item.asin}`;
+  const href = productHref(item.asin);
 
   return (
     <div className="shrink-0" style={{ width: TILE_WIDTH }}>

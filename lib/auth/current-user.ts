@@ -8,7 +8,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { sessions, users } from "@/lib/db/schema";
 import { SESSION_COOKIE } from "@/lib/auth/session";
-import { ROUTES } from "@/lib/constants/links";
+import { signInHref } from "@/lib/auth/gate";
 
 export type SessionUser = { id: string; email: string; name: string; firstName: string };
 
@@ -42,9 +42,9 @@ export const getCurrentUser = cache(async (): Promise<SessionUser | null> => {
 });
 
 // Used by pages that require a signed-in user (checkout, account pages in later slices):
-// redirects to /ap/signin?return_to=<encoded returnTo> when signed out, per docs/design.md 5.2.
+// redirects to /signin?return_to=<encoded returnTo> when signed out.
 export async function requireUser(returnTo: string): Promise<SessionUser> {
   const user = await getCurrentUser();
-  if (!user) redirect(`${ROUTES.signIn}?return_to=${encodeURIComponent(returnTo)}`);
+  if (!user) redirect(signInHref(returnTo));
   return user;
 }

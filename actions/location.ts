@@ -1,15 +1,13 @@
 "use server";
 
-// Server actions behind the "Deliver to" header block and its LocationModal (slice 1, task 3).
-// setLocation validates and geocodes a zip, then persists it to the deliver_to cookie;
-// dismissLocationPrompt just flips loc_prompt so the first-visit popover doesn't come back.
+// Server action behind LocationModal (the delivery ZIP on the product page, C17): validates and
+// geocodes a zip, then persists it to the deliver_to cookie.
 import { cookies } from "next/headers";
 import {
   isValidZip,
   lookupZip,
   serializeLocation,
   LOCATION_COOKIE,
-  LOCATION_PROMPT_COOKIE,
   type DeliveryLocation,
 } from "@/lib/location";
 
@@ -40,22 +38,6 @@ export async function setLocation(
     sameSite: "lax",
     httpOnly: false,
   });
-  store.set(LOCATION_PROMPT_COOKIE, "1", {
-    path: "/",
-    maxAge: ONE_YEAR_SECONDS,
-    sameSite: "lax",
-    httpOnly: false,
-  });
 
   return { ok: true, location };
-}
-
-export async function dismissLocationPrompt(): Promise<void> {
-  const store = await cookies();
-  store.set(LOCATION_PROMPT_COOKIE, "1", {
-    path: "/",
-    maxAge: ONE_YEAR_SECONDS,
-    sameSite: "lax",
-    httpOnly: false,
-  });
 }

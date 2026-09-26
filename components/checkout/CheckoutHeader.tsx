@@ -15,9 +15,9 @@ export function CheckoutHeader({ cartLink }: { cartLink: ReactNode }) {
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <header className="relative flex h-[60px] items-center justify-between bg-inverse px-4">
+    <header className="relative flex h-16 items-center justify-between border-b border-border bg-surface px-4 sm:px-6">
       <Link href={ROUTES.home} className="shrink-0">
-        <Logo tone="inverse" />
+        <Logo />
       </Link>
 
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -26,7 +26,7 @@ export function CheckoutHeader({ cartLink }: { cartLink: ReactNode }) {
           type="button"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
-          className="flex items-center gap-1 whitespace-nowrap text-lg font-bold text-white"
+          className="flex items-center gap-1 whitespace-nowrap text-base font-bold text-fg sm:text-lg"
         >
           Secure checkout
           <svg

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Stars } from "@/components/product/Stars";
 import { toSearchUrl, type SearchQuery } from "@/lib/validation/search";
 import type { Department } from "@/lib/data/departments";
+import { ROUTES } from "@/lib/constants/links";
 
 type FilterSidebarProps = {
   query: SearchQuery;
@@ -150,7 +151,7 @@ function FilterGroup({ title, active, query, clearPatch, children }: FilterGroup
 
 function PriceForm({ query }: { query: SearchQuery }) {
   return (
-    <form action="/s" method="get" className="mt-2 flex items-center gap-1">
+    <form action={ROUTES.search} method="get" className="mt-2 flex items-center gap-1">
       {query.k && <input type="hidden" name="k" value={query.k} />}
       {query.dept && <input type="hidden" name="i" value={query.dept} />}
       <label className="sr-only" htmlFor="pmin">

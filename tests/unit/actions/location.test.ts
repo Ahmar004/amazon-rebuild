@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { LOCATION_COOKIE, LOCATION_PROMPT_COOKIE } from "@/lib/location";
+import { LOCATION_COOKIE } from "@/lib/location";
 
 const cookieStore = {
   get: vi.fn(),
@@ -11,7 +11,7 @@ vi.mock("next/headers", () => ({
   cookies: vi.fn(async () => cookieStore),
 }));
 
-const { setLocation, dismissLocationPrompt } = await import("@/actions/location");
+const { setLocation } = await import("@/actions/location");
 
 const INVALID_ZIP_ERROR = "Please enter a valid US zip code";
 
@@ -39,7 +39,7 @@ describe("setLocation", () => {
     expect(cookieStore.set).not.toHaveBeenCalled();
   });
 
-  it("sets both cookies and returns the location for a good zip", async () => {
+  it("sets the delivery cookie and returns the location for a good zip", async () => {
     const fetcher = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({
@@ -59,24 +59,6 @@ describe("setLocation", () => {
       JSON.stringify({ zip: "90210", city: "Beverly Hills", state: "CA" }),
       expect.objectContaining({ path: "/", sameSite: "lax", httpOnly: false }),
     );
-    expect(cookieStore.set).toHaveBeenCalledWith(
-      LOCATION_PROMPT_COOKIE,
-      "1",
-      expect.objectContaining({ path: "/", sameSite: "lax" }),
-    );
-  });
-});
-
-describe("dismissLocationPrompt", () => {
-  it("sets the loc_prompt cookie", async () => {
-    cookieStore.set.mockClear();
-
-    await dismissLocationPrompt();
-
-    expect(cookieStore.set).toHaveBeenCalledWith(
-      LOCATION_PROMPT_COOKIE,
-      "1",
-      expect.objectContaining({ path: "/", sameSite: "lax" }),
-    );
+    expect(cookieStore.set).toHaveBeenCalledTimes(1);
   });
 });

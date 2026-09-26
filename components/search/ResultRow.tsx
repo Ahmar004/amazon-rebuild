@@ -7,6 +7,7 @@ import { formatPrice } from "@/lib/pricing/money";
 import { FREE_SHIPPING_THRESHOLD_CENTS, shippingCents } from "@/lib/pricing/shipping";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import type { ProductSummary } from "@/lib/data/products";
+import { productHref } from "@/lib/constants/links";
 
 const LOW_STOCK_THRESHOLD = 10;
 
@@ -18,7 +19,7 @@ type ResultRowProps = {
 // One search result: image, title, rating, price, delivery line and an "Add to cart" button,
 // list layout on desktop and a 2-column layout on mobile (docs/design.md 6.3).
 export function ResultRow({ item, now }: ResultRowProps) {
-  const href = `/dp/${item.asin}`;
+  const href = productHref(item.asin);
   const freeShipping = item.priceCents >= FREE_SHIPPING_THRESHOLD_CENTS;
   const eta = formatDeliveryDate(deliveryDate(now, "standard"));
 

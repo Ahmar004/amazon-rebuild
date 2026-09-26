@@ -4,12 +4,12 @@ import { formatPrice } from "@/lib/pricing/money";
 type SubtotalBoxProps = {
   itemCount: number;
   subtotalCents: number;
-  /** Where "Proceed to checkout" goes: /checkout when signed in, otherwise /ap/signin with
-   * return_to=/checkout (docs/design.md 6.5, Slice 6). */
+  /** Where "Proceed to checkout" goes: /checkout when signed in, otherwise /signin with
+   * return_to=/checkout */
   checkoutHref: string;
 };
 
-// The right rail on /cart: "Subtotal (n items): $x" and the yellow "Proceed to checkout" button.
+// The right rail on /cart: "Subtotal (n items): $x" and the "Proceed to checkout" button.
 // Checkout itself arrives in Slice 7; Slice 6 makes signed-out visitors sign in first.
 export function SubtotalBox({ itemCount, subtotalCents, checkoutHref }: SubtotalBoxProps) {
   return (

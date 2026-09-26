@@ -12,7 +12,7 @@ export type UserRow = {
 };
 
 // Emails are stored lowercased (CLAUDE.md); callers pass an already-lowercased, trimmed email
-// (lib/validation/auth.ts's parseIdentifier/registerSchema do that normalisation).
+// (lib/validation/auth.ts's schemas do that normalisation).
 export async function findUserByEmail(email: string): Promise<UserRow | null> {
   const [row] = await db.select().from(users).where(eq(users.email, email)).limit(1);
   return row ?? null;

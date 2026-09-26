@@ -18,11 +18,11 @@ import { ReviewList } from "@/components/product/ReviewList";
 // (plan: "generateStaticParams returns getTopAsins(200)").
 export async function generateStaticParams() {
   const asins = await getTopAsins(200);
-  return asins.map((asin) => ({ asin }));
+  return asins.map((id) => ({ id }));
 }
 
 type ProductPageProps = {
-  params: Promise<{ asin: string }>;
+  params: Promise<{ id: string }>;
   searchParams: Promise<RawReviewsParams>;
 };
 
@@ -38,7 +38,7 @@ export default function ProductPage({ params, searchParams }: ProductPageProps) 
 }
 
 async function ProductPageForParams({ params, searchParams }: ProductPageProps) {
-  const { asin } = await params;
+  const { id: asin } = await params;
   const product = await getProduct(asin);
   if (!product) notFound();
 

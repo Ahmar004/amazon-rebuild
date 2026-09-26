@@ -3,8 +3,7 @@
 import { Suspense, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { Department } from "@/lib/data/departments";
-import { CaretDown } from "@/components/layout/CaretDown";
-import { SearchIcon } from "@/components/layout/SearchIcon";
+import { ChevronDown, Search } from "lucide-react";
 import { useTypeahead } from "@/hooks/useTypeahead";
 import { ROUTES } from "@/lib/constants/links";
 
@@ -12,7 +11,7 @@ type SearchBarProps = {
   departments: Department[];
 };
 
-// useSearchParams() (used to keep the field synced with /s) needs a Suspense boundary, since its
+// useSearchParams() (used to keep the field synced with /search) needs a Suspense boundary, since its
 // value is only known at request time. SearchBarFallback is the same static shell so there is no
 // layout shift while it resolves.
 export function SearchBar({ departments }: SearchBarProps) {
@@ -102,7 +101,7 @@ function SearchBarInner({ departments }: SearchBarProps) {
           type="button"
           aria-label="Close search suggestions"
           onClick={() => setOpen(false)}
-          className="fixed inset-0 top-[120px] z-30 hidden bg-black/50 md:block"
+          className="fixed inset-0 z-30 hidden bg-overlay md:block"
         />
       )}
 
@@ -111,11 +110,11 @@ function SearchBarInner({ departments }: SearchBarProps) {
         action={ROUTES.search}
         method="get"
         onSubmit={handleSubmit}
-        className="relative z-40 flex h-10 flex-1 rounded focus-within:ring-[3px] focus-within:ring-accent"
+        className="relative z-40 flex h-10 flex-1 rounded-lg border border-border-strong bg-surface focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/30"
       >
-        <div className="relative flex shrink-0 items-center rounded-l border-r border-border bg-surface-muted pl-3 pr-5 text-xs text-fg-muted">
+        <div className="relative hidden shrink-0 items-center rounded-l-lg border-r border-border bg-surface-muted pl-3 pr-3 text-xs text-fg-muted sm:flex">
           <span className="whitespace-nowrap">{selectedLabel}</span>
-          <CaretDown className="ml-1.5" />
+          <ChevronDown size={14} className="ml-1" aria-hidden="true" />
           <select
             ref={selectRef}
             name="i"
@@ -146,22 +145,22 @@ function SearchBarInner({ departments }: SearchBarProps) {
           onFocus={() => setOpen(true)}
           onKeyDown={handleKeyDown}
           placeholder="Search Shopeedo"
-          className="min-w-0 flex-1 border-0 bg-surface pl-[10px] text-[15px] text-fg placeholder:text-fg-muted outline-none"
+          className="min-w-0 flex-1 rounded-l-lg border-0 bg-transparent pl-3 text-[15px] text-fg placeholder:text-fg-muted outline-none sm:rounded-none"
         />
 
         <button
           type="submit"
           aria-label="Go"
-          className="flex h-10 w-[45px] shrink-0 items-center justify-center rounded-r bg-accent text-accent-fg hover:bg-accent-hover"
+          className="-m-px flex h-10 w-12 shrink-0 items-center justify-center rounded-r-lg bg-accent text-accent-fg hover:bg-accent-hover"
         >
-          <SearchIcon size={22} />
+          <Search size={20} aria-hidden="true" />
         </button>
 
         {showSuggestions && (
           <ul
             role="listbox"
             aria-label="Search suggestions"
-            className="absolute left-0 right-[45px] top-full mt-1 max-h-[400px] overflow-y-auto rounded border border-border bg-surface shadow-lg"
+            className="absolute left-0 right-12 top-full mt-2 max-h-[400px] overflow-y-auto rounded-xl border border-border bg-surface py-1 shadow-pop"
           >
             {suggestions.map((suggestion, index) => {
               const matchLength = query.trim().length;
@@ -178,7 +177,7 @@ function SearchBarInner({ departments }: SearchBarProps) {
                       index === activeIndex ? "bg-surface-muted" : ""
                     }`}
                   >
-                    <SearchIcon size={14} />
+                    <Search size={14} aria-hidden="true" className="shrink-0 text-fg-muted" />
                     <span>
                       {typed}
                       <b>{rest}</b>
@@ -202,11 +201,11 @@ function SearchBarFallback({ departments }: SearchBarProps) {
     <form
       action={ROUTES.search}
       method="get"
-      className="flex h-10 flex-1 rounded focus-within:ring-[3px] focus-within:ring-accent"
+      className="flex h-10 flex-1 rounded-lg border border-border-strong bg-surface focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/30"
     >
-      <div className="relative flex shrink-0 items-center rounded-l border-r border-border bg-surface-muted pl-3 pr-5 text-xs text-fg-muted">
+      <div className="relative hidden shrink-0 items-center rounded-l-lg border-r border-border bg-surface-muted pl-3 pr-3 text-xs text-fg-muted sm:flex">
         <span className="whitespace-nowrap">All</span>
-        <CaretDown className="ml-1.5" />
+        <ChevronDown size={14} className="ml-1" aria-hidden="true" />
         <select name="i" aria-label="Search in department" defaultValue="" className="absolute inset-0 h-full w-full cursor-pointer opacity-0">
           <option value="">All Departments</option>
           {departments.map((department) => (
@@ -225,15 +224,15 @@ function SearchBarFallback({ departments }: SearchBarProps) {
         name="k"
         type="text"
         placeholder="Search Shopeedo"
-        className="min-w-0 flex-1 border-0 bg-surface pl-[10px] text-[15px] text-fg placeholder:text-fg-muted outline-none"
+        className="min-w-0 flex-1 rounded-l-lg border-0 bg-transparent pl-3 text-[15px] text-fg placeholder:text-fg-muted outline-none sm:rounded-none"
       />
 
       <button
         type="submit"
         aria-label="Go"
-        className="flex h-10 w-[45px] shrink-0 items-center justify-center rounded-r bg-accent text-accent-fg hover:bg-accent-hover"
+        className="-m-px flex h-10 w-12 shrink-0 items-center justify-center rounded-r-lg bg-accent text-accent-fg hover:bg-accent-hover"
       >
-        <SearchIcon size={22} />
+        <Search size={20} aria-hidden="true" />
       </button>
     </form>
   );

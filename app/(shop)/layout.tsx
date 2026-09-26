@@ -1,65 +1,60 @@
 import { Suspense } from "react";
 import { Header } from "@/components/layout/Header";
-import { HeaderMobile } from "@/components/layout/HeaderMobile";
-import { ScrollHideHeader } from "@/components/layout/ScrollHideHeader";
-import { SubNav } from "@/components/layout/SubNav";
-import { DeliverTo, DeliverToFallback } from "@/components/layout/DeliverTo";
+import { AllMenu } from "@/components/layout/AllMenu";
+import { AccountMenu } from "@/components/layout/AccountMenu";
+import { SessionGuard, UserFirstName, UserIdentity } from "@/components/layout/SessionShell";
 import { CartLink } from "@/components/layout/CartLink";
 import { CartCount } from "@/components/cart/CartCount";
-import { AccountFlyout } from "@/components/layout/AccountFlyout";
-import { Greeting } from "@/components/layout/Greeting";
 import { Footer } from "@/components/layout/Footer";
 import { getDepartments } from "@/lib/data/departments";
 
-// Shell for every storefront page: header + sub-nav + page content + footer, desktop and mobile
-// each as their own deliberate design (CLAUDE.md) toggled by hidden/md:flex classes inside each
-// component. Departments are cached catalogue data ('use cache' in lib/data/departments.ts), so
-// this layout can read them directly. DeliverTo and CartCount read cookies() (Task 3, Slice 5), so
-// each instance renders inside its own <Suspense> boundary rather than blocking the rest of the shell.
+// Shell for every storefront page: one fluid header, the page, and the footer (C9). Departments
+// are cached catalogue data, so the layout reads them directly and passes the same list to every
+// menu (point 9). Anything that reads the session or cart cookie renders inside its own
+// <Suspense> with a static fallback, never under 'use cache' (CLAUDE.md caching rule); the menus
+// themselves sit outside Suspense so their open state never resets when a slot streams in.
 export default async function ShopLayout({ children }: { children: React.ReactNode }) {
   const departments = await getDepartments();
 
   return (
-    <>
-      <ScrollHideHeader>
-        <Header
-          departments={departments}
-          deliverTo={
-            <Suspense fallback={<DeliverToFallback />}>
-              <DeliverTo />
-            </Suspense>
-          }
-          cartLink={
-            <Suspense fallback={<CartLink count={0} />}>
-              <CartCount />
-            </Suspense>
-          }
-          accountMenu={
-            <Suspense fallback={<AccountFlyout user={null} />}>
-              <Greeting />
-            </Suspense>
-          }
-        />
-        <SubNav departments={departments} />
-
-        <HeaderMobile
-          departments={departments}
-          deliverTo={
-            <Suspense fallback={<DeliverToFallback variant="mobile" />}>
-              <DeliverTo variant="mobile" />
-            </Suspense>
-          }
-          cartLink={
-            <Suspense fallback={<CartLink count={0} />}>
-              <CartCount />
-            </Suspense>
-          }
-        />
-      </ScrollHideHeader>
-
-      <main>{children}</main>
-
+    <div className="flex min-h-screen flex-col">
+      <Suspense fallback={null}>
+        <SessionGuard />
+      </Suspense>
+      <Header
+        departments={departments}
+        allMenu={
+          <AllMenu
+            departments={departments}
+            firstName={
+              <Suspense fallback="there">
+                <UserFirstName />
+              </Suspense>
+            }
+          />
+        }
+        accountMenu={
+          <AccountMenu
+            firstName={
+              <Suspense fallback="Account">
+                <UserFirstName />
+              </Suspense>
+            }
+            identity={
+              <Suspense fallback={<span className="block h-9 animate-pulse rounded bg-surface-muted" />}>
+                <UserIdentity />
+              </Suspense>
+            }
+          />
+        }
+        cartLink={
+          <Suspense fallback={<CartLink count={0} />}>
+            <CartCount />
+          </Suspense>
+        }
+      />
+      <main className="flex-1">{children}</main>
       <Footer departments={departments} />
-    </>
+    </div>
   );
 }

@@ -2,19 +2,18 @@
 
 import { useId, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Modal } from "@/components/ui/Modal";
+import { buttonClass } from "@/components/ui/Button";
+import { inputClass } from "@/components/ui/Input";
 import { setLocation } from "@/actions/location";
-import { ROUTES } from "@/lib/constants/links";
 
 type LocationModalProps = {
   open: boolean;
   onClose: () => void;
 };
 
-// "Choose your location" dialog: sign-in CTA (always shown - no session exists in this slice),
-// then a zip form. On success it closes and calls router.refresh() so the server-rendered
-// DeliverTo island (app/(shop)/layout.tsx) picks up the new deliver_to cookie.
+// "Choose your location" dialog: a zip form. On success it closes and calls router.refresh() so the server-rendered
+// product page picks up the new deliver_to cookie.
 export function LocationModal({ open, onClose }: LocationModalProps) {
   const router = useRouter();
   const inputId = useId();
@@ -56,23 +55,10 @@ export function LocationModal({ open, onClose }: LocationModalProps) {
         Delivery options and delivery speeds may vary for different locations
       </p>
 
-      <Link
-        href={ROUTES.signIn}
-        className="mt-4 flex w-full items-center justify-center rounded-lg border border-accent bg-accent text-accent-fg py-2 text-sm font-medium hover:bg-accent-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-      >
-        Sign in to see your addresses
-      </Link>
-
-      <div className="my-4 flex items-center gap-3">
-        <hr className="flex-1 border-border" />
-        <span className="text-xs text-fg-muted">or enter a US zip code</span>
-        <hr className="flex-1 border-border" />
-      </div>
-
-      <form onSubmit={handleSubmit} className="flex items-start gap-2">
+      <form onSubmit={handleSubmit} className="mt-4 flex items-start gap-2">
         <div className="flex-1">
-          <label htmlFor={inputId} className="sr-only">
-            or enter a US zip code
+          <label htmlFor={inputId} className="mb-1 block text-sm font-semibold text-fg">
+            US zip code
           </label>
           <input
             id={inputId}
@@ -81,13 +67,13 @@ export function LocationModal({ open, onClose }: LocationModalProps) {
             maxLength={5}
             value={zip}
             onChange={(event) => setZip(event.target.value)}
-            className="w-full rounded-md border border-border px-2 py-1.5 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className={inputClass}
           />
         </div>
         <button
           type="submit"
           disabled={pending}
-          className="shrink-0 rounded-xl border border-border bg-surface px-4 py-1.5 text-sm hover:bg-surface-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60"
+          className={buttonClass({ variant: "secondary", className: "mt-6 shrink-0" })}
         >
           Apply
         </button>
@@ -103,7 +89,7 @@ export function LocationModal({ open, onClose }: LocationModalProps) {
         <button
           type="button"
           onClick={handleClose}
-          className="rounded-lg border border-accent bg-accent text-accent-fg px-6 py-1.5 text-sm font-medium hover:bg-accent-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          className={buttonClass()}
         >
           Done
         </button>

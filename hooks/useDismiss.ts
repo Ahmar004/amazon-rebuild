@@ -5,7 +5,7 @@ import { useEffect, type RefObject } from "react";
 // Shared dismiss behaviour for popovers/modals: Escape key, or a pointerdown outside the
 // referenced element, calls onDismiss. Used by components/ui/Popover.tsx and Modal.tsx.
 //
-// `triggerRef` is optional and covers click-to-toggle triggers (AccountFlyout, LanguagePopover):
+// `triggerRef` is optional and covers click-to-toggle triggers (AccountMenu):
 // without it, a pointerdown on the trigger button counts as "outside" the panel and closes the
 // popover before the button's own click handler can toggle it back open, so a second click can
 // never close it. Treating the trigger as "inside" for dismissal purposes lets the trigger's own

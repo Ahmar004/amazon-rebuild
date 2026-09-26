@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { imageAt } from "@/lib/assets";
 import { formatPrice } from "@/lib/pricing/money";
-import { ROUTES } from "@/lib/constants/links";
+import { productHref, ROUTES } from "@/lib/constants/links";
 import { QuantityStepper } from "@/components/cart/QuantityStepper";
 import type { CartView } from "@/lib/data/cart";
 
@@ -30,7 +30,7 @@ export function MiniCart({ cart }: MiniCartProps) {
       <div className="mt-2 flex flex-col gap-4">
         {cart.lines.map((line) => (
           <div key={line.asin} className="flex flex-col items-center gap-1 border-t border-border pt-3">
-            <Link href={`/dp/${line.asin}`} className="flex h-16 w-16 items-center justify-center bg-surface-muted">
+            <Link href={productHref(line.asin)} className="flex h-16 w-16 items-center justify-center bg-surface-muted">
               {line.imageUrl && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img

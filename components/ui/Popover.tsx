@@ -17,11 +17,13 @@ type PopoverProps = {
    * immediately toggle()'s it back open (see useDismiss.ts).
    */
   triggerRef?: RefObject<HTMLElement | null>;
+  /** Which edge of the panel the caret sits near: "left" (default) or "right" for right-aligned panels. */
+  align?: "left" | "right";
 };
 
 // Generic positioned popover: a rounded card with a 1px border, soft shadow and an upward caret.
 // Callers supply the content.
-export function Popover({ open, onClose, children, anchorClassName, className, triggerRef }: PopoverProps) {
+export function Popover({ open, onClose, children, anchorClassName, className, triggerRef, align = "left" }: PopoverProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   useDismiss(ref, open, onClose, triggerRef);
@@ -32,7 +34,7 @@ export function Popover({ open, onClose, children, anchorClassName, className, t
     <div ref={ref} className={`absolute z-50 ${anchorClassName ?? ""}`}>
       <div className="relative mt-2">
         <div
-          className="absolute -top-2 left-4 h-4 w-4 rotate-45 border-l border-t border-border bg-surface"
+          className={`absolute -top-2 ${align === "right" ? "right-4" : "left-4"} h-4 w-4 rotate-45 border-l border-t border-border bg-surface`}
           aria-hidden="true"
         />
         <div

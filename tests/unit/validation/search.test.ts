@@ -65,7 +65,7 @@ describe("toSearchUrl", () => {
   it("rebuilds the url with a patch and resets the page", () => {
     const base = parseSearchParams({ k: "headphones", page: "3" });
     const url = toSearchUrl(base, { sort: "price-asc" });
-    expect(url).toBe("/s?k=headphones&sort=price-asc");
+    expect(url).toBe("/search?k=headphones&sort=price-asc");
   });
 
   it("keeps existing filters and adds a brand", () => {
@@ -79,6 +79,6 @@ describe("toSearchUrl", () => {
   it("omits default sort and page from the url", () => {
     const base = parseSearchParams({ k: "headphones" });
     const url = toSearchUrl(base, {});
-    expect(url).toBe("/s?k=headphones");
+    expect(url).toBe("/search?k=headphones");
   });
 });

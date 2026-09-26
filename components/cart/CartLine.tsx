@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { imageAt } from "@/lib/assets";
 import { formatPrice } from "@/lib/pricing/money";
-import { ROUTES } from "@/lib/constants/links";
+import { productHref, ROUTES } from "@/lib/constants/links";
 import { QuantityStepper } from "@/components/cart/QuantityStepper";
 import { ShareButton } from "@/components/product/ShareButton";
 import { SaveForLaterButton } from "@/components/cart/SaveForLaterButton";
@@ -19,7 +19,7 @@ type CartLineProps = {
 // price bold at the right. Desktop and mobile share this markup, reflowed with responsive classes
 // (same pattern as components/search/ResultRow.tsx).
 export function CartLine({ line }: CartLineProps) {
-  const href = `/dp/${line.asin}`;
+  const href = productHref(line.asin);
 
   return (
     <div className="flex flex-col gap-3 border-b border-border py-4 sm:flex-row sm:gap-4">

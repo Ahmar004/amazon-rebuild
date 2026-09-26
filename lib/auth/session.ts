@@ -5,8 +5,9 @@ import { cookies } from "next/headers";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { sessions } from "@/lib/db/schema";
+import { SESSION_COOKIE } from "@/lib/auth/gate";
 
-export const SESSION_COOKIE = "session";
+export { SESSION_COOKIE };
 const THIRTY_DAYS_SECONDS = 60 * 60 * 24 * 30;
 
 // Pure: 32 random bytes as 64 hex characters. Exported so tests/unit/auth/session.test.ts can

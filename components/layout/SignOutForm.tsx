@@ -9,7 +9,7 @@ type SignOutFormProps = {
 };
 
 // A real <form> posting to the signOut action (docs/design.md 6.6: "signOut: destroySession,
-// then redirect to /"), used by AccountFlyout's and SideMenu's "Sign Out" rows. A form (not a
+// then redirect to /signin"), used by AccountMenu's and AllMenu's "Sign out" rows. A form (not a
 // plain link) per CLAUDE.md: mutations are actions, and Enter submits it like any other form.
 export function SignOutForm({ className, children }: SignOutFormProps) {
   const [pending, startTransition] = useTransition();

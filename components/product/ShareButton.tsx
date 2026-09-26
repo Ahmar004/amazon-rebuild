@@ -5,7 +5,7 @@ import { useState } from "react";
 const COPIED_TOOLTIP_MS = 1500;
 
 type ShareButtonProps = {
-  /** Path to share instead of the current page, e.g. a cart line's "/dp/<asin>" (Slice 5). */
+  /** Path to share instead of the current page, e.g. a cart line's product page. */
   path?: string;
 };
 

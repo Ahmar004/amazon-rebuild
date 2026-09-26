@@ -15,7 +15,6 @@ export const DEFAULT_LOCATION: DeliveryLocation = {
 };
 
 export const LOCATION_COOKIE = "deliver_to";
-export const LOCATION_PROMPT_COOKIE = "loc_prompt";
 
 const ZIP_PATTERN = /^\d{5}$/;
 

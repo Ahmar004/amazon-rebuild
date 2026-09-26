@@ -4,6 +4,7 @@ import { formatPrice } from "@/lib/pricing/money";
 import { DeleteLineButton } from "@/components/cart/DeleteLineButton";
 import { MoveToCartButton } from "@/components/cart/MoveToCartButton";
 import type { CartLine } from "@/lib/data/cart";
+import { productHref } from "@/lib/constants/links";
 
 type SavedForLaterProps = {
   items: CartLine[];
@@ -21,7 +22,7 @@ export function SavedForLater({ items }: SavedForLaterProps) {
 
       {items.map((item) => (
         <div key={item.asin} className="flex gap-4 border-b border-border py-4 last:border-b-0">
-          <Link href={`/dp/${item.asin}`} className="flex w-[100px] shrink-0 items-center justify-center bg-surface-muted">
+          <Link href={productHref(item.asin)} className="flex w-[100px] shrink-0 items-center justify-center bg-surface-muted">
             {item.imageUrl && (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -33,7 +34,7 @@ export function SavedForLater({ items }: SavedForLaterProps) {
           </Link>
 
           <div className="min-w-0 flex-1">
-            <Link href={`/dp/${item.asin}`} className="text-sm text-fg hover:text-accent-hover">
+            <Link href={productHref(item.asin)} className="text-sm text-fg hover:text-accent-hover">
               {item.title}
             </Link>
             <p className="mt-1 font-bold text-fg">{formatPrice(item.priceCents)}</p>

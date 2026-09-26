@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { DEFAULT_SORT, SORT_KEYS, type SortKey } from "@/lib/constants/sort";
+import { ROUTES } from "@/lib/constants/links";
 
 export type SearchQuery = {
   k?: string;
@@ -73,5 +74,5 @@ export function toSearchUrl(query: SearchQuery, patch: Partial<SearchQuery>): st
   if (merged.page !== 1) params.set("page", String(merged.page));
 
   const qs = params.toString();
-  return qs ? `/s?${qs}` : "/s";
+  return qs ? `${ROUTES.search}?${qs}` : ROUTES.search;
 }
