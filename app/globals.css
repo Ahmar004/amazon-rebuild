@@ -125,6 +125,16 @@ body {
 @keyframes float { 50% { transform: translateY(-10px); } }
 @keyframes progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @keyframes shimmer { to { background-position: -200% 0; } }
+@keyframes drift { 33% { transform: translate(40px, 30px) scale(1.1); } 66% { transform: translate(-30px, 20px) scale(0.95); } }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+/* Entrance for the sign-in and register card (point 14): direct children rise in one by one. */
+.stagger-in > * { animation: rise-in 550ms cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.stagger-in > :nth-child(2) { animation-delay: 70ms; }
+.stagger-in > :nth-child(3) { animation-delay: 140ms; }
+.stagger-in > :nth-child(4) { animation-delay: 210ms; }
+.stagger-in > :nth-child(5) { animation-delay: 280ms; }
+.stagger-in > :nth-child(n + 6) { animation-delay: 350ms; }
 
 /* Scroll reveal (components/motion/Reveal.tsx): content fades up once it enters the viewport.
    --reveal-delay staggers siblings. */

@@ -20,7 +20,7 @@ export function AuthCard({ mode, returnTo, title, subtitle, children }: AuthCard
   ] as const;
 
   return (
-    <div className="w-full max-w-[420px] rounded-2xl border border-border bg-surface p-6 shadow-card sm:p-8">
+    <div className="stagger-in relative w-full max-w-[420px] rounded-2xl border border-border bg-surface p-6 shadow-pop sm:p-8">
       <nav aria-label="Account" className="grid grid-cols-2 gap-1 rounded-lg bg-surface-muted p-1">
         {tabs.map((tab) => (
           <Link
@@ -43,5 +43,5 @@ export function AuthCard({ mode, returnTo, title, subtitle, children }: AuthCard
 }
 
 export function AuthCardSkeleton() {
-  return <div className="h-[460px] w-full max-w-[420px] animate-pulse rounded-2xl border border-border bg-surface" aria-hidden="true" />;
+  return <div className="skeleton h-[460px] w-full max-w-[420px] rounded-2xl border border-border" aria-hidden="true" />;
 }

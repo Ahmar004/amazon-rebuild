@@ -14,7 +14,7 @@ export function RegisterForm({ returnTo }: { returnTo: string }) {
   );
 
   return (
-    <form onSubmit={onSubmit} noValidate className="space-y-4">
+    <form onSubmit={onSubmit} noValidate className="stagger-in space-y-4">
       {error && <FormAlert message={error} />}
       <Input label="Your name" name="name" autoComplete="name" autoFocus error={fieldErrors.name} />
       <Input label="Email" name="email" type="email" autoComplete="email" error={fieldErrors.email} />

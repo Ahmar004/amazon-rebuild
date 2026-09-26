@@ -42,7 +42,7 @@ export function CardForm({ onReady, saveCard, onSaveCardChange }: CardFormProps)
         Save this card for future purchases
       </label>
 
-      <p className="mt-2 text-xs text-fg-muted">Test mode: use 4242 4242 4242 4242, any future date, any CVC.</p>
+      <p className="mt-2 text-xs text-fg-muted">Payments run in Stripe test mode: use 4242 4242 4242 4242, any future date, any CVC.</p>
     </div>
   );
 }

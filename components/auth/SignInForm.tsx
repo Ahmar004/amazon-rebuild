@@ -14,7 +14,7 @@ export function SignInForm({ returnTo, email }: { returnTo: string; email?: stri
   );
 
   return (
-    <form onSubmit={onSubmit} noValidate className="space-y-4">
+    <form onSubmit={onSubmit} noValidate className="stagger-in space-y-4">
       {error && <FormAlert message={error} />}
       <Input label="Email" name="email" type="email" autoComplete="email" defaultValue={email} autoFocus error={fieldErrors.email} />
       <PasswordInput label="Password" name="password" autoComplete="current-password" error={fieldErrors.password} />

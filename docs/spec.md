@@ -19,7 +19,7 @@ This is the single source of truth for what the product does. `docs/requirements
 | Payment | Stripe in test mode, cards only. Card entry is Stripe's own field, so card numbers never touch our server. Test card 4242 4242 4242 4242. |
 | Links | Every link goes to a Shopeedo page. There are no links to other sites and no placeholder links. |
 | Brand | Our own "Shopeedo" SVG wordmark and lucide icons. A "clean modern retail" design system: cream light theme (default) and a GitHub-style dark theme, one teal accent, rounded cards, soft shadows. |
-| Demo notice | One line in the footer and at checkout: "Shopeedo is a demo store built for an 8x assessment. No real orders are placed; use Stripe test cards." Every page is noindex. |
+| Demo notice | One line in the footer and at checkout: "Shopeedo is a demo store built for an 8x assessment. Payments run in Stripe test mode." The card field adds the test card number. Every page is noindex. |
 | Order status | Worked out from the order's age (section 6.4). Orders can be cancelled until they ship. |
 | Ads | No sponsored placements; rails show real catalogue items. |
 | Live URL | The free `vercel.app` address (roadmap Rule 0.3). |
