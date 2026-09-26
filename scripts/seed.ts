@@ -26,6 +26,8 @@ async function main() {
   const { db } = await import("../lib/db/client");
   const { departments, products, reviews } = await import("../lib/db/schema");
   const { histogramFromAverage } = await import("../lib/reviews/histogram");
+  // The dataset names the marketplace it came from; Shopeedo never shows that name.
+  const { scrubDetails, scrubName, scrubProse } = await import("../lib/catalogue/store-name");
   const { count, sql } = await import("drizzle-orm");
 
   const catalogue: Catalogue = JSON.parse(gunzipSync(readFileSync("data/catalogue.json.gz")).toString("utf8"));
@@ -46,18 +48,18 @@ async function main() {
     await db.insert(products).values(
       batch.map((p) => ({
         asin: p.asin,
-        title: p.title,
-        brand: p.brand,
+        title: scrubName(p.title),
+        brand: scrubName(p.brand),
         departmentId: departmentId.get(p.departmentSlug)!,
-        categoryPath: p.categoryPath,
+        categoryPath: p.categoryPath.map(scrubName),
         priceCents: p.priceCents,
         listPriceCents: p.listPriceCents,
         ratingCounts: histogramFromAverage(p.averageRating, p.ratingCount),
         stock: p.stock,
         isBestSeller: p.isBestSeller,
-        features: p.features,
-        description: p.description,
-        details: p.details,
+        features: p.features.map(scrubProse),
+        description: scrubProse(p.description),
+        details: scrubDetails(p.details),
         images: p.images,
         importedRank: p.importedRank,
       })),
@@ -72,8 +74,8 @@ async function main() {
         asin: r.asin,
         authorName: REVIEW_AUTHOR,
         rating: r.rating,
-        title: r.title,
-        body: r.body,
+        title: scrubProse(r.title),
+        body: scrubProse(r.body),
         verified: r.verified,
         helpfulCount: r.helpfulCount,
         source: "dataset" as const,
