@@ -88,7 +88,13 @@ export async function createOrderFromPayment(
     const result = await tx
       .update(products)
       .set({ stock: sql`stock - ${item.quantity}` })
-      .where(and(eq(products.asin, item.asin), sql`stock >= ${item.quantity}`))
+      // The last word on availability: enough stock, still listed, and not the buyer's own listing.
+      .where(
+        and(
+          eq(products.asin, item.asin),
+          sql`stock >= ${item.quantity} and status = 'active' and seller_id is distinct from ${input.userId}`,
+        ),
+      )
       .returning({ asin: products.asin });
     if (result.length === 0) throw new InsufficientStockError();
   }
@@ -201,6 +207,7 @@ export async function getBuyAgain(userId: string): Promise<ProductSummary[]> {
     ) bought
     join products p on p.asin = bought.asin
     join categories d on d.id = p.category_id
+    where p.status <> 'removed'
     order by bought.last_ordered desc
     limit ${BUY_AGAIN_LIMIT}`);
   return result.rows.map(mapSummarySqlRow);

@@ -29,6 +29,13 @@
       "when": 1790406434832,
       "tag": "0003_rename_departments_to_categories",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790416774802,
+      "tag": "0004_listings",
+      "breakpoints": true
     }
   ]
 }

@@ -14,7 +14,8 @@ import {
 // Catalogue reads for the home page (frontend-rebuild.md C6). Everything here is shared, cached
 // catalogue data; the signed-in rails (recently viewed, buy again) live with their own tables.
 
-const HAS_IMAGE = sql`jsonb_array_length(p.images) > 0`;
+// Only active products with a photo appear on the home page.
+const HAS_IMAGE = sql`jsonb_array_length(p.images) > 0 and p.status = 'active'`;
 const DISCOUNT = sql`(p.list_price_cents - p.price_cents)::float / p.list_price_cents`;
 const IS_DEAL = sql`p.list_price_cents is not null and p.list_price_cents > p.price_cents`;
 

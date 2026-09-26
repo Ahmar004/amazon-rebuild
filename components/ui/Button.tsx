@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes } from "react";
 
-export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
+export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "danger-ghost";
 export type ButtonSize = "sm" | "md" | "lg";
 
 const VARIANTS: Record<ButtonVariant, string> = {
@@ -8,6 +8,7 @@ const VARIANTS: Record<ButtonVariant, string> = {
   secondary: "border border-border-strong bg-surface text-fg hover:bg-surface-muted",
   ghost: "text-fg hover:bg-surface-muted",
   danger: "bg-danger text-white hover:opacity-90",
+  "danger-ghost": "text-danger hover:bg-danger/10",
 };
 
 const SIZES: Record<ButtonSize, string> = {

@@ -39,7 +39,8 @@ type BuildOptions = { forFacets?: boolean };
 // Pure WHERE-clause builder (design 6.3): kept separate from searchProducts so
 // tests/unit/data/search-query.test.ts can check each filter's condition without a database.
 export function buildSearchConditions(q: SearchQuery, options: BuildOptions = {}): SQL[] {
-  const conditions: SQL[] = [];
+  // Paused and removed listings never show up in search.
+  const conditions: SQL[] = [sql`status = 'active'`];
 
   if (q.k) {
     conditions.push(sql`search_vector @@ websearch_to_tsquery('english', ${q.k})`);
@@ -191,7 +192,7 @@ export async function suggest(prefix: string): Promise<string[]> {
     from (
       select lower(left(title, 60)) as suggestion, word_similarity(${trimmed}, title) as similarity
       from products
-      where ${trimmed} <% title
+      where ${trimmed} <% title and status = 'active'
     ) matches
     group by suggestion
     order by max(similarity) desc

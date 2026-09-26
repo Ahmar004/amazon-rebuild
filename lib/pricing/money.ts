@@ -20,3 +20,13 @@ export function discountPercent(priceCents: number, listPriceCents: number | nul
   if (listPriceCents === null || listPriceCents <= priceCents) return null;
   return Math.round(((listPriceCents - priceCents) / listPriceCents) * 100);
 }
+
+const PRICE_PATTERN = /^(\d{1,3}(,\d{3})+|\d+)(\.\d{1,2})?$/;
+
+// Reads a typed dollar amount ("19.99", "1,250") as integer cents, or null when it isn't one.
+export function parsePriceToCents(input: string): number | null {
+  const value = input.trim();
+  if (!PRICE_PATTERN.test(value)) return null;
+  const [whole, fraction = ""] = value.replace(/,/g, "").split(".");
+  return Number(whole) * 100 + Number(fraction.padEnd(2, "0"));
+}

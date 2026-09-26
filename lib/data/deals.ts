@@ -14,7 +14,7 @@ export async function getDeals(query: DealsQuery): Promise<DealsPage> {
   cacheLife("hours");
   cacheTag("products");
 
-  const isDeal = sql`p.list_price_cents is not null and p.list_price_cents > p.price_cents and p.stock > 0`;
+  const isDeal = sql`p.list_price_cents is not null and p.list_price_cents > p.price_cents and p.stock > 0 and p.status = 'active'`;
   const inCategory = query.category ? sql`and d.slug = ${query.category}` : sql``;
   const offset = (query.page - 1) * DEALS_PAGE_SIZE;
 

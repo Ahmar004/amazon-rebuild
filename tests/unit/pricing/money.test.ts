@@ -39,3 +39,19 @@ describe("discountPercent", () => {
     expect(discountPercent(2499, 3499)).toBe(29);
   });
 });
+
+describe("parsePriceToCents", () => {
+  it("reads dollars with up to two decimals", async () => {
+    const { parsePriceToCents } = await import("@/lib/pricing/money");
+    expect(parsePriceToCents("19.99")).toBe(1999);
+    expect(parsePriceToCents(" 19 ")).toBe(1900);
+    expect(parsePriceToCents("19.9")).toBe(1990);
+    expect(parsePriceToCents("0.5")).toBe(50);
+    expect(parsePriceToCents("1,250.00")).toBe(125000);
+  });
+
+  it("returns null for anything else", async () => {
+    const { parsePriceToCents } = await import("@/lib/pricing/money");
+    for (const bad of ["", "abc", "19.999", "-5", "1e3", "12.", ".5x"]) expect(parsePriceToCents(bad)).toBeNull();
+  });
+});

@@ -22,6 +22,8 @@ const createdAt = () => timestamp({ withTimezone: true }).notNull().defaultNow()
 
 export const deliverySpeedEnum = pgEnum("delivery_speed", ["standard", "fast"]);
 export const reviewSourceEnum = pgEnum("review_source", ["dataset", "user"]);
+// Must list the same values as LISTING_STATUS in lib/constants/listings.ts.
+export const listingStatusEnum = pgEnum("listing_status", ["active", "paused", "removed"]);
 
 export type ProductImage = { thumb: string; large: string; hiRes: string | null };
 export type AddressSnapshot = {
@@ -86,6 +88,12 @@ export const products = pgTable(
     details: jsonb().$type<Record<string, string>>().notNull(),
     images: jsonb().$type<ProductImage[]>().notNull(),
     importedRank: integer().notNull(),
+    // Set for items listed by a user (frontend-rebuild.md point 15); null means sold by Shopeedo.
+    sellerId: uuid().references(() => users.id),
+    // Only active products are shown, carted or sold. "removed" hides a deleted listing that still
+    // has orders, so those orders keep their product row.
+    status: listingStatusEnum().notNull().default("active"),
+    createdAt: createdAt(),
     searchVector: tsvector().generatedAlwaysAs(
       sql`setweight(to_tsvector('english', coalesce(title, '')), 'A') || setweight(to_tsvector('english', coalesce(brand, '')), 'B') || setweight(to_tsvector('english', immutable_array_to_string(features, ' ')), 'C')`,
     ),
@@ -96,6 +104,7 @@ export const products = pgTable(
     index("products_brand_trgm_idx").using("gin", sql`${t.brand} gin_trgm_ops`),
     index("products_category_idx").on(t.categoryId),
     index("products_price_idx").on(t.priceCents),
+    index("products_seller_idx").on(t.sellerId).where(sql`${t.sellerId} is not null`),
   ],
 );
 

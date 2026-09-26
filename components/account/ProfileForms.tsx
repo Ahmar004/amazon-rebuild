@@ -5,13 +5,13 @@ import { changePassword, updateProfile } from "@/actions/account";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { PasswordInput } from "@/components/auth/PasswordInput";
-import { useAccountAction } from "@/hooks/useAccountAction";
+import { useServerAction } from "@/hooks/useServerAction";
 
 const CARD = "rounded-xl border border-border bg-surface p-5 shadow-card";
 
 // Name and email. Enter submits (CLAUDE.md forms rule); errors show under each field.
 export function ProfileForm({ name, email }: { name: string; email: string }) {
-  const { pending, run } = useAccountAction();
+  const { pending, run } = useServerAction();
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -37,7 +37,7 @@ export function ProfileForm({ name, email }: { name: string; email: string }) {
 
 // Password change: needs the current password. The form clears after a successful change.
 export function PasswordForm() {
-  const { pending, run } = useAccountAction();
+  const { pending, run } = useServerAction();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formKey, setFormKey] = useState(0);
 

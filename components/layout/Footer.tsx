@@ -17,7 +17,7 @@ export function Footer({ categories, compact = false }: { categories?: Category[
     <footer className="mt-10 border-t border-border bg-surface">
       {!compact && <BackToTop />}
       {!compact && (
-        <div className="mx-auto grid max-w-[1400px] gap-8 px-4 py-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
+        <div className="mx-auto grid max-w-[1400px] gap-8 px-4 py-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-5">
           <div>
             <Link href={ROUTES.home} aria-label="Shopeedo home">
               <Logo />

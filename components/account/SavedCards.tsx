@@ -4,7 +4,7 @@ import { useState } from "react";
 import { CreditCard } from "lucide-react";
 import { makeDefaultCard, removeCard } from "@/actions/account";
 import { Badge } from "@/components/ui/Badge";
-import { useAccountAction } from "@/hooks/useAccountAction";
+import { useServerAction } from "@/hooks/useServerAction";
 import type { PaymentMethod } from "@/lib/data/payments";
 
 const LINK = "text-sm font-semibold text-accent hover:underline disabled:opacity-50";
@@ -12,7 +12,7 @@ const LINK = "text-sm font-semibold text-accent hover:underline disabled:opacity
 // The Payment methods tab. Cards are added at checkout ("Save this card"), where Stripe already
 // collects them, so this tab manages the saved ones: default and remove.
 export function SavedCards({ cards }: { cards: PaymentMethod[] }) {
-  const { pending, run } = useAccountAction();
+  const { pending, run } = useServerAction();
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
 
   if (cards.length === 0) {

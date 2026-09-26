@@ -16,14 +16,5 @@ export const reviewInputSchema = z.object({
 });
 export type ReviewInput = z.infer<typeof reviewInputSchema>;
 
-function capitalise(word: string): string {
-  return word.charAt(0).toUpperCase() + word.slice(1);
-}
-
-// "Robin Tester" -> "Robin T.": recognisable without publishing a shopper's full name.
-export function reviewAuthorName(fullName: string): string {
-  const parts = fullName.trim().split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return "Shopeedo customer";
-  const first = capitalise(parts[0]);
-  return parts.length === 1 ? first : `${first} ${parts.at(-1)!.charAt(0).toUpperCase()}.`;
-}
+// Review authors show their public name (lib/users/public-name.ts).
+export { publicName as reviewAuthorName } from "@/lib/users/public-name";

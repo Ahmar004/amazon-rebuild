@@ -31,7 +31,7 @@ export async function getCategoryPreviews(): Promise<CategoryPreview[]> {
       (select array_agg(p.images->0->>'large' order by p.is_cover desc, p.rating_count desc nulls last)
          from (select images, rating_count, asin = (${JSON.stringify(CATEGORY_COVERS)}::jsonb ->> d.slug) is true as is_cover
                from products
-               where category_id = d.id and jsonb_array_length(images) > 0
+               where category_id = d.id and jsonb_array_length(images) > 0 and status = 'active'
                order by is_cover desc, rating_count desc nulls last limit ${PREVIEW_IMAGES}) p) as images
     from categories d
     order by d.sort_order`);

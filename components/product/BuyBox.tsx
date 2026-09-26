@@ -8,6 +8,8 @@ import { AddToCartForm } from "@/components/cart/AddToCartForm";
 import { WishlistHeart } from "@/components/wishlist/WishlistHeart";
 import { MAX_CART_QUANTITY } from "@/lib/data/cart";
 import type { ProductDetail } from "@/lib/data/products";
+import { getCurrentUser } from "@/lib/auth/current-user";
+import { OwnListingPanel } from "@/components/listings/OwnListingPanel";
 
 const LOW_STOCK_THRESHOLD = 10;
 
@@ -19,7 +21,12 @@ type BuyBoxProps = {
 // shopper's ZIP, stock, quantity, Add to cart, Buy now and the wishlist heart. It reads the
 // deliver_to cookie, so the page renders it inside <Suspense>, never under 'use cache'.
 export async function BuyBox({ product }: BuyBoxProps) {
+  // Sellers can't buy their own listing: they get its status and an Edit link instead.
+  const user = await getCurrentUser();
+  if (product.sellerId && product.sellerId === user?.id) return <OwnListingPanel product={product} />;
+
   const location = await getDeliveryLocation();
+  const seller = product.sellerName ?? "Shopeedo";
   const now = new Date();
   const standardEta = formatDeliveryDate(deliveryDate(now, "standard"));
   const fastEta = formatDeliveryDate(deliveryDate(now, "fast"));
@@ -51,8 +58,8 @@ export async function BuyBox({ product }: BuyBoxProps) {
       </div>
 
       <dl className="mt-4 space-y-1 border-t border-border pt-3 text-sm text-fg">
-        <InfoRow label="Ships from" value="Shopeedo" />
-        <InfoRow label="Sold by" value="Shopeedo" />
+        <InfoRow label="Ships from" value={seller} />
+        <InfoRow label="Sold by" value={seller} />
         <InfoRow label="Returns" value="30-day refund/replacement" />
         <InfoRow label="Payment" value="Secure transaction" />
       </dl>

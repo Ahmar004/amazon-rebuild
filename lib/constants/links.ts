@@ -21,6 +21,8 @@ export const ROUTES = {
   history: "/history",
   deals: "/deals",
   customerService: "/customer-service",
+  sellerListings: "/seller/listings",
+  sellItem: "/seller/listings/new",
 } as const;
 
 // Pages anyone can open without signing in (point 12: everything else needs an account).
@@ -28,6 +30,10 @@ export const PUBLIC_PATHS: string[] = [ROUTES.signIn, ROUTES.register];
 
 export function productHref(asin: string): string {
   return `${ROUTES.product}/${encodeURIComponent(asin)}`;
+}
+
+export function editListingHref(asin: string): string {
+  return `${ROUTES.sellerListings}/${encodeURIComponent(asin)}/edit`;
 }
 
 export const BEST_SELLERS_HREF = `${ROUTES.search}?sort=bestsellers`;
@@ -54,6 +60,8 @@ export const ACCOUNT_LINKS: NavLink[] = [
   { label: "Your Wishlist", href: ROUTES.wishlist },
   { label: "Browsing history", href: ROUTES.history },
   { label: "Your Cart", href: ROUTES.cart },
+  { label: "Sell an item", href: ROUTES.sellItem },
+  { label: "Your listings", href: ROUTES.sellerListings },
   { label: "Customer Service", href: ROUTES.customerService },
 ];
 
@@ -75,6 +83,13 @@ export const FOOTER_COLUMNS: { title: string; links: NavLink[] }[] = [
       { label: "Your Wishlist", href: ROUTES.wishlist },
       { label: "Your Cart", href: ROUTES.cart },
       { label: "Customer Service", href: ROUTES.customerService },
+    ],
+  },
+  {
+    title: "Sell on Shopeedo",
+    links: [
+      { label: "Sell an item", href: ROUTES.sellItem },
+      { label: "Your listings", href: ROUTES.sellerListings },
     ],
   },
 ];

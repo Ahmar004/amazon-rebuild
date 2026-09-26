@@ -2,6 +2,15 @@ import { eq, inArray, sql } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { db } from "@/lib/db/client";
 import { categories, products } from "@/lib/db/schema";
+import { LISTING_STATUS, type ListingStatus } from "@/lib/constants/listings";
+import { publicName } from "@/lib/users/public-name";
+
+// Only active products can be bought: a paused or removed listing reads as out of stock
+// everywhere stock is shown or checked (cart, checkout, purchase panel).
+export const AVAILABLE_STOCK = sql<number>`(case when ${products.status} = 'active' then ${products.stock} else 0 end)`.mapWith(Number);
+/** The same rule for raw SQL over `products p`, plus the filter that keeps other listings out of lists. */
+export const AVAILABLE_STOCK_P = sql`(case when p.status = 'active' then p.stock else 0 end)`;
+export const LISTED_P = sql`p.status = 'active'`;
 
 // Contract fixed by docs/superpowers/plans/2026-09-19-slice-3-search.md: later slices (product
 // page, cart, orders) depend on this exact shape.
@@ -66,6 +75,11 @@ export function mapProductSummaryRow(row: ProductSummaryRow): ProductSummary {
 export type ProductImage = { thumb: string; large: string; hiRes: string | null };
 
 export type ProductDetail = ProductSummary & {
+  /** The user who listed it, or null when Shopeedo sells it. */
+  sellerId: string | null;
+  /** Public seller name ("First L."), or null when Shopeedo sells it. */
+  sellerName: string | null;
+  status: ListingStatus;
   categoryPath: string[];
   categoryName: string;
   features: string[];
@@ -93,6 +107,9 @@ type ProductDetailRow = {
   description: string;
   details: Record<string, string>;
   images: unknown;
+  seller_id: string | null;
+  seller_full_name: string | null;
+  status: ListingStatus;
 };
 
 export async function getProduct(asin: string): Promise<ProductDetail | null> {
@@ -103,13 +120,16 @@ export async function getProduct(asin: string): Promise<ProductDetail | null> {
   const result = await db.execute<ProductDetailRow>(sql`
     select p.asin, p.title, p.brand, d.slug as category_slug, d.name as category_name,
            p.category_path, p.price_cents, p.list_price_cents, p.rating_avg, p.rating_count,
-           p.rating_counts, p.stock, p.is_best_seller, p.features, p.description, p.details, p.images
+           p.rating_counts, ${AVAILABLE_STOCK_P} as stock, p.is_best_seller, p.features, p.description,
+           p.details, p.images, p.seller_id, u.name as seller_full_name, p.status
     from products p
     join categories d on d.id = p.category_id
+    left join users u on u.id = p.seller_id
     where p.asin = ${asin}
   `);
   const row = result.rows[0];
-  if (!row) return null;
+  // A deleted listing that still has orders stays in the table but is gone from the store.
+  if (!row || row.status === LISTING_STATUS.removed) return null;
 
   const summary = mapProductSummaryRow({
     asin: row.asin,
@@ -127,6 +147,9 @@ export async function getProduct(asin: string): Promise<ProductDetail | null> {
 
   return {
     ...summary,
+    sellerId: row.seller_id,
+    sellerName: row.seller_full_name === null ? null : publicName(row.seller_full_name),
+    status: row.status,
     categoryPath: row.category_path,
     categoryName: row.category_name,
     features: row.features,
@@ -170,7 +193,7 @@ export async function getRelated(
            p.list_price_cents, p.rating_avg, p.rating_count, p.stock, p.is_best_seller
     from products p
     join categories d on d.id = p.category_id
-    where d.slug = ${categorySlug} and p.asin != ${asin}
+    where d.slug = ${categorySlug} and p.asin != ${asin} and ${LISTED_P}
     order by p.rating_count desc
     limit ${limit}
   `);
@@ -223,7 +246,7 @@ export async function getTopAsins(n: number = TOP_ASINS_DEFAULT): Promise<string
   cacheTag("products");
 
   const result = await db.execute<{ asin: string }>(
-    sql`select asin from products order by rating_count desc limit ${n}`,
+    sql`select asin from products where status = 'active' order by rating_count desc limit ${n}`,
   );
   return result.rows.map((row) => row.asin);
 }
@@ -244,7 +267,7 @@ export async function getProductsByAsins(asins: string[]): Promise<ProductSummar
       listPriceCents: products.listPriceCents,
       ratingAvg: products.ratingAvg,
       ratingCount: products.ratingCount,
-      stock: products.stock,
+      stock: AVAILABLE_STOCK,
       isBestSeller: products.isBestSeller,
     })
     .from(products)
@@ -258,7 +281,7 @@ export async function getProductsByAsins(asins: string[]): Promise<ProductSummar
 // first image (rails and grids never need the rest). Pair with mapSummarySqlRow.
 export const SUMMARY_COLUMNS = sql`p.asin, p.title, p.brand, d.slug as category_slug,
   jsonb_build_array(p.images->0) as images, p.price_cents, p.list_price_cents, p.rating_avg,
-  p.rating_count, p.stock, p.is_best_seller`;
+  p.rating_count, (case when p.status = 'active' then p.stock else 0 end) as stock, p.is_best_seller`;
 
 export type SummarySqlRow = {
   asin: string;

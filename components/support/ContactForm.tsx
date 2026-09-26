@@ -6,9 +6,8 @@ import { submitSupportRequest } from "@/actions/support";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
+import { Field, fieldClass as FIELD } from "@/components/ui/Field";
 import { SUPPORT_LIMITS, SUPPORT_TOPICS } from "@/lib/constants/support";
-
-const FIELD = "w-full rounded-md border border-border-strong bg-surface px-3 text-sm text-fg outline-none focus:border-accent focus:ring-2 focus:ring-accent/25 aria-invalid:border-danger";
 
 type ContactFormProps = {
   /** The shopper's orders to link the request to, newest first. */
@@ -91,17 +90,5 @@ export function ContactForm({ orders, defaultOrderId }: ContactFormProps) {
         {pending ? "Sending..." : "Send message"}
       </Button>
     </form>
-  );
-}
-
-function Field({ label, id, error, className, children }: { label: string; id: string; error?: string; className?: string; children: React.ReactNode }) {
-  return (
-    <div className={className}>
-      <label htmlFor={id} className="mb-1 block text-sm font-semibold text-fg">
-        {label}
-      </label>
-      {children}
-      {error && <p className="mt-1 text-xs text-danger">{error}</p>}
-    </div>
   );
 }

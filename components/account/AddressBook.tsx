@@ -7,7 +7,7 @@ import { makeDefaultAddress, removeAddress } from "@/actions/account";
 import { AddressModal } from "@/components/checkout/AddressModal";
 import { Badge } from "@/components/ui/Badge";
 import { useToast } from "@/components/ui/Toast";
-import { useAccountAction } from "@/hooks/useAccountAction";
+import { useServerAction } from "@/hooks/useServerAction";
 import type { Address } from "@/lib/data/addresses";
 
 const LINK = "text-sm font-semibold text-accent hover:underline disabled:opacity-50";
@@ -17,7 +17,7 @@ const LINK = "text-sm font-semibold text-accent hover:underline disabled:opacity
 export function AddressBook({ addresses }: { addresses: Address[] }) {
   const router = useRouter();
   const toast = useToast();
-  const { pending, run } = useAccountAction();
+  const { pending, run } = useServerAction();
   const [editing, setEditing] = useState<Address | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [confirmingId, setConfirmingId] = useState<string | null>(null);

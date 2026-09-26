@@ -4,7 +4,7 @@
 import { and, eq, inArray } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { carts, cartItems, categories, products } from "@/lib/db/schema";
-import { mapProductSummaryRow, type ProductSummary, type ProductSummaryRow } from "@/lib/data/products";
+import { AVAILABLE_STOCK, mapProductSummaryRow, type ProductSummary, type ProductSummaryRow } from "@/lib/data/products";
 
 export type CartOwner = { userId: string } | { guestToken: string };
 
@@ -42,6 +42,7 @@ export function mergeQuantities(existing: number, addQty: number, stock: number)
 
 export const CART_ERROR_UNKNOWN_PRODUCT = "This item is no longer available.";
 export const CART_ERROR_OUT_OF_STOCK = "This item is currently out of stock.";
+export const CART_ERROR_OWN_LISTING = "This is your own listing, so you can't buy it.";
 
 function ownerFilter(owner: CartOwner) {
   return "userId" in owner ? eq(carts.userId, owner.userId) : eq(carts.guestToken, owner.guestToken);
@@ -64,8 +65,13 @@ async function getOrCreateCartId(owner: CartOwner): Promise<string> {
 }
 
 async function productStock(asin: string): Promise<number | null> {
-  const [row] = await db.select({ stock: products.stock }).from(products).where(eq(products.asin, asin)).limit(1);
+  const [row] = await db.select({ stock: AVAILABLE_STOCK }).from(products).where(eq(products.asin, asin)).limit(1);
   return row?.stock ?? null;
+}
+
+async function sellerOf(asin: string): Promise<string | null> {
+  const [row] = await db.select({ sellerId: products.sellerId }).from(products).where(eq(products.asin, asin)).limit(1);
+  return row?.sellerId ?? null;
 }
 
 type CartItemRow = ProductSummaryRow & { quantity: number; savedForLater: boolean };
@@ -97,7 +103,7 @@ export async function getCart(owner: CartOwner): Promise<CartView> {
       listPriceCents: products.listPriceCents,
       ratingAvg: products.ratingAvg,
       ratingCount: products.ratingCount,
-      stock: products.stock,
+      stock: AVAILABLE_STOCK,
       isBestSeller: products.isBestSeller,
       quantity: cartItems.quantity,
       savedForLater: cartItems.savedForLater,
@@ -122,6 +128,7 @@ export async function addItem(owner: CartOwner, asin: string, qty: number): Prom
   const stock = await productStock(asin);
   if (stock === null) throw new Error(CART_ERROR_UNKNOWN_PRODUCT);
   if (stock <= 0) throw new Error(CART_ERROR_OUT_OF_STOCK);
+  if ("userId" in owner && (await sellerOf(asin)) === owner.userId) throw new Error(CART_ERROR_OWN_LISTING);
 
   const cartId = await getOrCreateCartId(owner);
   const [existing] = await db
