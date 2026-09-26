@@ -1,29 +1,29 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { imageAt } from "@/lib/assets";
 import { ROUTES } from "@/lib/constants/links";
 import type { DepartmentPreview } from "@/lib/data/departments";
 
-// A department tile: its name over a 2x2 grid of real product photos, linking to its search page.
+// A compact department tile: one real product photo that swaps to a second one on hover, and the
+// department name, linking to its search page (frontend-rebuild.md C6).
 export function DepartmentCard({ department }: { department: DepartmentPreview }) {
+  const [first, second] = department.images;
   return (
     <Link
       href={`${ROUTES.search}?i=${department.slug}`}
-      className="group flex flex-col rounded-xl border border-border bg-surface p-4 shadow-card transition hover:-translate-y-0.5 hover:border-accent"
+      className="group flex h-full flex-col items-center gap-2 rounded-xl border border-border bg-surface p-3 text-center shadow-card transition duration-300 hover:-translate-y-1 hover:border-accent hover:shadow-pop"
     >
-      <h2 className="text-base font-bold text-fg">{department.name}</h2>
-      <div className="mt-3 grid grid-cols-2 gap-2">
-        {department.images.map((src) => (
-          <div key={src} className="flex aspect-square items-center justify-center overflow-hidden rounded-lg bg-white p-2">
-            {/* eslint-disable-next-line @next/next/no-img-element -- dataset image, pre-sized by URL (next.config.ts) */}
-            <img src={imageAt(src, "SY200")} alt="" loading="lazy" className="max-h-full max-w-full object-contain" />
-          </div>
-        ))}
-      </div>
-      <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-accent">
-        Shop now
-        <ArrowRight size={14} aria-hidden="true" className="transition-transform group-hover:translate-x-0.5" />
+      <span className="relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg bg-white">
+        {first && <TileImage src={first} className={second ? "transition-opacity duration-500 group-hover:opacity-0" : ""} />}
+        {second && <TileImage src={second} className="absolute inset-0 m-auto opacity-0 transition-opacity duration-500 group-hover:opacity-100" />}
       </span>
+      <span className="line-clamp-2 text-sm font-semibold text-fg group-hover:text-accent">{department.name}</span>
     </Link>
+  );
+}
+
+function TileImage({ src, className }: { src: string; className: string }) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element -- dataset image, pre-sized by URL (next.config.ts)
+    <img src={imageAt(src, "SY200")} alt="" loading="lazy" className={`max-h-[80%] max-w-[80%] object-contain ${className}`} />
   );
 }

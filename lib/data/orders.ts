@@ -9,6 +9,7 @@ import { cartItems, carts, orderItems, orders, products, type AddressSnapshot } 
 import type { DeliverySpeed } from "@/lib/pricing/shipping";
 import type { OrderTotals } from "@/lib/pricing/totals";
 import type { CartOwner } from "@/lib/data/cart";
+import { mapSummarySqlRow, SUMMARY_COLUMNS, type ProductSummary, type SummarySqlRow } from "@/lib/data/products";
 
 export type OrderItemInput = {
   asin: string;
@@ -184,4 +185,23 @@ export async function getOrder(userId: string, orderId: string): Promise<OrderSu
       quantity: item.quantity,
     })),
   };
+}
+
+const BUY_AGAIN_LIMIT = 16;
+
+// Products from the user's non-cancelled orders, most recently ordered first (home "Buy again").
+export async function getBuyAgain(userId: string): Promise<ProductSummary[]> {
+  const result = await db.execute<SummarySqlRow>(sql`
+    select ${SUMMARY_COLUMNS}
+    from (
+      select oi.asin, max(o.placed_at) as last_ordered
+      from order_items oi join orders o on o.id = oi.order_id
+      where o.user_id = ${userId} and o.cancelled_at is null
+      group by oi.asin
+    ) bought
+    join products p on p.asin = bought.asin
+    join departments d on d.id = p.department_id
+    order by bought.last_ordered desc
+    limit ${BUY_AGAIN_LIMIT}`);
+  return result.rows.map(mapSummarySqlRow);
 }

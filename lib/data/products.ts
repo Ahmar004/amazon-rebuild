@@ -253,3 +253,39 @@ export async function getProductsByAsins(asins: string[]): Promise<ProductSummar
 
   return rows.map(mapProductSummaryRow);
 }
+
+// The ProductSummary columns for raw SQL over `products p join departments d`, with only the
+// first image (rails and grids never need the rest). Pair with mapSummarySqlRow.
+export const SUMMARY_COLUMNS = sql`p.asin, p.title, p.brand, d.slug as department_slug,
+  jsonb_build_array(p.images->0) as images, p.price_cents, p.list_price_cents, p.rating_avg,
+  p.rating_count, p.stock, p.is_best_seller`;
+
+export type SummarySqlRow = {
+  asin: string;
+  title: string;
+  brand: string;
+  department_slug: string;
+  images: unknown;
+  price_cents: number;
+  list_price_cents: number | null;
+  rating_avg: string | number | null;
+  rating_count: number | null;
+  stock: number;
+  is_best_seller: boolean;
+};
+
+export function mapSummarySqlRow(row: SummarySqlRow): ProductSummary {
+  return mapProductSummaryRow({
+    asin: row.asin,
+    title: row.title,
+    brand: row.brand,
+    departmentSlug: row.department_slug,
+    images: row.images,
+    priceCents: row.price_cents,
+    listPriceCents: row.list_price_cents,
+    ratingAvg: row.rating_avg,
+    ratingCount: row.rating_count,
+    stock: row.stock,
+    isBestSeller: row.is_best_seller,
+  });
+}
