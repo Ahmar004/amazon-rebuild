@@ -40,7 +40,7 @@ MUST follow rule-0.0A now to avoid high token usage, we have to broke all remain
 - No long hyphens anywhere. Use a single hyphen "-" where a dash is needed.
 - In docs, spell out technical justifications in plain sentences: state the claim, then the reason behind it.
 - DO NOT bloat any doc. Every line must prevent a concrete mistake or answer a real question; cut anything that does neither.
-- Use the domain vocabulary from `docs/spec.md` section 4 (product, category, brand, review, rating, cart, cart item, saved item, order, order item, address, payment method, wishlist, browsing history, deal, support request, user). Import these terms from a constants module and DO NOT invent synonyms.
+- Use the domain vocabulary from `docs/spec.md` section 4 (product, category, brand, review, rating, cart, cart item, saved item, order, order item, address, payment method, wishlist, browsing history, deal, support request, user, listing, seller). Import these terms from a constants module and DO NOT invent synonyms.
 
 ## Architecture Rules
 

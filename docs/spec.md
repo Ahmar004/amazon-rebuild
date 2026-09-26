@@ -20,19 +20,20 @@ This is the single source of truth for what the product does. `docs/requirements
 | Links | Every link goes to a Shopeedo page. There are no links to other sites and no placeholder links. |
 | Brand | Our own "Shopeedo" SVG wordmark and lucide icons. A "clean modern retail" design system: cream light theme (default) and a GitHub-style dark theme, one teal accent, rounded cards, soft shadows. |
 | Demo notice | One line in the footer and at checkout: "Shopeedo is a demo store built for an 8x assessment. Payments run in Stripe test mode." The card field adds the test card number. Every page is noindex. |
-| Order status | Worked out from the order's age (section 6.4). Orders can be cancelled until they ship. |
+| Order status | Catalogue items move along with the order's age; items sold by users move when their seller marks them shipped and delivered (section 6.4). An order can be cancelled until any of its items ships. |
+| Selling | Any user can list items for sale and buy from others (not their own listings). Listings are products with a seller, so they appear in search and on product pages like catalogue items. Photos go to a public Vercel Blob store on its free tier. |
 | Ads | No sponsored placements; rails show real catalogue items. |
 | Live URL | The free `vercel.app` address (roadmap Rule 0.3). |
 
 ## 3. Scope
 
-Built (every item works end to end): layout shell with the All menu and theme toggle; home; search; product page; wishlist; cart drawer and cart page; one-page checkout; orders list and order details with cancel; account with profile, addresses, cards and orders; buyer-only reviews; browsing history; Today's Deals; Customer Service with contact requests.
+Built (every item works end to end): layout shell with the All menu and theme toggle; home; search; product page; wishlist; cart drawer and cart page; one-page checkout; orders list and order details with cancel; account with profile, addresses, cards and orders; buyer-only reviews; browsing history; Today's Deals; Customer Service with contact requests; selling (Sell an item, Your listings with edit, pause and delete), the Buying / Selling switch, the seller dashboard and Seller orders.
 
-Cut on purpose: multiple lists (one wishlist instead), the language and locale pickers, the header "Deliver to" popup (ZIP is chosen on the product page and at checkout), the full-page "Added to cart" interstitial (replaced by the drawer), links out to sister businesses, sellers and multiple offers, sponsored ads, returns processing (a return is requested through Customer Service), review photos and videos, email and phone verification codes, and adding a card outside checkout (cards are saved at checkout).
+Cut on purpose: multiple lists (one wishlist instead), the language and locale pickers, the header "Deliver to" popup (ZIP is chosen on the product page and at checkout), the full-page "Added to cart" interstitial (replaced by the drawer), links out to sister businesses, several offers for one product, seller payouts and ratings, sponsored ads, returns processing (a return is requested through Customer Service), review photos and videos, email and phone verification codes, and adding a card outside checkout (cards are saved at checkout).
 
 ## 4. Domain vocabulary
 
-Use these terms in code, UI copy and docs, and no synonyms: **product, category, brand, review, rating, cart, cart item, saved item, order, order item, address, payment method, wishlist, browsing history, deal, support request, user**.
+Use these terms in code, UI copy and docs, and no synonyms: **product, category, brand, review, rating, cart, cart item, saved item, order, order item, address, payment method, wishlist, browsing history, deal, support request, user, listing, seller**.
 
 ## 5. Screens and behaviour
 
@@ -41,7 +42,8 @@ One fluid, desktop-first layout scales down to phones; there are no separate mob
 ### 5.1 Layout shell
 
 - **Sticky header:** All menu, logo, search bar (its own row under 768px), theme toggle, account menu (name, email, account links, Sign out), wishlist with count, Orders, and the cart button with count.
-- **Quick links row:** Today's Deals, Best Sellers, New Releases, Your Orders, Customer Service.
+- **Mode row:** a Buying / Selling switch (remembered in a cookie), then that mode's quick links. Buying: Today's Deals, Best Sellers, New Releases, Your Orders, Customer Service. Selling: Seller dashboard, Your listings, Sell an item, Seller orders. Switching to Selling opens the dashboard; switching to Buying opens home.
+- **Orders menu:** the header Orders button opens Buyer (`/orders`) and Seller (`/seller/orders`) in either mode.
 - **All menu:** a left sheet with the same content on every page: Trending, every category, and the account links.
 - **Footer:** Shop, Your account and Categories columns, "Back to top", and the demo notice. Checkout has a minimal header ("Secure checkout") and a compact footer.
 - **Search suggestions:** typing shows matching product titles; Enter or the search button runs the search in the chosen category.
@@ -102,6 +104,14 @@ One fluid, desktop-first layout scales down to phones; there are no separate mob
 
 - Shortcuts for the three latest orders (Track, Get help, Cancel while allowed); searchable help topics with topic chips; a "Contact us" form (topic, optional order, subject, message) saved as a support request; and the shopper's own requests with Open or Resolved status and "Mark as resolved".
 
+### 5.13 Selling
+
+- **Sell an item** (`/seller/listings/new`): 1-5 photos (JPEG, PNG or WebP, 4 MB each, the first is the cover), title, optional brand (the seller's public name if empty), category, description, up to 5 key features, price, optional "was" price and stock. Publishing puts it straight into search and "Newest Arrivals".
+- **Your listings** (`/seller/listings`): each listing with price, stock, units sold and status, plus Edit, Pause / Resume and Delete (two steps). A paused listing is hidden from search and can't be bought. Deleting removes it from the store, carts and wishlists; one that has orders stays in those orders.
+- **Product page:** "Sold by" shows the seller's public name ("First L.") or Shopeedo. On their own listing a seller sees its status and the listing actions instead of Add to cart.
+- **Seller dashboard** (`/seller`): Sales, To ship, Units sold and Active listings; a 14-day daily sales chart; best-selling listings; Needs attention (sales to ship, listings out of stock); recent sales.
+- **Seller orders** (`/seller/orders`): the seller's sold items grouped by order, with the ship-to address and promised date, under To ship, On the way, Delivered and Cancelled, with "Mark as shipped" and then "Mark as delivered".
+
 ## 6. Business rules
 
 ### 6.1 Money
@@ -129,7 +139,9 @@ Status comes from the time since the order was placed, so nothing runs in the ba
 | On the delivery date, before 6 pm | Out for delivery | No |
 | From 6 pm on the delivery date | Delivered | No |
 
-Times use the server's clock in UTC. Cancelling refunds the Stripe payment first, then marks the order cancelled and puts the stock back in one transaction.
+Times use the server's clock in UTC. An item a user sells skips that clock: it is Ordered until its seller marks it shipped, then Shipped until they mark it delivered. An order shows its least advanced item, and its timeline is Ordered > Shipped > Delivered when it contains such an item.
+
+Cancelling covers the whole order and is allowed until any item ships. It runs in one transaction that locks the order (so a seller can't ship it meanwhile), marks it cancelled, puts the stock back and refunds the Stripe payment; if the refund fails, nothing is cancelled.
 
 ### 6.5 Accounts and auth
 
@@ -139,7 +151,7 @@ Times use the server's clock in UTC. Cancelling refunds the Stripe payment first
 
 ### 6.6 Stock
 
-- "Only N left in stock - order soon." shows when stock is 10 or fewer. Quantity selectors are capped at stock and at 30. Out-of-stock products show "Currently unavailable" and can't be added to the cart.
+- "Only N left in stock - order soon." shows when stock is 10 or fewer. Quantity selectors are capped at stock and at 30. Out-of-stock products show "Currently unavailable" and can't be added to the cart. Paused listings count as out of stock, and the order transaction re-checks stock, listing status and that the buyer isn't the seller.
 
 ### 6.7 Reviews
 

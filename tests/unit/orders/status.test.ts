@@ -61,3 +61,53 @@ describe("orderTimeline", () => {
     ]);
   });
 });
+
+describe("orders with items sold by users (D3)", () => {
+  const catalogue = { sellerId: null, shippedAt: null, deliveredAt: null };
+  const waiting = { sellerId: "seller-1", shippedAt: null, deliveredAt: null };
+  const shipped = { sellerId: "seller-1", shippedAt: at("2026-09-21T09:00:00Z"), deliveredAt: null };
+  const delivered = { sellerId: "seller-1", shippedAt: at("2026-09-21T09:00:00Z"), deliveredAt: at("2026-09-22T15:00:00Z") };
+  const late = at("2026-10-30T00:00:00Z");
+
+  it("moves a seller's item only when the seller marks it", async () => {
+    const { itemStatus } = await import("@/lib/orders/status");
+    expect(itemStatus(order, waiting, late)).toBe(ORDER_STATUS.ordered);
+    expect(itemStatus(order, shipped, late)).toBe(ORDER_STATUS.shipped);
+    expect(itemStatus(order, delivered, late)).toBe(ORDER_STATUS.delivered);
+    expect(itemStatus(order, catalogue, late)).toBe(ORDER_STATUS.delivered);
+    expect(itemStatus({ ...order, cancelledAt: placedAt }, delivered, late)).toBe(ORDER_STATUS.cancelled);
+  });
+
+  it("gives the order the status of its least advanced item", () => {
+    expect(orderStatus({ ...order, items: [catalogue, shipped] }, late)).toBe(ORDER_STATUS.shipped);
+    expect(orderStatus({ ...order, items: [delivered, waiting] }, late)).toBe(ORDER_STATUS.ordered);
+    expect(orderStatus({ ...order, items: [delivered, catalogue] }, late)).toBe(ORDER_STATUS.delivered);
+  });
+
+  it("allows cancelling only while no item has shipped", () => {
+    const early = at("2026-09-20T10:30:00Z");
+    expect(canCancel({ ...order, items: [catalogue, waiting] }, early)).toBe(true);
+    expect(canCancel({ ...order, items: [waiting] }, late)).toBe(true);
+    expect(canCancel({ ...order, items: [catalogue, shipped] }, early)).toBe(false);
+    expect(canCancel({ ...order, items: [catalogue, waiting] }, at("2026-09-20T11:00:00Z"))).toBe(false);
+  });
+
+  it("builds Ordered > Shipped > Delivered from the seller's dates", () => {
+    const steps = orderTimeline({ ...order, items: [shipped] }, late);
+    expect(steps.map((s) => [s.status, s.reached, s.current, s.at])).toEqual([
+      [ORDER_STATUS.ordered, true, false, placedAt],
+      [ORDER_STATUS.shipped, true, true, shipped.shippedAt],
+      [ORDER_STATUS.delivered, false, false, null],
+    ]);
+  });
+
+  it("reaches a step only when every item has, dated by the last one", () => {
+    const steps = orderTimeline({ ...order, items: [catalogue, delivered] }, late);
+    expect(steps.map((s) => [s.status, s.reached])).toEqual([
+      [ORDER_STATUS.ordered, true],
+      [ORDER_STATUS.shipped, true],
+      [ORDER_STATUS.delivered, true],
+    ]);
+    expect(steps[2].at).toEqual(at("2026-09-24T18:00:00Z"));
+  });
+});

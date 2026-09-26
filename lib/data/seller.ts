@@ -9,7 +9,7 @@ const TOP_LISTINGS = 5;
 const RECENT_SALES = 5;
 const ATTENTION_LIMIT = 5;
 
-export type SellerStats = { activeListings: number; unitsSold: number; salesCents: number; orders: number };
+export type SellerStats = { activeListings: number; unitsSold: number; salesCents: number; toShip: number };
 export type TopListing = { asin: string; title: string; imageUrl: string; units: number; cents: number };
 export type RecentSale = {
   orderId: string;
@@ -28,6 +28,7 @@ export type SellerDashboard = {
   topListings: TopListing[];
   recentSales: RecentSale[];
   outOfStock: { asin: string; title: string }[];
+  toShip: { orderId: string; asin: string; title: string; quantity: number }[];
   hasListings: boolean;
 };
 
@@ -40,14 +41,14 @@ const SALES = (sellerId: string) => sql`
 
 export async function getSellerDashboard(sellerId: string, now: Date): Promise<SellerDashboard> {
   const since = new Date(now.getTime() - SALES_CHART_DAYS * 86_400_000);
-  const [stats, daily, top, recent, outOfStock] = await Promise.all([
-    db.execute<{ active_listings: number; any_listing: boolean; units_sold: number; sales_cents: number; orders: number }>(sql`
+  const [stats, daily, top, recent, outOfStock, toShip] = await Promise.all([
+    db.execute<{ active_listings: number; any_listing: boolean; units_sold: number; sales_cents: number; to_ship: number }>(sql`
       select
         (select count(*)::int from products where seller_id = ${sellerId} and status = 'active') as active_listings,
         exists (select 1 from products where seller_id = ${sellerId} and status <> 'removed') as any_listing,
         coalesce(sum(oi.quantity), 0)::int as units_sold,
         coalesce(sum(oi.quantity * oi.unit_price_cents), 0)::int as sales_cents,
-        count(distinct o.id)::int as orders
+        (count(*) filter (where oi.shipped_at is null))::int as to_ship
       ${SALES(sellerId)}`),
     db.execute<{ day: string; cents: number; units: number }>(sql`
       select to_char(o.placed_at at time zone 'UTC', 'YYYY-MM-DD') as day,
@@ -75,11 +76,16 @@ export async function getSellerDashboard(sellerId: string, now: Date): Promise<S
       where seller_id = ${sellerId} and status = 'active' and stock = 0
       order by created_at desc
       limit ${ATTENTION_LIMIT}`),
+    db.execute<{ order_id: string; asin: string; title: string; quantity: number }>(sql`
+      select o.id as order_id, oi.asin, oi.title, oi.quantity
+      ${SALES(sellerId)} and oi.shipped_at is null
+      order by o.placed_at
+      limit ${ATTENTION_LIMIT}`),
   ]);
 
   const s = stats.rows[0];
   return {
-    stats: { activeListings: s.active_listings, unitsSold: s.units_sold, salesCents: s.sales_cents, orders: s.orders },
+    stats: { activeListings: s.active_listings, unitsSold: s.units_sold, salesCents: s.sales_cents, toShip: s.to_ship },
     hasListings: s.any_listing,
     daily: dailySeries(daily.rows.map((r) => ({ day: r.day, cents: Number(r.cents), units: Number(r.units) })), SALES_CHART_DAYS, now),
     topListings: top.rows.map((r) => ({ asin: r.asin, title: r.title, imageUrl: r.image ?? "", units: Number(r.units), cents: Number(r.cents) })),
@@ -95,5 +101,6 @@ export async function getSellerDashboard(sellerId: string, now: Date): Promise<S
       cancelled: r.cancelled_at !== null,
     })),
     outOfStock: outOfStock.rows,
+    toShip: toShip.rows.map((r) => ({ orderId: r.order_id, asin: r.asin, title: r.title, quantity: r.quantity })),
   };
 }

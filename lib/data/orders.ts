@@ -2,10 +2,12 @@
 // withTransaction (actions/checkout.ts's finalizeOrder) so the order insert, the order-item
 // snapshots, the stock decrement and the cart cleanup all succeed or fail together
 // (CLAUDE.md: "created in one transaction with the stock decrement and cart cleanup").
-import { and, desc, eq, inArray, isNull, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import type { Tx } from "@/lib/db/client";
 import { db, withTransaction } from "@/lib/db/client";
-import { cartItems, carts, orderItems, orders, products, type AddressSnapshot } from "@/lib/db/schema";
+import { cartItems, carts, orderItems, orders, products, users, type AddressSnapshot } from "@/lib/db/schema";
+import type { ItemFulfilment } from "@/lib/orders/status";
+import { publicName } from "@/lib/users/public-name";
 import type { DeliverySpeed } from "@/lib/pricing/shipping";
 import type { OrderTotals } from "@/lib/pricing/totals";
 import type { CartOwner } from "@/lib/data/cart";
@@ -112,6 +114,9 @@ export async function createOrderFromPayment(
   return { orderId: input.orderId, alreadyExisted: false };
 }
 
+/** An ordered item as the buyer sees it: who sells it and, for a user's listing, how far it has got. */
+export type OrderItemView = OrderItemInput & ItemFulfilment & { sellerName: string | null };
+
 export type OrderSummary = {
   id: string;
   placedAt: Date;
@@ -125,22 +130,43 @@ export type OrderSummary = {
   taxCents: number;
   totalCents: number;
   cancelledAt: Date | null;
-  items: OrderItemInput[];
+  items: OrderItemView[];
 };
+
+// The items of the given orders, with each product's seller (products.seller_id never changes).
+async function itemsOf(orderIds: string[]): Promise<Map<string, OrderItemView[]>> {
+  const rows = await db
+    .select({
+      orderId: orderItems.orderId,
+      asin: orderItems.asin,
+      title: orderItems.title,
+      imageUrl: orderItems.imageUrl,
+      unitPriceCents: orderItems.unitPriceCents,
+      quantity: orderItems.quantity,
+      shippedAt: orderItems.shippedAt,
+      deliveredAt: orderItems.deliveredAt,
+      sellerId: products.sellerId,
+      sellerFullName: users.name,
+    })
+    .from(orderItems)
+    .innerJoin(products, eq(products.asin, orderItems.asin))
+    .leftJoin(users, eq(users.id, products.sellerId))
+    .where(inArray(orderItems.orderId, orderIds));
+  const byOrder = new Map<string, OrderItemView[]>();
+  for (const { orderId, sellerFullName, ...item } of rows) {
+    const list = byOrder.get(orderId) ?? [];
+    list.push({ ...item, sellerName: sellerFullName === null ? null : publicName(sellerFullName) });
+    byOrder.set(orderId, list);
+  }
+  return byOrder;
+}
 
 // Ownership-checked: only returns orders belonging to userId, newest first, for the Your Orders list.
 export async function getOrdersForUser(userId: string): Promise<OrderSummary[]> {
   const rows = await db.select().from(orders).where(eq(orders.userId, userId)).orderBy(desc(orders.placedAt));
   if (rows.length === 0) return [];
 
-  const orderIds = rows.map((row) => row.id);
-  const items = await db.select().from(orderItems).where(inArray(orderItems.orderId, orderIds));
-  const itemsByOrder = new Map<string, OrderItemInput[]>();
-  for (const item of items) {
-    const list = itemsByOrder.get(item.orderId) ?? [];
-    list.push({ asin: item.asin, title: item.title, imageUrl: item.imageUrl, unitPriceCents: item.unitPriceCents, quantity: item.quantity });
-    itemsByOrder.set(item.orderId, list);
-  }
+  const itemsByOrder = await itemsOf(rows.map((row) => row.id));
 
   return rows.map((order) => ({
     id: order.id,
@@ -168,7 +194,7 @@ export async function getOrder(userId: string, orderId: string): Promise<OrderSu
     .limit(1);
   if (!order) return null;
 
-  const items = await db.select().from(orderItems).where(eq(orderItems.orderId, orderId));
+  const items = (await itemsOf([orderId])).get(orderId) ?? [];
 
   return {
     id: order.id,
@@ -183,13 +209,7 @@ export async function getOrder(userId: string, orderId: string): Promise<OrderSu
     taxCents: order.taxCents,
     totalCents: order.totalCents,
     cancelledAt: order.cancelledAt,
-    items: items.map((item) => ({
-      asin: item.asin,
-      title: item.title,
-      imageUrl: item.imageUrl,
-      unitPriceCents: item.unitPriceCents,
-      quantity: item.quantity,
-    })),
+    items,
   };
 }
 
@@ -223,22 +243,25 @@ export async function getOrderPaymentIntentId(userId: string, orderId: string): 
   return row?.id ?? null;
 }
 
-// Marks the user's order cancelled and puts its stock back, in one transaction (docs/spec.md 6.4).
-// The `cancelled_at is null` guard makes a repeated call a no-op, so stock is only returned once.
-// Returns the cancelled order's product ids, or null when there was nothing to cancel.
-export async function cancelOrderAndRestock(userId: string, orderId: string, now: Date): Promise<string[] | null> {
-  return withTransaction(async (tx) => {
-    const [cancelled] = await tx
-      .update(orders)
-      .set({ cancelledAt: now })
-      .where(and(eq(orders.id, orderId), eq(orders.userId, userId), isNull(orders.cancelledAt)))
-      .returning({ id: orders.id });
-    if (!cancelled) return null;
+export type CancelOutcome = { cancelled: true; asins: string[] } | { cancelled: false; reason: "not_found" | "shipped" };
 
+// Cancels the user's order and puts its stock back (docs/spec.md 6.4, D3). The order row is locked
+// first, so a seller can't mark an item shipped while this runs, and `refund` runs inside the
+// transaction: if Stripe refuses, nothing is cancelled. A second call finds the order already
+// cancelled and does nothing, so stock is only returned once.
+export async function cancelOrderAndRestock(userId: string, orderId: string, now: Date, refund: () => Promise<unknown>): Promise<CancelOutcome> {
+  return withTransaction(async (tx) => {
+    const locked = await tx.execute(sql`select id from orders where id = ${orderId} and user_id = ${userId} and cancelled_at is null for update`);
+    if (locked.rows.length === 0) return { cancelled: false, reason: "not_found" };
+    const shipped = await tx.execute(sql`select 1 from order_items where order_id = ${orderId} and shipped_at is not null limit 1`);
+    if (shipped.rows.length > 0) return { cancelled: false, reason: "shipped" };
+
+    await tx.update(orders).set({ cancelledAt: now }).where(eq(orders.id, orderId));
     const items = await tx.select({ asin: orderItems.asin, quantity: orderItems.quantity }).from(orderItems).where(eq(orderItems.orderId, orderId));
     for (const item of items) {
       await tx.update(products).set({ stock: sql`${products.stock} + ${item.quantity}` }).where(eq(products.asin, item.asin));
     }
-    return items.map((item) => item.asin);
+    await refund();
+    return { cancelled: true, asins: items.map((item) => item.asin) };
   });
 }

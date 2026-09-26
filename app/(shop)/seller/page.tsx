@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { DollarSign, LayoutGrid, PackageCheck, PackagePlus, ShoppingCart, Store } from "lucide-react";
+import { DollarSign, LayoutGrid, PackageCheck, PackagePlus, Store, Truck } from "lucide-react";
 import { requireUser } from "@/lib/auth/current-user";
 import { getSellerDashboard, SALES_CHART_DAYS } from "@/lib/data/seller";
 import { ROUTES } from "@/lib/constants/links";
@@ -23,6 +23,10 @@ export default function SellerDashboardPage() {
           <p className="text-sm text-fg-muted">How your listings are selling. Cancelled orders are left out.</p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Link href={ROUTES.sellerOrders} className={buttonClass({ variant: "secondary", className: "rounded-full" })}>
+            <Truck size={16} aria-hidden="true" />
+            Seller orders
+          </Link>
           <Link href={ROUTES.sellerListings} className={buttonClass({ variant: "secondary", className: "rounded-full" })}>
             <LayoutGrid size={16} aria-hidden="true" />
             Your listings
@@ -57,7 +61,7 @@ async function Dashboard() {
     <div className="mt-5 space-y-4">
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatTile index={0} icon={DollarSign} label="Sales" value={formatCompactPrice(stats.salesCents)} />
-        <StatTile index={1} icon={ShoppingCart} label="Orders" value={stats.orders.toLocaleString("en-US")} />
+        <StatTile index={1} icon={Truck} label="To ship" value={stats.toShip.toLocaleString("en-US")} />
         <StatTile index={2} icon={PackageCheck} label="Units sold" value={stats.unitsSold.toLocaleString("en-US")} />
         <StatTile index={3} icon={Store} label="Active listings" value={stats.activeListings.toLocaleString("en-US")} />
       </div>
@@ -70,10 +74,10 @@ async function Dashboard() {
         </DashboardCard>
       </div>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
-        <DashboardCard title="Needs attention" subtitle="Listings buyers can't order right now">
-          <NeedsAttention outOfStock={data.outOfStock} />
+        <DashboardCard title="Needs attention" subtitle="Sales to ship and listings out of stock">
+          <NeedsAttention toShip={data.toShip} outOfStock={data.outOfStock} />
         </DashboardCard>
-        <DashboardCard title="Recent sales">
+        <DashboardCard title="Recent sales" subtitle="Ship them from Seller orders">
           <RecentSales sales={data.recentSales} />
         </DashboardCard>
       </div>

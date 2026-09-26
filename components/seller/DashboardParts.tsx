@@ -1,8 +1,8 @@
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
-import { PackageX } from "lucide-react";
+import { PackageX, Truck } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
-import { editListingHref, productHref } from "@/lib/constants/links";
+import { editListingHref, productHref, ROUTES } from "@/lib/constants/links";
 import { formatPrice } from "@/lib/pricing/money";
 import { formatDeliveryDate } from "@/lib/pricing/delivery";
 import type { RecentSale, TopListing } from "@/lib/data/seller";
@@ -90,25 +90,39 @@ export function RecentSales({ sales }: { sales: RecentSale[] }) {
   );
 }
 
-export function NeedsAttention({ outOfStock }: { outOfStock: { asin: string; title: string }[] }) {
-  if (outOfStock.length === 0) {
+type NeedsAttentionProps = {
+  toShip: { orderId: string; asin: string; title: string; quantity: number }[];
+  outOfStock: { asin: string; title: string }[];
+};
+
+// Sales waiting to ship (oldest first), then listings buyers can't order because stock ran out.
+export function NeedsAttention({ toShip, outOfStock }: NeedsAttentionProps) {
+  if (toShip.length === 0 && outOfStock.length === 0) {
     return <p className="py-6 text-center text-sm text-fg-muted">All caught up. Nothing needs your attention.</p>;
   }
   return (
     <ul className="space-y-2">
+      {toShip.map((sale) => (
+        <AttentionRow key={`${sale.orderId}-${sale.asin}`} icon={Truck} label="To ship" text={`${sale.title} (Qty ${sale.quantity})`} href={ROUTES.sellerOrders} action="Ship" />
+      ))}
       {outOfStock.map((listing) => (
-        <li key={listing.asin} className="flex items-center gap-3 rounded-lg bg-surface-muted px-3 py-2">
-          <PackageX size={18} className="shrink-0 text-deal" aria-hidden="true" />
-          <p className="min-w-0 flex-1 truncate text-sm text-fg">
-            <span className="sr-only">Out of stock: </span>
-            {listing.title}
-          </p>
-          <Link href={editListingHref(listing.asin)} className="shrink-0 text-xs font-semibold text-accent hover:underline">
-            Restock
-          </Link>
-        </li>
+        <AttentionRow key={listing.asin} icon={PackageX} label="Out of stock" text={listing.title} href={editListingHref(listing.asin)} action="Restock" />
       ))}
     </ul>
   );
 }
 
+function AttentionRow({ icon: Icon, label, text, href, action }: { icon: LucideIcon; label: string; text: string; href: string; action: string }) {
+  return (
+    <li className="flex items-center gap-3 rounded-lg bg-surface-muted px-3 py-2">
+      <Icon size={18} className="shrink-0 text-deal" aria-hidden="true" />
+      <p className="min-w-0 flex-1 truncate text-sm text-fg">
+        <span className="sr-only">{label}: </span>
+        {text}
+      </p>
+      <Link href={href} className="shrink-0 text-xs font-semibold text-accent hover:underline">
+        {action}
+      </Link>
+    </li>
+  );
+}

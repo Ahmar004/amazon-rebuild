@@ -12,8 +12,9 @@ const ICONS: Record<OrderStatus, typeof Check> = {
 
 const DAY = new Intl.DateTimeFormat("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" });
 
-// Ordered > Shipped > Out for delivery > Delivered (C16), worked out from the order's age by
-// orderTimeline. Steps not reached yet show their expected date. Horizontal from 640px, a vertical
+// Ordered > Shipped > Out for delivery > Delivered (C16), worked out by orderTimeline from the
+// order's age, or Ordered > Shipped > Delivered when a user sells an item (D3). Steps not reached
+// yet show their expected date, or that they wait on the seller. Horizontal from 640px, a vertical
 // list on phones.
 export function OrderTimeline({ steps }: { steps: TimelineStep[] }) {
   return (
@@ -39,7 +40,7 @@ export function OrderTimeline({ steps }: { steps: TimelineStep[] }) {
                 {ORDER_STATUS_LABEL[step.status]}
               </span>
               <span className="block text-xs text-fg-muted">
-                {step.reached ? DAY.format(step.at) : `Expected ${DAY.format(step.at)}`}
+                {step.at === null ? "Waiting for the seller" : step.reached ? DAY.format(step.at) : `Expected ${DAY.format(step.at)}`}
               </span>
             </span>
           </li>

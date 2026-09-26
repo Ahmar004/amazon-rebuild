@@ -24,6 +24,7 @@ export const ROUTES = {
   sellerDashboard: "/seller",
   sellerListings: "/seller/listings",
   sellItem: "/seller/listings/new",
+  sellerOrders: "/seller/orders",
 } as const;
 
 // Pages anyone can open without signing in (point 12: everything else needs an account).
@@ -54,12 +55,13 @@ export const SELLER_LINKS: NavLink[] = [
   { label: "Seller dashboard", href: ROUTES.sellerDashboard },
   { label: "Your listings", href: ROUTES.sellerListings },
   { label: "Sell an item", href: ROUTES.sellItem },
+  { label: "Seller orders", href: ROUTES.sellerOrders },
 ];
 
 // The header's Orders menu offers both sides in either mode (D4).
 export const ORDERS_MENU: (NavLink & { description: string })[] = [
   { label: "Buyer", description: "Things you ordered", href: ROUTES.orders },
-  { label: "Seller", description: "Your sales and listings", href: ROUTES.sellerDashboard },
+  { label: "Seller", description: "Items you sold and need to ship", href: ROUTES.sellerOrders },
 ];
 
 export const SIDE_MENU_TRENDING: NavLink[] = [
@@ -75,7 +77,7 @@ export const ACCOUNT_LINKS: NavLink[] = [
   { label: "Browsing history", href: ROUTES.history },
   { label: "Your Cart", href: ROUTES.cart },
   { label: "Seller dashboard", href: ROUTES.sellerDashboard },
-  { label: "Your listings", href: ROUTES.sellerListings },
+  { label: "Seller orders", href: ROUTES.sellerOrders },
   { label: "Customer Service", href: ROUTES.customerService },
 ];
 
@@ -105,6 +107,7 @@ export const FOOTER_COLUMNS: { title: string; links: NavLink[] }[] = [
       { label: "Seller dashboard", href: ROUTES.sellerDashboard },
       { label: "Sell an item", href: ROUTES.sellItem },
       { label: "Your listings", href: ROUTES.sellerListings },
+      { label: "Seller orders", href: ROUTES.sellerOrders },
     ],
   },
 ];

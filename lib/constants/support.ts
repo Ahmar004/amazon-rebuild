@@ -47,7 +47,7 @@ export const FAQ: FaqEntry[] = [
     id: "cancel",
     topic: "order",
     question: "Can I cancel an order?",
-    answer: `Yes, for ${SHIP_MINUTES} minutes after you place it, until it ships. Open the order and choose "Cancel order". The full amount goes straight back to your card.`,
+    answer: `Yes, until it ships. Items sold by Shopeedo ship ${SHIP_MINUTES} minutes after you order; items from other sellers ship when their seller marks them shipped. Open the order and choose "Cancel order". The full amount goes straight back to your card.`,
   },
   {
     id: "change-address",

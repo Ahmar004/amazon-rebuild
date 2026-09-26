@@ -7,7 +7,12 @@ const order = { id: "111-2222222-3333333", placedAt, deliveryDate: new Date(Date
 const currentUser = vi.fn(async (): Promise<typeof user | null> => user);
 const getOrder = vi.fn(async (): Promise<typeof order | null> => order);
 const getOrderPaymentIntentId = vi.fn(async () => "pi_123");
-const cancelOrderAndRestock = vi.fn(async (): Promise<string[] | null> => ["B000TEST01"]);
+type Outcome = { cancelled: true; asins: string[] } | { cancelled: false; reason: "not_found" | "shipped" };
+// Runs the refund callback the way the real transaction does, so a failing refund fails the cancel.
+const cancelOrderAndRestock = vi.fn(async (_user: string, _order: string, _now: Date, refund: () => Promise<unknown>): Promise<Outcome> => {
+  await refund();
+  return { cancelled: true, asins: ["B000TEST01"] };
+});
 const refundsCreate = vi.fn(async () => ({ id: "re_1" }));
 const updateTag = vi.fn();
 
@@ -24,7 +29,7 @@ describe("cancelOrder", () => {
   it("refunds the payment, cancels the order and refreshes the products' stock", async () => {
     expect(await cancelOrder(order.id)).toEqual({ ok: true });
     expect(refundsCreate).toHaveBeenCalledWith({ payment_intent: "pi_123" }, { idempotencyKey: `cancel-${order.id}` });
-    expect(cancelOrderAndRestock).toHaveBeenCalledWith(user.id, order.id, expect.any(Date));
+    expect(cancelOrderAndRestock).toHaveBeenCalledWith(user.id, order.id, expect.any(Date), expect.any(Function));
     expect(updateTag).toHaveBeenCalledWith("product:B000TEST01");
   });
 
@@ -48,10 +53,16 @@ describe("cancelOrder", () => {
     expect(cancelOrderAndRestock).not.toHaveBeenCalled();
   });
 
-  it("leaves the order alone when the refund fails", async () => {
+  it("fails the cancel when the refund fails", async () => {
     refundsCreate.mockRejectedValueOnce(new Error("stripe down"));
     expect((await cancelOrder(order.id)).ok).toBe(false);
-    expect(cancelOrderAndRestock).not.toHaveBeenCalled();
+    expect(updateTag).not.toHaveBeenCalled();
+  });
+
+  it("refuses when a seller shipped an item in the meantime", async () => {
+    cancelOrderAndRestock.mockResolvedValueOnce({ cancelled: false, reason: "shipped" });
+    expect(await cancelOrder(order.id)).toEqual({ ok: false, error: "This order has already shipped, so it can no longer be cancelled." });
+    expect(refundsCreate).not.toHaveBeenCalled();
   });
 
   it("rejects a malformed order id", async () => {

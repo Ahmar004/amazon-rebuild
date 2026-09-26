@@ -244,6 +244,10 @@ export const orderItems = pgTable(
     imageUrl: text().notNull(),
     unitPriceCents: integer().notNull(),
     quantity: integer().notNull(),
+    // Set by the seller of a user listing (frontend-rebuild.md D3); catalogue items keep the
+    // time-based status in lib/orders/status.ts and leave these null.
+    shippedAt: timestamp({ withTimezone: true }),
+    deliveredAt: timestamp({ withTimezone: true }),
   },
   (t) => [primaryKey({ columns: [t.orderId, t.asin] })],
 );

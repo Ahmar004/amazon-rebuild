@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ChevronLeft, CreditCard, MapPin } from "lucide-react";
 import { requireUser } from "@/lib/auth/current-user";
 import { getOrder } from "@/lib/data/orders";
-import { canCancel, orderStatus, orderTimeline } from "@/lib/orders/status";
+import { canCancel, itemStatus, orderStatus, orderTimeline } from "@/lib/orders/status";
 import { ORDER_STATUS, ORDER_STATUS_LABEL } from "@/lib/constants/orders";
 import { formatDeliveryDate } from "@/lib/pricing/delivery";
 import { formatPrice } from "@/lib/pricing/money";
@@ -36,6 +36,8 @@ async function OrderContent({ params }: OrderPageProps) {
   const now = new Date();
   const status = orderStatus(order, now);
   const delivered = status === ORDER_STATUS.delivered;
+  // Items sold by users move when their seller marks them (D3), so each shows its own status.
+  const hasSellerItems = order.items.some((item) => item.sellerId !== null);
 
   return (
     <div className="mx-auto max-w-[1000px] px-4 py-6">
@@ -66,7 +68,9 @@ async function OrderContent({ params }: OrderPageProps) {
         {canCancel(order, now) && (
           <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-border pt-4">
             <CancelOrderButton orderId={order.id} />
-            <p className="text-xs text-fg-muted">You can cancel until the order ships, about an hour after you place it.</p>
+            <p className="text-xs text-fg-muted">
+              {hasSellerItems ? "You can cancel until the seller ships an item." : "You can cancel until the order ships, about an hour after you place it."}
+            </p>
           </div>
         )}
       </section>
@@ -86,8 +90,13 @@ async function OrderContent({ params }: OrderPageProps) {
                     {item.title}
                   </Link>
                   <p className="mt-1 text-sm text-fg-muted">
-                    Qty {item.quantity} &middot; {formatPrice(item.unitPriceCents)} each
+                    Qty {item.quantity} &middot; {formatPrice(item.unitPriceCents)} each &middot; Sold by {item.sellerName ?? "Shopeedo"}
                   </p>
+                  {hasSellerItems && (
+                    <div className="mt-1.5">
+                      <OrderStatusBadge status={itemStatus(order, item, now)} />
+                    </div>
+                  )}
                   <div className="mt-2 flex flex-wrap items-center gap-3">
                     <AddToCartButton asin={item.asin} label="Buy it again" />
                     {delivered && (
