@@ -89,3 +89,31 @@ C20) Interaction states: skeleton loaders while data streams in, toasts for acti
 C21) README gets a "Design decisions" section: what Amazon does, what Shopeedo does instead, why, and what was cut. It's also the script for the walkthrough video.
 
 C22) Docs: rewrite the Amazon-fidelity rules in CLAUDE.md and docs/spec.md for Shopeedo, and propose new rebuild steps for roadmap.md sized for short sessions (Rule-0.0A). The user approves the exact changes to roadmap.md before they are made.
+
+## Round 2 requirements by the user (2026-09-26)
+
+Numbered 14 onwards so they don't clash with points 1-13.
+
+14) Sign-in and register pages: add professional, well-designed animations and pictures on top of the current ones, so the first screen is attractive and shows senior-level effort.
+
+15) Real orders and selling: remove the "No real orders are placed" sentence. Any user can sell: add product details, choose a product category, upload photos and publish the item so it joins the inventory and other users can see and buy it. A buyer can be a seller and a seller can be a buyer. Add a seller orders page for sold items, pending deliveries and the user's published listings. The header "Orders" gets a Buyer / Seller drop-down, and every page has a clearly visible switch between buying and selling at the top. The buyer orders page stays as it is.
+
+16) Make the light theme's cream background clearly creamier; it currently reads as white.
+
+17) Rename "Shop by department" to "Shop by category" in the UI.
+
+18) Add more professional animations across the app on top of the current ones.
+
+19) Card outlines slightly more visible: a slight dark shadow outside the outline in the light theme, and a lighter one in the dark theme.
+
+20) Perform roadmap Step-7: test the whole app rigorously and make sure everything is smooth and working.
+
+### Decisions for round 2 (answered by the user on 2026-09-26)
+
+D1) Payments stay in Stripe test mode. Orders, stock and sales are real database records; only the card is a test card. The "No real orders are placed" wording goes from the demo notice; a short "Payments run in Stripe test mode" hint stays at the card field.
+
+D2) Listing photos are uploaded (1-5 per listing) to Vercel Blob on its free Hobby allowance.
+
+D3) Items sold by users are moved along by their seller ("Mark as shipped", then "Mark as delivered") and the buyer's timeline follows. Catalogue items sold by Shopeedo keep the time-based timeline. Cancel stays allowed until the item ships.
+
+D4) A global Buying / Selling mode switch sits at the top of every page. Selling mode swaps the quick links to the seller pages (Seller dashboard, Your listings, Sell an item, Seller orders); Buying mode is today's store. The header Orders menu offers Buyer and Seller in both modes.

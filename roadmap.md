@@ -64,7 +64,7 @@ Foundation (git and GitHub already set up in Step-00): scaffold the project, set
 Use subagent-driven-development skill to build the app slice by slice in the order of the slice plan in Design.md, on the basis of Design.md, @spec.md and @tech-stack.md files. For every slice: write tests first (test-driven-development), build it, compare it visually against the live amazon.com page, then commit and deploy before starting the next slice. Use Opus for the main agent and Sonnet for the subagents to avoid hitting token limits.
 
 ### Step-7:
-Hardening: use systematic-debugging and end-to-end tests of the key flows (browse, search, product page, cart, checkout, orders) to find and fix bugs across the whole system, then run a light load check to confirm the deployed app stays responsive under concurrent users.
+Hardening: use systematic-debugging and end-to-end tests of the key flows (browse, search, product page, cart, checkout, orders) to find and fix bugs across the whole system
 
 ### Step-8:
 Skipped: no paid domain under Rule 0.3; the live link is the free vercel.app address.
@@ -91,3 +91,15 @@ One slice per session, in this order:
 - **[completed]** R10 Reviews (buyers only), browsing history, deals (C19)
 - **[completed]** R11 Customer Service (11,C18)
 - **[completed]** R12 CLAUDE.md/spec rewrite, README Design decisions, hardening, deploy (C21,C22)
+
+### Step-11: Shopeedo round 2
+
+Source: frontend-rebuild.md (points 14-20, decisions D1-D4).
+One slice at a time, in this order:
+- S1  Theme polish: creamier light background, stronger card outline shadows in both themes, "Shop by category" (16,17,19)
+- S2  Animated sign-in and register pages with imagery; new demo-notice wording (14, D1)
+- S3  Selling: listing data model, photo upload to Vercel Blob, "Sell an item" form (details, category, price, stock, photos), publish to search and product pages, "Your listings" with edit, pause and delete (15, D2)
+- S4  Buying / Selling mode switch on every page, header Orders drop-down (Buyer / Seller), seller dashboard (15, D4)
+- S5  Seller orders: sold items and pending deliveries, "Mark as shipped" / "Mark as delivered" driving the buyer's timeline (15, D3)
+- S6  App-wide animation pass on top of the current animations (18)
+- S7  Step-7 hardening: end-to-end tests of every key flow (browse, search, product, cart, checkout, orders, selling, seller orders), bug fixing, light load check, deploy (20)
