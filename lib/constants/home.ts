@@ -78,3 +78,9 @@ export const HERO_IMAGES_PER_SLIDE = 3;
 export const HERO_AUTOPLAY_MS = 6000;
 export const RAIL_SIZE = 16;
 export const CATEGORY_RAIL_SIZE = 12;
+
+/** Product whose photo leads a category's home tile, by category slug, where the most-rated
+ *  product doesn't represent the category well. Other categories lead with their most-rated. */
+export const CATEGORY_COVERS: Record<string, string> = {
+  sports: "B07VXV6CDH",
+};
