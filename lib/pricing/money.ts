@@ -30,3 +30,10 @@ export function parsePriceToCents(input: string): number | null {
   const [whole, fraction = ""] = value.replace(/,/g, "").split(".");
   return Number(whole) * 100 + Number(fraction.padEnd(2, "0"));
 }
+
+const COMPACT_USD = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", notation: "compact", maximumFractionDigits: 1 });
+
+// "$12.9K"-style amounts for chart axes and stat tiles.
+export function formatCompactPrice(cents: number): string {
+  return COMPACT_USD.format(cents / 100);
+}

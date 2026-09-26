@@ -6,6 +6,7 @@ import { SessionGuard, UserFirstName, UserIdentity } from "@/components/layout/S
 import { CartButton } from "@/components/layout/CartLink";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { Footer } from "@/components/layout/Footer";
+import { ModeBar, ModeBarFallback } from "@/components/layout/ModeBar";
 import { WishlistProvider } from "@/components/wishlist/WishlistProvider";
 import { getCategories } from "@/lib/data/categories";
 
@@ -52,6 +53,11 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
           />
         }
         cartLink={<CartButton />}
+        modeBar={
+          <Suspense fallback={<ModeBarFallback />}>
+            <ModeBar />
+          </Suspense>
+        }
       />
       <main className="flex-1">{children}</main>
       <Footer categories={categories} />

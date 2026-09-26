@@ -21,6 +21,7 @@ export const ROUTES = {
   history: "/history",
   deals: "/deals",
   customerService: "/customer-service",
+  sellerDashboard: "/seller",
   sellerListings: "/seller/listings",
   sellItem: "/seller/listings/new",
 } as const;
@@ -48,6 +49,19 @@ export const SUBNAV_LINKS: NavLink[] = [
   { label: "Customer Service", href: ROUTES.customerService },
 ];
 
+// The quick links in Selling mode (D4). Buying mode shows SUBNAV_LINKS.
+export const SELLER_LINKS: NavLink[] = [
+  { label: "Seller dashboard", href: ROUTES.sellerDashboard },
+  { label: "Your listings", href: ROUTES.sellerListings },
+  { label: "Sell an item", href: ROUTES.sellItem },
+];
+
+// The header's Orders menu offers both sides in either mode (D4).
+export const ORDERS_MENU: (NavLink & { description: string })[] = [
+  { label: "Buyer", description: "Things you ordered", href: ROUTES.orders },
+  { label: "Seller", description: "Your sales and listings", href: ROUTES.sellerDashboard },
+];
+
 export const SIDE_MENU_TRENDING: NavLink[] = [
   { label: "Today's Deals", href: ROUTES.deals },
   { label: "Best Sellers", href: BEST_SELLERS_HREF },
@@ -60,7 +74,7 @@ export const ACCOUNT_LINKS: NavLink[] = [
   { label: "Your Wishlist", href: ROUTES.wishlist },
   { label: "Browsing history", href: ROUTES.history },
   { label: "Your Cart", href: ROUTES.cart },
-  { label: "Sell an item", href: ROUTES.sellItem },
+  { label: "Seller dashboard", href: ROUTES.sellerDashboard },
   { label: "Your listings", href: ROUTES.sellerListings },
   { label: "Customer Service", href: ROUTES.customerService },
 ];
@@ -88,6 +102,7 @@ export const FOOTER_COLUMNS: { title: string; links: NavLink[] }[] = [
   {
     title: "Sell on Shopeedo",
     links: [
+      { label: "Seller dashboard", href: ROUTES.sellerDashboard },
       { label: "Sell an item", href: ROUTES.sellItem },
       { label: "Your listings", href: ROUTES.sellerListings },
     ],

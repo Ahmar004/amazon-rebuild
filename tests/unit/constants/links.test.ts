@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { ACCOUNT_LINKS, FOOTER_COLUMNS, productHref, ROUTES, SIDE_MENU_TRENDING, SUBNAV_LINKS, type NavLink } from "@/lib/constants/links";
+import { ACCOUNT_LINKS, FOOTER_COLUMNS, ORDERS_MENU, productHref, ROUTES, SELLER_LINKS, SIDE_MENU_TRENDING, SUBNAV_LINKS, type NavLink } from "@/lib/constants/links";
 
 function allNavLinks(): NavLink[] {
-  return [...SUBNAV_LINKS, ...SIDE_MENU_TRENDING, ...ACCOUNT_LINKS, ...FOOTER_COLUMNS.flatMap((c) => c.links)];
+  return [...SUBNAV_LINKS, ...SELLER_LINKS, ...ORDERS_MENU, ...SIDE_MENU_TRENDING, ...ACCOUNT_LINKS, ...FOOTER_COLUMNS.flatMap((c) => c.links)];
 }
 
 describe("NavLink collections", () => {

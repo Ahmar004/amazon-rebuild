@@ -1,12 +1,11 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { Package } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
 import { SearchBar } from "@/components/layout/SearchBar";
-import { NavAnchor } from "@/components/layout/NavAnchor";
+import { OrdersMenu } from "@/components/layout/OrdersMenu";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { WishlistLink } from "@/components/wishlist/WishlistLink";
-import { ROUTES, SUBNAV_LINKS } from "@/lib/constants/links";
+import { ROUTES } from "@/lib/constants/links";
 import type { Category } from "@/lib/data/categories";
 
 type HeaderProps = {
@@ -16,12 +15,14 @@ type HeaderProps = {
   allMenu: ReactNode;
   accountMenu: ReactNode;
   cartLink: ReactNode;
+  /** The Buying / Selling switch and quick links; reads the mode cookie, so it arrives in <Suspense>. */
+  modeBar: ReactNode;
 };
 
 // One fluid, sticky header for every screen size (C9): menu, logo, search, theme, account, orders
 // and cart. The search bar sits inline from 768px and wraps onto its own full-width row below it
-// (a single element, re-ordered with CSS). The quick-links row scrolls sideways on small screens.
-export function Header({ categories, allMenu, accountMenu, cartLink }: HeaderProps) {
+// (a single element, re-ordered with CSS). The second row holds the Buying / Selling switch and quick links, which scroll sideways on small screens.
+export function Header({ categories, allMenu, accountMenu, cartLink, modeBar }: HeaderProps) {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-surface">
       <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-x-2 gap-y-2 px-3 py-2.5 sm:gap-x-3 sm:px-6">
@@ -36,20 +37,11 @@ export function Header({ categories, allMenu, accountMenu, cartLink }: HeaderPro
           <ThemeToggle className="text-fg hover:bg-surface-muted" />
           {accountMenu}
           <WishlistLink />
-          <Link href={ROUTES.orders} className="hidden h-10 items-center gap-1.5 rounded-md px-2 text-sm font-semibold text-fg hover:bg-surface-muted lg:inline-flex">
-            <Package size={20} aria-hidden="true" />
-            Orders
-          </Link>
+          <OrdersMenu />
           {cartLink}
         </div>
       </div>
-      <nav aria-label="Quick links" className="border-t border-border">
-        <div className="scrollbar-hide mx-auto flex max-w-[1400px] gap-1 overflow-x-auto px-3 py-1.5 sm:px-6">
-          {SUBNAV_LINKS.map((link) => (
-            <NavAnchor key={link.href} link={link} className="shrink-0 rounded-full px-3 py-1 text-sm text-fg-muted hover:bg-surface-muted hover:text-fg" />
-          ))}
-        </div>
-      </nav>
+      <div className="border-t border-border">{modeBar}</div>
     </header>
   );
 }
