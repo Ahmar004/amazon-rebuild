@@ -38,7 +38,7 @@ npm run typecheck        # route types + tsc --noEmit
 ```
 
 Database: Neon Postgres via Drizzle. `npm run db:migrate` applies migrations, `npm run db:seed`
-loads `data/catalogue.json` (720 products, 3,479 reviews) into an empty database.
+loads `data/catalogue.json.gz` (12,000 products across 24 departments, 36,267 reviews) into an empty database.
 
 ## Tech stack
 

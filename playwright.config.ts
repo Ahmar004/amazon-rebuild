@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-// End-to-end tests for roadmap Step-7, at Amazon's desktop and mobile web widths.
+// End-to-end tests at desktop and phone widths.
 export default defineConfig({
   testDir: "tests/e2e",
   use: { baseURL: process.env.E2E_BASE_URL ?? "http://localhost:3000" },

@@ -75,8 +75,8 @@ MUST follow rule-0.0A now to avoid high token usage, we have to broke all remain
 | `npm test` | Vitest unit tests (`tests/unit`); one file: `npx vitest run tests/unit/<path>.test.ts` |
 | `npm run e2e` | Playwright (`tests/e2e`), desktop and mobile projects; set `E2E_BASE_URL` to test a deployment |
 | `npm run db:generate` / `npm run db:migrate` | Create a migration from `lib/db/schema.ts` / apply migrations to `DATABASE_URL` |
-| `npm run catalogue:import` | Rebuild `data/catalogue.json` from the Hugging Face dataset (downloads about 700 MB) |
-| `npm run db:seed` | Load `data/catalogue.json` into an empty database (`-- --reset` reloads the catalogue) |
+| `npm run catalogue:import` | Rebuild `data/catalogue.json.gz` (12k products, 24 departments) from the Hugging Face dataset (streams several GB, about 20 minutes) |
+| `npm run db:seed` | Load `data/catalogue.json.gz` into an empty database (`-- --reset` reloads the catalogue and empties carts and lists) |
 
 Next.js 16 ships its own docs in `node_modules/next/dist/docs/`; read the relevant guide there before using a Next.js API (see `AGENTS.md`, which `next dev` keeps up to date).
 

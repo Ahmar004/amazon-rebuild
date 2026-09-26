@@ -1,8 +1,9 @@
-// Loads data/catalogue.json into the database named by DATABASE_URL (from .env.local).
+// Loads data/catalogue.json.gz (written by npm run catalogue:import) into the database named by DATABASE_URL (from .env.local).
 // Refuses to run on a database that already has products unless --reset is passed,
 // so it can never wipe live user data by accident. Run: npm run db:seed [-- --reset]
 import { config } from "dotenv";
 import { readFileSync } from "node:fs";
+import { gunzipSync } from "node:zlib";
 
 config({ path: ".env.local" });
 
@@ -27,7 +28,7 @@ async function main() {
   const { histogramFromAverage } = await import("../lib/reviews/histogram");
   const { count, sql } = await import("drizzle-orm");
 
-  const catalogue: Catalogue = JSON.parse(readFileSync("data/catalogue.json", "utf8"));
+  const catalogue: Catalogue = JSON.parse(gunzipSync(readFileSync("data/catalogue.json.gz")).toString("utf8"));
   const [{ value: existing }] = await db.select({ value: count() }).from(products);
   if (existing > 0 && !process.argv.includes("--reset")) {
     console.log(`database already has ${existing} products; pass --reset to reload the catalogue`);
@@ -40,6 +41,7 @@ async function main() {
   const inserted = await db.insert(departments).values(catalogue.departments).returning({ id: departments.id, slug: departments.slug });
   const departmentId = new Map(inserted.map((d) => [d.slug, d.id]));
 
+  let done = 0;
   for (const batch of chunks(catalogue.products, 100)) {
     await db.insert(products).values(
       batch.map((p) => ({
@@ -60,6 +62,8 @@ async function main() {
         importedRank: p.importedRank,
       })),
     );
+    done += batch.length;
+    if (done % 2000 === 0) console.log(`  products: ${done}/${catalogue.products.length}`);
   }
 
   for (const batch of chunks(catalogue.reviews, 200)) {
