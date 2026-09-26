@@ -12,6 +12,8 @@ export type CheckoutSourceLine = {
   imageUrl: string;
   unitPriceCents: number;
   quantity: number;
+  /** unitPriceCents x quantity, worked out here so the summary only displays it. */
+  lineTotalCents: number;
   stock: number;
 };
 
@@ -53,6 +55,7 @@ export async function resolveCheckoutSource(owner: CartOwner | null, buy: string
           imageUrl: product.imageUrl,
           unitPriceCents: product.priceCents,
           quantity,
+          lineTotalCents: product.priceCents * quantity,
           stock: product.stock,
         },
       ],
@@ -70,6 +73,7 @@ export async function resolveCheckoutSource(owner: CartOwner | null, buy: string
       imageUrl: line.imageUrl,
       unitPriceCents: line.priceCents,
       quantity: line.quantity,
+      lineTotalCents: line.lineTotalCents,
       stock: line.stock,
     })),
   };

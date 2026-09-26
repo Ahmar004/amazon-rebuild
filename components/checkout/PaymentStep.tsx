@@ -4,6 +4,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import type { Stripe } from "@stripe/stripe-js";
 import { CardForm, type ConfirmCardResult } from "@/components/checkout/CardForm";
 import type { PaymentMethod } from "@/lib/data/payments";
+import { CheckoutSection, choiceClass } from "@/components/checkout/CheckoutSection";
 
 /** Sentinel selectedId meaning "add a new card" rather than an existing saved card's id. */
 export const NEW_CARD_ID = "new";
@@ -24,7 +25,7 @@ type PaymentStepProps = {
   error: string | null;
 };
 
-// Step 2 of checkout (docs/spec.md 5.8): saved cards as radio cards, plus "Add a credit or debit
+// Section 3 of checkout: saved cards as radio cards, plus "Add a credit or debit
 // card", which reveals the Stripe Payment Element (CardForm) once CheckoutClient has created a
 // PaymentIntent for the current address/speed/totals.
 export function PaymentStep({
@@ -41,21 +42,17 @@ export function PaymentStep({
   error,
 }: PaymentStepProps) {
   return (
-    <section className="rounded-lg bg-surface p-4">
-      <h2 className="text-lg font-bold text-fg">Payment method</h2>
-
-      <div role="radiogroup" aria-label="Payment method" className="mt-3 space-y-2">
+    <CheckoutSection step={3} title="Payment" done={selectedId !== null && selectedId !== NEW_CARD_ID}>
+      <div role="radiogroup" aria-label="Payment method" className="space-y-2">
         {paymentMethods.map((pm) => (
           <label
             key={pm.id}
-            className={`flex cursor-pointer gap-2 rounded border p-3 text-sm text-fg ${
-              selectedId === pm.id ? "border-accent" : "border-border"
-            }`}
+            className={choiceClass(selectedId === pm.id)}
           >
             <input
               type="radio"
               name="payment"
-              className="mt-1 shrink-0"
+              className="mt-1 shrink-0 accent-[var(--color-accent)]"
               checked={selectedId === pm.id}
               onChange={() => onSelectSaved(pm.id)}
             />
@@ -70,14 +67,12 @@ export function PaymentStep({
         ))}
 
         <label
-          className={`flex cursor-pointer gap-2 rounded border p-3 text-sm text-fg ${
-            selectedId === NEW_CARD_ID ? "border-accent" : "border-border"
-          }`}
+          className={choiceClass(selectedId === NEW_CARD_ID)}
         >
           <input
             type="radio"
             name="payment"
-            className="mt-1 shrink-0"
+            className="mt-1 shrink-0 accent-[var(--color-accent)]"
             checked={selectedId === NEW_CARD_ID}
             onChange={onSelectNew}
           />
@@ -88,13 +83,13 @@ export function PaymentStep({
       {selectedId === NEW_CARD_ID && (
         <>
           {!addressChosen ? (
-            <p className="mt-3 text-sm text-fg-muted">Choose a delivery address to enter card details.</p>
+            <p className="mt-3 rounded-lg bg-surface-muted px-3 py-2 text-sm text-fg-muted">Add a delivery address first, then enter your card here.</p>
           ) : clientSecret ? (
             <Elements key={clientSecret} stripe={stripePromise} options={{ clientSecret }}>
               <CardForm onReady={onCardReady} saveCard={saveCard} onSaveCardChange={onSaveCardChange} />
             </Elements>
           ) : (
-            <p className="mt-3 text-sm text-fg-muted">Loading payment form...</p>
+            <div className="mt-3 h-40 animate-pulse rounded-lg bg-surface-muted" aria-label="Loading payment form" />
           )}
         </>
       )}
@@ -104,6 +99,6 @@ export function PaymentStep({
           {error}
         </p>
       )}
-    </section>
+    </CheckoutSection>
   );
 }

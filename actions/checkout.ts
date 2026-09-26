@@ -131,7 +131,9 @@ export async function createPaymentIntent(input: CreatePaymentIntentInput): Prom
         buy: source.kind === "buy" ? source.buy : "",
         saveCard: input.saveCard ? "1" : "0",
       },
-      automatic_payment_methods: { enabled: true, allow_redirects: "never" },
+      // Cards only: bank and pay-later methods settle later or redirect, and an order is only
+      // created once the PaymentIntent has already succeeded.
+      payment_method_types: ["card"],
       ...(savedPaymentMethod ? { payment_method: savedPaymentMethod.stripePaymentMethodId } : {}),
       ...(input.saveCard ? { setup_future_usage: "off_session" } : {}),
     });

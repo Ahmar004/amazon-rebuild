@@ -6,7 +6,7 @@ import { AddressModal } from "@/components/checkout/AddressModal";
 import { AddressStep } from "@/components/checkout/AddressStep";
 import { NEW_CARD_ID, PaymentStep } from "@/components/checkout/PaymentStep";
 import { OrderSummary } from "@/components/checkout/OrderSummary";
-import { ReviewStep } from "@/components/checkout/ReviewStep";
+import { DeliveryStep } from "@/components/checkout/DeliveryStep";
 import { SmallPrint } from "@/components/checkout/SmallPrint";
 import type { ConfirmCardResult } from "@/components/checkout/CardForm";
 import { getStripe } from "@/lib/stripe-client";
@@ -27,8 +27,8 @@ type CheckoutClientProps = {
 
 const GENERIC_ERROR = "Something went wrong. Please try again.";
 
-// Composes the three checkout steps and the order summary (docs/superpowers/plans/
-// 2026-09-19-slice-7-checkout.md). Every total shown comes from quoteCheckout; the payment
+// The one-page checkout (C12): address, delivery speed and payment side by side with a live order
+// summary. Every total shown comes from quoteCheckout; the payment
 // confirmation and order creation follow the plan's "Placing the order" section exactly:
 // a new card confirms through the Stripe Elements Payment Element (CardForm), a saved card
 // confirms with stripe.confirmCardPayment, then finalizeOrder creates the order server-side.
@@ -47,6 +47,7 @@ export function CheckoutClient({
   const [addressId, setAddressId] = useState(defaultAddressId);
   const [speed, setSpeed] = useState<DeliverySpeed>("standard");
   const [quote, setQuote] = useState(initialQuote);
+  const [updating, setUpdating] = useState(false);
 
   const [addressModalOpen, setAddressModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
@@ -72,9 +73,14 @@ export function CheckoutClient({
       return;
     }
     let cancelled = false;
-    quoteCheckout({ addressId, speed, buy }).then((result) => {
-      if (!cancelled) setQuote(result);
-    });
+    setUpdating(true);
+    quoteCheckout({ addressId, speed, buy })
+      .then((result) => {
+        if (!cancelled) setQuote(result);
+      })
+      .finally(() => {
+        if (!cancelled) setUpdating(false);
+      });
     return () => {
       cancelled = true;
     };
@@ -201,28 +207,32 @@ export function CheckoutClient({
     }
   }
 
-  const summary = (
-    <OrderSummary
-      totals={quote.totals}
-      disabled={!addressId || !selectedPaymentId}
-      placing={placing}
-      error={checkoutError}
-      onPlaceOrder={handlePlaceOrder}
-    />
-  );
+  const blocker = !addressId
+    ? "Add a delivery address to place your order."
+    : !selectedPaymentId
+      ? "Choose a payment method to place your order."
+      : null;
 
   return (
-    <div className="mx-auto max-w-[1000px] px-4 py-6">
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_360px] lg:items-start">
-        <div className="order-first lg:order-last lg:sticky lg:top-4">{summary}</div>
-
-        <div className="order-last space-y-4 lg:order-first">
+    <div className="mx-auto max-w-[1120px] px-4 py-6">
+      <h1 className="mb-4 text-2xl font-bold text-fg">Checkout</h1>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_380px] lg:items-start">
+        <div className="space-y-4">
           <AddressStep
             addresses={addressList}
             selectedId={addressId}
             onSelect={handleAddressSelect}
             onAddNew={handleAddNew}
             onEdit={handleEditAddress}
+          />
+
+          <DeliveryStep
+            speed={speed}
+            onSpeedChange={setSpeed}
+            standardDate={quote.standardDate}
+            fastDate={quote.fastDate}
+            standardShippingCents={quote.standardShippingCents}
+            fastShippingCents={quote.fastShippingCents}
           />
 
           <PaymentStep
@@ -239,17 +249,19 @@ export function CheckoutClient({
             error={paymentError}
           />
 
-          <ReviewStep
-            items={items}
-            speed={speed}
-            onSpeedChange={setSpeed}
-            standardDate={quote.standardDate}
-            fastDate={quote.fastDate}
-            standardShippingCents={quote.standardShippingCents}
-            fastShippingCents={quote.fastShippingCents}
-          />
-
           <SmallPrint />
+        </div>
+
+        <div className="lg:sticky lg:top-4">
+          <OrderSummary
+            items={items}
+            totals={quote.totals}
+            blocker={blocker}
+            placing={placing}
+            updating={updating}
+            error={checkoutError}
+            onPlaceOrder={handlePlaceOrder}
+          />
         </div>
       </div>
 

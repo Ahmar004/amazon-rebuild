@@ -34,7 +34,8 @@ export function CardForm({ onReady, saveCard, onSaveCardChange }: CardFormProps)
 
   return (
     <div className="mt-3">
-      <PaymentElement options={{ layout: "accordion" }} />
+      {/* Link offers bank and pay-later options that settle later; checkout only completes card payments. */}
+      <PaymentElement options={{ layout: "tabs", wallets: { link: "never" } }} />
 
       <label className="mt-3 flex items-center gap-2 text-sm text-fg">
         <input type="checkbox" checked={saveCard} onChange={(event) => onSaveCardChange(event.target.checked)} />

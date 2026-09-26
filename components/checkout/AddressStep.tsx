@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Address } from "@/lib/data/addresses";
+import { CheckoutSection, choiceClass } from "@/components/checkout/CheckoutSection";
 
 type AddressStepProps = {
   addresses: Address[];
@@ -11,53 +12,49 @@ type AddressStepProps = {
   onEdit: (address: Address) => void;
 };
 
-// Step 1 of checkout (docs/spec.md 5.8): a collapsed "Delivering to <name>" summary once an
-// address is chosen, or the radio list of saved addresses plus "Add a new delivery address"
-// while choosing (recon 6-we-reach-checkout-page-after-email-verification...).
+// Section 1 of checkout: a short "Delivering to <name>" summary once an address is chosen, or the
+// saved addresses as radio cards plus "Add a new address" while choosing.
 export function AddressStep({ addresses, selectedId, onSelect, onAddNew, onEdit }: AddressStepProps) {
   const selected = addresses.find((a) => a.id === selectedId) ?? null;
   const [editing, setEditing] = useState(selected === null);
 
   if (!editing && selected) {
     return (
-      <section className="rounded-lg bg-surface p-4">
-        <h2 className="text-lg font-bold text-fg">Delivery address</h2>
-        <p className="mt-2 text-sm text-fg">
-          Delivering to <span className="font-bold">{selected.fullName}</span>
-        </p>
-        <p className="text-sm text-fg">
-          {selected.line1}
-          {selected.line2 ? `, ${selected.line2}` : ""}, {selected.city}, {selected.state} {selected.zip}
-        </p>
-        <button
-          type="button"
-          onClick={() => setEditing(true)}
-          className="mt-2 text-sm text-accent hover:text-accent-hover hover:underline"
-        >
-          Change
-        </button>
-      </section>
+      <CheckoutSection step={1} title="Delivery address" done>
+        <div className="flex items-start justify-between gap-3 text-sm text-fg">
+          <p>
+            Delivering to <span className="font-bold">{selected.fullName}</span>
+            <br />
+            {selected.line1}
+            {selected.line2 ? `, ${selected.line2}` : ""}, {selected.city}, {selected.state} {selected.zip}
+          </p>
+          <button
+            type="button"
+            onClick={() => setEditing(true)}
+            className="shrink-0 rounded-full border border-border-strong px-3 py-1 text-sm font-semibold text-fg hover:bg-surface-muted"
+          >
+            Change
+          </button>
+        </div>
+      </CheckoutSection>
     );
   }
 
   return (
-    <section className="rounded-lg bg-surface p-4">
-      <h2 className="text-lg font-bold text-fg">{addresses.length ? "Delivery address" : "Add delivery address"}</h2>
-      {addresses.length === 0 && <p className="mt-1 text-sm text-fg-muted">Enter your address to see delivery options</p>}
+    <CheckoutSection step={1} title="Delivery address">
+      {addresses.length === 0 && <p className="text-sm text-fg-muted">Add where your order should go. We save it for next time.</p>}
 
       {addresses.length > 0 && (
-        <div role="radiogroup" aria-label="Delivery address" className="mt-3 space-y-2">
+        <div role="radiogroup" aria-label="Delivery address" className="grid gap-2 sm:grid-cols-2">
           {addresses.map((address) => (
             <label
               key={address.id}
-              className={`flex cursor-pointer gap-2 rounded border p-3 text-sm text-fg ${
-                selectedId === address.id ? "border-accent" : "border-border"
-              }`}
+              className={choiceClass(selectedId === address.id)}
             >
               <input
                 type="radio"
                 name="address"
-                className="mt-1 shrink-0"
+                className="mt-1 shrink-0 accent-[var(--color-accent)]"
                 checked={selectedId === address.id}
                 onChange={() => {
                   onSelect(address.id);
@@ -95,12 +92,12 @@ export function AddressStep({ addresses, selectedId, onSelect, onAddNew, onEdit 
         onClick={onAddNew}
         className={
           addresses.length === 0
-            ? "mt-3 rounded-full border border-accent bg-accent px-4 py-1.5 text-sm font-bold text-accent-fg hover:bg-accent-hover"
-            : "mt-3 block text-sm text-accent hover:text-accent-hover hover:underline"
+            ? "rounded-full bg-accent px-4 py-2 text-sm font-bold text-accent-fg hover:bg-accent-hover"
+            : "mt-3 block text-sm font-semibold text-accent hover:text-accent-hover hover:underline"
         }
       >
-        Add a new delivery address
+        {addresses.length === 0 ? "Add a delivery address" : "+ Add a new address"}
       </button>
-    </section>
+    </CheckoutSection>
   );
 }
