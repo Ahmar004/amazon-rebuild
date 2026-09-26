@@ -101,5 +101,5 @@ One slice at a time, in this order:
 - **[completed]** S3  Selling: listing data model, photo upload to Vercel Blob, "Sell an item" form (details, category, price, stock, photos), publish to search and product pages, "Your listings" with edit, pause and delete (15, D2)
 - **[completed]** S4  Buying / Selling mode switch on every page, header Orders drop-down (Buyer / Seller), seller dashboard (15, D4)
 - **[completed]** S5  Seller orders: sold items and pending deliveries, "Mark as shipped" / "Mark as delivered" driving the buyer's timeline (15, D3)
-- S6  App-wide animation pass on top of the current animations (18)
+- **[completed]** S6  App-wide animation pass on top of the current animations (18)
 - S7  Step-7 hardening: end-to-end tests of every key flow (browse, search, product, cart, checkout, orders, selling, seller orders), bug fixing, light load check, deploy (20)
