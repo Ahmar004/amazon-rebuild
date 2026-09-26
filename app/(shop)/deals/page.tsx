@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { Tag } from "lucide-react";
 import { getDeals, DEALS_PAGE_SIZE } from "@/lib/data/deals";
-import { getDepartments } from "@/lib/data/departments";
+import { getCategories } from "@/lib/data/categories";
 import { dealsUrl, parseDealsParams, type DealsQuery } from "@/lib/validation/deals";
 import { ProductCard } from "@/components/product/ProductCard";
 
@@ -11,7 +11,7 @@ export const metadata = { title: "Today's Deals - Shopeedo" };
 type RawParams = Record<string, string | string[] | undefined>;
 
 // Today's Deals (frontend-rebuild.md C19): discounted products, biggest saving first, with
-// department chips. The query lives in the URL; the data is cached per query.
+// category chips. The query lives in the URL; the data is cached per query.
 export default function DealsPage({ searchParams }: { searchParams: Promise<RawParams> }) {
   return (
     <div className="mx-auto max-w-[1400px] px-3 py-4 sm:px-6 sm:py-6">
@@ -33,19 +33,19 @@ export default function DealsPage({ searchParams }: { searchParams: Promise<RawP
 
 async function DealsForParams({ searchParams }: { searchParams: Promise<RawParams> }) {
   const query = parseDealsParams(await searchParams);
-  const [deals, departments] = await Promise.all([getDeals(query), getDepartments()]);
+  const [deals, categories] = await Promise.all([getDeals(query), getCategories()]);
   const totalPages = Math.max(1, Math.ceil(deals.total / DEALS_PAGE_SIZE));
 
   return (
     <>
-      <nav aria-label="Deal departments" className="scrollbar-hide -mx-3 mt-4 flex gap-2 overflow-x-auto px-3 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
-        <Chip href={dealsUrl({ page: 1 })} active={!query.dept}>
+      <nav aria-label="Deal categories" className="scrollbar-hide -mx-3 mt-4 flex gap-2 overflow-x-auto px-3 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
+        <Chip href={dealsUrl({ page: 1 })} active={!query.category}>
           All deals
         </Chip>
-        {departments
-          .filter((d) => deals.departmentCounts[d.slug])
+        {categories
+          .filter((d) => deals.categoryCounts[d.slug])
           .map((d) => (
-            <Chip key={d.slug} href={dealsUrl({ dept: d.slug, page: 1 })} active={query.dept === d.slug}>
+            <Chip key={d.slug} href={dealsUrl({ category: d.slug, page: 1 })} active={query.category === d.slug}>
               {d.name}
             </Chip>
           ))}

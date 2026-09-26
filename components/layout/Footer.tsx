@@ -4,15 +4,15 @@ import { NavAnchor } from "@/components/layout/NavAnchor";
 import { BackToTop } from "@/components/layout/BackToTop";
 import { SafetyNotice } from "@/components/layout/SafetyNotice";
 import { FOOTER_COLUMNS, ROUTES } from "@/lib/constants/links";
-import type { Department } from "@/lib/data/departments";
+import type { Category } from "@/lib/data/categories";
 
-const FOOTER_DEPARTMENTS = 8;
+const FOOTER_CATEGORIES = 8;
 // A fixed year: new Date() during prerender makes the page dynamic under cacheComponents.
 const COPYRIGHT_YEAR = 2026;
 
-// One fluid footer for every screen size: brand, link columns (shop, departments, account), then
+// One fluid footer for every screen size: brand, link columns (shop, categories, account), then
 // the copyright line and the demo notice. Replaces the old desktop/mobile footer pair.
-export function Footer({ departments, compact = false }: { departments?: Department[]; compact?: boolean }) {
+export function Footer({ categories, compact = false }: { categories?: Category[]; compact?: boolean }) {
   return (
     <footer className="mt-10 border-t border-border bg-surface">
       {!compact && <BackToTop />}
@@ -27,10 +27,10 @@ export function Footer({ departments, compact = false }: { departments?: Departm
           {FOOTER_COLUMNS.map((column) => (
             <FooterColumn key={column.title} title={column.title} links={column.links} />
           ))}
-          {departments && departments.length > 0 && (
+          {categories && categories.length > 0 && (
             <FooterColumn
-              title="Departments"
-              links={departments.slice(0, FOOTER_DEPARTMENTS).map((d) => ({ label: d.name, href: `${ROUTES.search}?i=${d.slug}` }))}
+              title="Categories"
+              links={categories.slice(0, FOOTER_CATEGORIES).map((d) => ({ label: d.name, href: `${ROUTES.search}?i=${d.slug}` }))}
             />
           )}
         </div>

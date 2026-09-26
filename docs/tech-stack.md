@@ -41,7 +41,7 @@ We use Next.js 16's default model with `cacheComponents: true`, called Partial P
 | Home `/` | Static shell and cached content (`'use cache'`, `cacheLife('hours')`). The greeting, cart count and history strip stream per user. | The same for everyone except the header parts, so it loads instantly from the CDN. |
 | Product `/dp/[asin]` | Top products are prerendered with `generateStaticParams`; others are generated on first visit and then cached (ISR). Product data is tagged with `cacheTag('product:<asin>')`. Buy-box stock and delivery date stream per request. | Catalogue content rarely changes; stock and the chosen delivery location do. A new review calls `revalidateTag` so the rating updates. |
 | Search `/s?k=...` | Static shell (header, filter layout); results stream inside `<Suspense>`. The query function is cached with `'use cache'` keyed by the query and filters. | Results depend on the URL, but the same query from many users reuses one cache entry. |
-| Today's Deals, Customer Service, department pages | Static and cached (`cacheLife('hours')`) | Shared content. |
+| Today's Deals, Customer Service, category pages | Static and cached (`cacheLife('hours')`) | Shared content. |
 | Cart, checkout, account, orders, lists, history, sign-in | Server-rendered per request (they read the session cookie inside `<Suspense>`), never shared-cached | Private data. The server is the single source of truth for money and ownership. |
 | Typeahead, add to cart, quantity stepper, mini-cart, Stripe card field | Client components calling our API routes | Instant interaction without full page loads. |
 
@@ -51,7 +51,7 @@ Writes go through Server Actions or Route Handlers that check the session first,
 
 - **Tables:**
   - `users`, `sessions`, `addresses`, `payment_methods` (Stripe payment-method id, brand, last 4, expiry, default).
-  - `departments`, `products`, `product_images`, `reviews`.
+  - `categories`, `products`, `product_images`, `reviews`.
   - `carts`, `cart_items` (guest carts are keyed by a signed cookie id; each item has a `saved_for_later` flag).
   - `orders`, `order_items` (price copied onto the item at purchase time).
   - `lists`, `list_items`, `browsing_history`.
@@ -60,15 +60,15 @@ Writes go through Server Actions or Route Handlers that check the session first,
 
 ## 5. Search
 
-- Each product has a generated `tsvector` column (title, brand, department, features) with a GIN index. `websearch_to_tsquery` handles the user's query, and `ts_rank` provides the "Featured" sort.
+- Each product has a generated `tsvector` column (title, brand, category, features) with a GIN index. `websearch_to_tsquery` handles the user's query, and `ts_rank` provides the "Featured" sort.
 - Typeahead suggestions use `pg_trgm` similarity on product titles and brands, so partial words and typos still match. Results are cached per prefix.
-- Filters (rating, brand, price, department, deals) are plain `WHERE` clauses on indexed columns.
+- Filters (rating, brand, price, category, deals) are plain `WHERE` clauses on indexed columns.
 
 ## 6. Catalogue data
 
-- **Source:** the "Amazon Reviews 2023" dataset (McAuley Lab, UCSD), hosted on Hugging Face at `McAuley-Lab/Amazon-Reviews-2023`. Each department's metadata file has real titles, prices, average rating, rating count, brand (`store`), category path, "About this item" features, description, a details table, and image URLs on `m.media-amazon.com`. The review files have rating, title, text, date and the verified-purchase flag.
-- **Access:** checked on 2026-09-19. HTTP range requests on the Hugging Face files work, so the import script streams the first few MB of each department file and never downloads the multi-GB whole. About 27% of records are usable (price, images and a rating count above 20).
-- **Import:** a one-off script (`scripts/import-catalogue.ts`) picks about 40 to 80 usable products for each home-page department (Electronics, Computers, Home & Kitchen, Beauty, Clothing Shoes & Jewelry, Toys & Games, Pet Supplies, Video Games, Books, Sports & Outdoors, Baby, Tools & Home Improvement). It maps them to our tables and attaches the real reviews found for each product. The review files are ordered by user, not product, so the script reads about 40 MB of each department's reviews and keeps the products that appear in both samples (usually 1 to 8 reviews each). The dataset has no reviewer names, so reviews show Amazon's default display name, "Amazon Customer".
+- **Source:** the "Amazon Reviews 2023" dataset (McAuley Lab, UCSD), hosted on Hugging Face at `McAuley-Lab/Amazon-Reviews-2023`. Each category's metadata file has real titles, prices, average rating, rating count, brand (`store`), category path, "About this item" features, description, a details table, and image URLs on `m.media-amazon.com`. The review files have rating, title, text, date and the verified-purchase flag.
+- **Access:** checked on 2026-09-19. HTTP range requests on the Hugging Face files work, so the import script streams the first few MB of each category file and never downloads the multi-GB whole. About 27% of records are usable (price, images and a rating count above 20).
+- **Import:** a one-off script (`scripts/import-catalogue.ts`) picks about 40 to 80 usable products for each home-page category (Electronics, Computers, Home & Kitchen, Beauty, Clothing Shoes & Jewelry, Toys & Games, Pet Supplies, Video Games, Books, Sports & Outdoors, Baby, Tools & Home Improvement). It maps them to our tables and attaches the real reviews found for each product. The review files are ordered by user, not product, so the script reads about 40 MB of each category's reviews and keeps the products that appear in both samples (usually 1 to 8 reviews each). The dataset has no reviewer names, so reviews show Amazon's default display name, "Amazon Customer".
   - **Fields the dataset lacks** are derived by fixed rules and written to the seed, so they're stable: stock (spread between 3 and 60), a list price for about a third of products (current price times 1.1 to 1.4, which creates deals), and "Best Seller" flags.
   - The seed is committed as JSON so any environment rebuilds identically.
 - **Licence note:** the dataset is published for research use. This is a non-commercial assessment; the README credits the dataset.

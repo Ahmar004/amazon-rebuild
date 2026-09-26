@@ -1,5 +1,5 @@
 import { PackageCheck, ShieldCheck, Truck } from "lucide-react";
-import { getDepartmentPreviews } from "@/lib/data/departments";
+import { getCategoryPreviews } from "@/lib/data/categories";
 import { imageAt } from "@/lib/assets";
 import { formatPrice } from "@/lib/pricing/money";
 import { FREE_SHIPPING_THRESHOLD_CENTS } from "@/lib/pricing/shipping";
@@ -16,8 +16,8 @@ type Tile = { name: string; image: string };
 // category, floating in a gradient panel with what the store offers. Desktop gets the panel;
 // narrow screens get a scrolling photo strip above the card instead.
 export async function AuthShowcase() {
-  const departments = await getDepartmentPreviews();
-  const tiles: Tile[] = departments
+  const categories = await getCategoryPreviews();
+  const tiles: Tile[] = categories
     .filter((d) => d.images.length > 0)
     .map((d) => ({ name: d.name, image: d.images[0] }));
 
@@ -37,7 +37,7 @@ export async function AuthShowcase() {
         <div aria-hidden="true" className="pointer-events-none absolute -bottom-20 -right-10 h-72 w-72 rounded-full bg-hero-fg/10 blur-3xl animate-[drift_18s_ease-in-out_infinite_reverse]" />
 
         <div className="relative animate-[rise-in_700ms_ease-out_both]">
-          <p className="text-sm font-semibold uppercase tracking-wider text-hero-fg/80">Shop {departments.length} categories</p>
+          <p className="text-sm font-semibold uppercase tracking-wider text-hero-fg/80">Shop {categories.length} categories</p>
           <h2 className="mt-2 max-w-md text-3xl font-bold leading-tight">Everything you need, a few clicks away.</h2>
         </div>
 

@@ -8,7 +8,7 @@ import { gunzipSync } from "node:zlib";
 config({ path: ".env.local" });
 
 type Catalogue = {
-  departments: { slug: string; name: string; sortOrder: number }[];
+  categories: { slug: string; name: string; sortOrder: number }[];
   products: import("./import-catalogue").CatalogueProduct[];
   reviews: import("./import-catalogue").CatalogueReview[];
 };
@@ -24,7 +24,7 @@ function chunks<T>(items: T[], size: number): T[][] {
 async function main() {
   // Imported after dotenv so the client sees DATABASE_URL.
   const { db } = await import("../lib/db/client");
-  const { departments, products, reviews } = await import("../lib/db/schema");
+  const { categories, products, reviews } = await import("../lib/db/schema");
   const { histogramFromAverage } = await import("../lib/reviews/histogram");
   // The dataset names the marketplace it came from; Shopeedo never shows that name.
   const { scrubDetails, scrubName, scrubProse } = await import("../lib/catalogue/store-name");
@@ -37,11 +37,11 @@ async function main() {
     return;
   }
   if (existing > 0) {
-    await db.execute(sql`truncate reviews, review_votes, cart_items, list_items, browsing_history, order_items, products, departments restart identity cascade`);
+    await db.execute(sql`truncate reviews, review_votes, cart_items, list_items, browsing_history, order_items, products, categories restart identity cascade`);
   }
 
-  const inserted = await db.insert(departments).values(catalogue.departments).returning({ id: departments.id, slug: departments.slug });
-  const departmentId = new Map(inserted.map((d) => [d.slug, d.id]));
+  const inserted = await db.insert(categories).values(catalogue.categories).returning({ id: categories.id, slug: categories.slug });
+  const categoryId = new Map(inserted.map((d) => [d.slug, d.id]));
 
   let done = 0;
   for (const batch of chunks(catalogue.products, 100)) {
@@ -50,7 +50,7 @@ async function main() {
         asin: p.asin,
         title: scrubName(p.title),
         brand: scrubName(p.brand),
-        departmentId: departmentId.get(p.departmentSlug)!,
+        categoryId: categoryId.get(p.categorySlug)!,
         categoryPath: p.categoryPath.map(scrubName),
         priceCents: p.priceCents,
         listPriceCents: p.listPriceCents,
@@ -84,7 +84,7 @@ async function main() {
     );
   }
 
-  console.log(`seeded ${catalogue.departments.length} departments, ${catalogue.products.length} products, ${catalogue.reviews.length} reviews`);
+  console.log(`seeded ${catalogue.categories.length} categories, ${catalogue.products.length} products, ${catalogue.reviews.length} reviews`);
 }
 
 main().catch((error) => {

@@ -1,7 +1,7 @@
 import { sql, type SQL } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { db } from "@/lib/db/client";
-import { departments } from "@/lib/db/schema";
+import { categories } from "@/lib/db/schema";
 import { mapProductSummaryRow, type ProductSummary } from "@/lib/data/products";
 import type { SearchQuery } from "@/lib/validation/search";
 import type { SortKey } from "@/lib/constants/sort";
@@ -12,7 +12,7 @@ export type SearchResult = {
   total: number;
   items: ProductSummary[];
   brandFacets: { name: string; count: number }[];
-  department: { slug: string; name: string } | null;
+  category: { slug: string; name: string } | null;
 };
 
 // Flattens a drizzle SQL fragment's literal string chunks into readable text, so a unit test can
@@ -44,8 +44,8 @@ export function buildSearchConditions(q: SearchQuery, options: BuildOptions = {}
   if (q.k) {
     conditions.push(sql`search_vector @@ websearch_to_tsquery('english', ${q.k})`);
   }
-  if (q.dept) {
-    conditions.push(sql`department_id = (select id from departments where slug = ${q.dept})`);
+  if (q.category) {
+    conditions.push(sql`category_id = (select id from categories where slug = ${q.category})`);
   }
   if (q.minRating) {
     conditions.push(sql`rating_avg >= ${q.minRating}`);
@@ -112,7 +112,7 @@ export async function searchProducts(q: SearchQuery): Promise<SearchResult> {
     asin: string;
     title: string;
     brand: string;
-    department_slug: string;
+    category_slug: string;
     images: unknown;
     price_cents: number;
     list_price_cents: number | null;
@@ -121,10 +121,10 @@ export async function searchProducts(q: SearchQuery): Promise<SearchResult> {
     stock: number;
     is_best_seller: boolean;
   }>(sql`
-    select p.asin, p.title, p.brand, d.slug as department_slug, p.images, p.price_cents,
+    select p.asin, p.title, p.brand, d.slug as category_slug, p.images, p.price_cents,
            p.list_price_cents, p.rating_avg, p.rating_count, p.stock, p.is_best_seller
     from products p
-    join departments d on d.id = p.department_id
+    join categories d on d.id = p.category_id
     where ${where}
     order by ${orderBy}
     limit ${PAGE_SIZE} offset ${offset}
@@ -136,7 +136,7 @@ export async function searchProducts(q: SearchQuery): Promise<SearchResult> {
       asin: row.asin,
       title: row.title,
       brand: row.brand,
-      departmentSlug: row.department_slug,
+      categorySlug: row.category_slug,
       images: row.images,
       priceCents: row.price_cents,
       listPriceCents: row.list_price_cents,
@@ -159,11 +159,11 @@ export async function searchProducts(q: SearchQuery): Promise<SearchResult> {
   `);
   const brandFacetRows = brandFacetResult.rows;
 
-  const department = q.dept
+  const category = q.category
     ? await db
-        .select({ slug: departments.slug, name: departments.name })
-        .from(departments)
-        .where(sql`slug = ${q.dept}`)
+        .select({ slug: categories.slug, name: categories.name })
+        .from(categories)
+        .where(sql`slug = ${q.category}`)
         .then((rows2) => rows2[0] ?? null)
     : null;
 
@@ -171,7 +171,7 @@ export async function searchProducts(q: SearchQuery): Promise<SearchResult> {
     total: Number(total),
     items,
     brandFacets: brandFacetRows.map((r) => ({ name: r.brand, count: Number(r.count) })),
-    department,
+    category,
   };
 }
 

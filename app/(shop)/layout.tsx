@@ -7,16 +7,16 @@ import { CartButton } from "@/components/layout/CartLink";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { Footer } from "@/components/layout/Footer";
 import { WishlistProvider } from "@/components/wishlist/WishlistProvider";
-import { getDepartments } from "@/lib/data/departments";
+import { getCategories } from "@/lib/data/categories";
 
-// Shell for every storefront page: one fluid header, the page, and the footer (C9). Departments
+// Shell for every storefront page: one fluid header, the page, and the footer (C9). Categories
 // are cached catalogue data, so the layout reads them directly and passes the same list to every
 // menu (point 9). The cart and wishlist load on the client (CartProvider, WishlistProvider) so
 // cached pages stay cached. Anything that reads the session or cart cookie renders inside its own
 // <Suspense> with a static fallback, never under 'use cache' (CLAUDE.md caching rule); the menus
 // themselves sit outside Suspense so their open state never resets when a slot streams in.
 export default async function ShopLayout({ children }: { children: React.ReactNode }) {
-  const departments = await getDepartments();
+  const categories = await getCategories();
 
   return (
     <WishlistProvider>
@@ -26,10 +26,10 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
         <SessionGuard />
       </Suspense>
       <Header
-        departments={departments}
+        categories={categories}
         allMenu={
           <AllMenu
-            departments={departments}
+            categories={categories}
             firstName={
               <Suspense fallback="there">
                 <UserFirstName />
@@ -54,7 +54,7 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
         cartLink={<CartButton />}
       />
       <main className="flex-1">{children}</main>
-      <Footer departments={departments} />
+      <Footer categories={categories} />
       </div>
       </CartProvider>
     </WishlistProvider>

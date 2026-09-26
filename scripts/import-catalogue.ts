@@ -1,5 +1,5 @@
 // Builds data/catalogue.json.gz from the "Reviews 2023" product dataset (McAuley Lab, UCSD) on
-// Hugging Face (frontend-rebuild.md C3: ~12k products across 24 departments). Each source file is
+// Hugging Face (frontend-rebuild.md C3: ~12k products across 24 categories). Each source file is
 // several GB, so it is streamed and the download stops once enough usable products (price, image,
 // 20+ ratings) are found or the byte cap is reached. Run: npm run catalogue:import
 import { writeFileSync, mkdirSync } from "node:fs";
@@ -7,19 +7,19 @@ import { gzipSync } from "node:zlib";
 
 // The dataset's public repository path; its name is fixed by the publisher.
 const BASE = "https://huggingface.co/datasets/McAuley-Lab/Amazon-Reviews-2023/resolve/main/raw";
-const PRODUCTS_PER_DEPARTMENT = 500;
-const CANDIDATES_WANTED = PRODUCTS_PER_DEPARTMENT * 3;
+const PRODUCTS_PER_CATEGORY = 500;
+const CANDIDATES_WANTED = PRODUCTS_PER_CATEGORY * 3;
 const META_BYTE_CAP = 250_000_000;
 const REVIEW_BYTE_CAP = 120_000_000;
 const REVIEWS_PER_PRODUCT = 6;
 const PARALLEL_FILES = 4;
 
-type DepartmentSource = { slug: string; name: string; file: string; pick?: (m: Meta) => boolean };
+type CategorySource = { slug: string; name: string; file: string; pick?: (m: Meta) => boolean };
 
 const isComputer = (m: Meta) => (m.categories ?? []).includes("Computers & Accessories");
 
-// Alphabetical, the order the department filter and the All menu list them in.
-const DEPARTMENTS: DepartmentSource[] = [
+// Alphabetical, the order the category filter and the All menu list them in.
+const CATEGORIES: CategorySource[] = [
   { slug: "appliances", name: "Appliances", file: "Appliances" },
   { slug: "arts-crafts", name: "Arts, Crafts & Sewing", file: "Arts_Crafts_and_Sewing" },
   { slug: "automotive", name: "Automotive", file: "Automotive" },
@@ -73,7 +73,7 @@ type Review = {
 
 export type CatalogueProduct = {
   asin: string;
-  departmentSlug: string;
+  categorySlug: string;
   title: string;
   brand: string;
   categoryPath: string[];
@@ -140,7 +140,7 @@ function parse<T>(line: string): T | null {
 
 const SKIPPED_DETAILS = new Set(["Best Sellers Rank", "Customer Reviews", "Date First Available"]);
 
-function toProduct(m: Meta, departmentSlug: string, rank: number): CatalogueProduct | null {
+function toProduct(m: Meta, categorySlug: string, rank: number): CatalogueProduct | null {
   const price = typeof m.price === "number" ? m.price : Number(m.price);
   const images = (m.images ?? [])
     .filter((i) => i.large)
@@ -159,7 +159,7 @@ function toProduct(m: Meta, departmentSlug: string, rank: number): CatalogueProd
   const priceCents = Math.round(price * 100);
   return {
     asin: m.parent_asin,
-    departmentSlug,
+    categorySlug,
     title,
     // Books have an author instead of a brand, shown in the same place.
     brand: (m.author?.name || m.store || details.Brand || "Generic").trim(),
@@ -195,16 +195,16 @@ function toReview(r: Review): CatalogueReview | null {
 
 type FileData = { metas: Meta[]; reviews: Map<string, Review[]> };
 
-// Reads one source file: metadata until every department drawing on it has enough candidates,
+// Reads one source file: metadata until every category drawing on it has enough candidates,
 // then reviews for just those candidates.
-async function loadFile(file: string, depts: DepartmentSource[]): Promise<FileData> {
+async function loadFile(file: string, categories: CategorySource[]): Promise<FileData> {
   const metas: Meta[] = [];
-  const counts = new Map(depts.map((d) => [d.slug, 0]));
+  const counts = new Map(categories.map((d) => [d.slug, 0]));
   await streamLines(`meta_categories/meta_${file}.jsonl`, META_BYTE_CAP, (line) => {
     const m = parse<Meta>(line);
     if (!m || !toProduct(m, "", 0)) return true;
     metas.push(m);
-    for (const d of depts) if (!d.pick || d.pick(m)) counts.set(d.slug, counts.get(d.slug)! + 1);
+    for (const d of categories) if (!d.pick || d.pick(m)) counts.set(d.slug, counts.get(d.slug)! + 1);
     return [...counts.values()].some((c) => c < CANDIDATES_WANTED);
   });
 
@@ -223,23 +223,23 @@ async function loadFile(file: string, depts: DepartmentSource[]): Promise<FileDa
 }
 
 async function main() {
-  const files = [...new Set(DEPARTMENTS.map((d) => d.file))];
+  const files = [...new Set(CATEGORIES.map((d) => d.file))];
   const loaded = new Map<string, FileData>();
   for (let i = 0; i < files.length; i += PARALLEL_FILES) {
     const group = files.slice(i, i + PARALLEL_FILES);
     console.log(`downloading ${group.join(", ")} ...`);
-    const results = await Promise.all(group.map((f) => loadFile(f, DEPARTMENTS.filter((d) => d.file === f))));
+    const results = await Promise.all(group.map((f) => loadFile(f, CATEGORIES.filter((d) => d.file === f))));
     group.forEach((f, j) => loaded.set(f, results[j]));
   }
 
   const products: CatalogueProduct[] = [];
   const reviews: CatalogueReview[] = [];
   const taken = new Set<string>();
-  for (const dept of DEPARTMENTS) {
-    const source = loaded.get(dept.file)!;
+  for (const category of CATEGORIES) {
+    const source = loaded.get(category.file)!;
     const candidates = source.metas
-      .filter((m) => !taken.has(m.parent_asin) && (!dept.pick || dept.pick(m)))
-      .map((m, i) => toProduct(m, dept.slug, i))
+      .filter((m) => !taken.has(m.parent_asin) && (!category.pick || category.pick(m)))
+      .map((m, i) => toProduct(m, category.slug, i))
       .filter((p): p is CatalogueProduct => p !== null);
 
     const reviewsByAsin = new Map<string, CatalogueReview[]>();
@@ -254,7 +254,7 @@ async function main() {
     // Prefer products with real reviews, then the most-rated ones.
     const chosen = candidates
       .sort((a, b) => (reviewsByAsin.get(b.asin)?.length ?? 0) - (reviewsByAsin.get(a.asin)?.length ?? 0) || b.ratingCount - a.ratingCount)
-      .slice(0, PRODUCTS_PER_DEPARTMENT);
+      .slice(0, PRODUCTS_PER_CATEGORY);
     const bestSellers = new Set([...chosen].sort((a, b) => b.ratingCount - a.ratingCount).slice(0, 20).map((p) => p.asin));
     for (const p of chosen) {
       taken.add(p.asin);
@@ -262,12 +262,12 @@ async function main() {
       reviews.push(...(reviewsByAsin.get(p.asin) ?? []));
     }
     const withReviews = chosen.filter((p) => reviewsByAsin.has(p.asin)).length;
-    console.log(`  ${dept.name}: ${chosen.length} products (${withReviews} with reviews) from ${candidates.length} usable`);
+    console.log(`  ${category.name}: ${chosen.length} products (${withReviews} with reviews) from ${candidates.length} usable`);
   }
 
   mkdirSync("data", { recursive: true });
-  const departments = DEPARTMENTS.map((d, i) => ({ slug: d.slug, name: d.name, sortOrder: i }));
-  const json = JSON.stringify({ source: "McAuley-Lab Reviews 2023", departments, products, reviews });
+  const categories = CATEGORIES.map((d, i) => ({ slug: d.slug, name: d.name, sortOrder: i }));
+  const json = JSON.stringify({ source: "McAuley-Lab Reviews 2023", categories, products, reviews });
   writeFileSync("data/catalogue.json.gz", gzipSync(json));
   console.log(`wrote data/catalogue.json.gz: ${products.length} products, ${reviews.length} reviews`);
 }

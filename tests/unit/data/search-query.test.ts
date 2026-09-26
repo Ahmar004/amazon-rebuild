@@ -15,8 +15,8 @@ describe("buildSearchConditions", () => {
     expect(sqls.some((s) => s.includes("search_vector"))).toBe(true);
   });
 
-  it("omits the text condition for department browse without k", () => {
-    const sqls = buildSearchConditions({ ...base, dept: "electronics" }).map(sqlText);
+  it("omits the text condition for category browse without k", () => {
+    const sqls = buildSearchConditions({ ...base, category: "electronics" }).map(sqlText);
     expect(sqls.some((s) => s.includes("search_vector"))).toBe(false);
   });
 

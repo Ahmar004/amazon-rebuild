@@ -16,7 +16,7 @@ describe("parseSearchParams", () => {
     });
     expect(q).toEqual({
       k: "headphones",
-      dept: "electronics",
+      category: "electronics",
       minRating: 4,
       brands: ["Sony", "Bose"],
       pminCents: 1000,
@@ -31,7 +31,7 @@ describe("parseSearchParams", () => {
     const q = parseSearchParams({});
     expect(q).toEqual({
       k: undefined,
-      dept: undefined,
+      category: undefined,
       minRating: undefined,
       brands: [],
       pminCents: undefined,

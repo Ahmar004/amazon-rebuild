@@ -19,19 +19,19 @@ describe("appliedFilterChips", () => {
   });
 
   it("builds one chip per filter, each removing only itself and resetting the page", () => {
-    const q: SearchQuery = { ...base, dept: "electronics", minRating: 4, brands: ["Anker", "Sony"], pminCents: 2500, pmaxCents: 5000, dealsOnly: true };
+    const q: SearchQuery = { ...base, category: "electronics", minRating: 4, brands: ["Anker", "Sony"], pminCents: 2500, pmaxCents: 5000, dealsOnly: true };
     const chips = appliedFilterChips(q, "Electronics");
     expect(chips.map((c) => c.label)).toEqual(["Electronics", "4 stars & up", "Anker", "Sony", "$25 - $50", "Deals only"]);
     const anker = chips.find((c) => c.label === "Anker")!;
     expect(anker.href).toContain("brand=Sony");
     expect(anker.href).not.toContain("Anker");
     expect(anker.href).not.toContain("page=");
-    const dept = chips.find((c) => c.label === "Electronics")!;
-    expect(dept.href).not.toContain("i=electronics");
+    const category = chips.find((c) => c.label === "Electronics")!;
+    expect(category.href).not.toContain("i=electronics");
   });
 
-  it("falls back to the slug when the department name is unknown", () => {
-    expect(appliedFilterChips({ ...base, dept: "toys" }, null)[0].label).toBe("toys");
+  it("falls back to the slug when the category name is unknown", () => {
+    expect(appliedFilterChips({ ...base, category: "toys" }, null)[0].label).toBe("toys");
   });
 });
 

@@ -13,12 +13,12 @@ type TitleBlockProps = {
 };
 
 // The dataset stores a book's author in the brand column (scripts/import-catalogue.ts), so the
-// department decides whether the line reads "by <Author>" or links to the brand's products.
-const BOOKS_DEPARTMENT_SLUG = "books";
+// category decides whether the line reads "by <Author>" or links to the brand's products.
+const BOOKS_CATEGORY_SLUG = "books";
 
 // Top of the purchase panel: brand, title, rating (opens the Reviews tab), badges and price.
 export function TitleBlock({ product, ratingAverage, ratingCount }: TitleBlockProps) {
-  const isBook = product.departmentSlug === BOOKS_DEPARTMENT_SLUG;
+  const isBook = product.categorySlug === BOOKS_CATEGORY_SLUG;
   const brandHref = `${ROUTES.search}?k=${encodeURIComponent(product.brand)}`;
 
   return (

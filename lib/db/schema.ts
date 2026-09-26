@@ -51,7 +51,7 @@ export const sessions = pgTable("sessions", {
   expiresAt: timestamp({ withTimezone: true }).notNull(),
 });
 
-export const departments = pgTable("departments", {
+export const categories = pgTable("categories", {
   id: serial().primaryKey(),
   slug: text().notNull().unique(),
   name: text().notNull(),
@@ -64,9 +64,9 @@ export const products = pgTable(
     asin: text().primaryKey(),
     title: text().notNull(),
     brand: text().notNull(),
-    departmentId: integer()
+    categoryId: integer()
       .notNull()
-      .references(() => departments.id),
+      .references(() => categories.id),
     categoryPath: text().array().notNull(),
     priceCents: integer().notNull(),
     listPriceCents: integer(),
@@ -94,7 +94,7 @@ export const products = pgTable(
     index("products_search_idx").using("gin", t.searchVector),
     index("products_title_trgm_idx").using("gin", sql`${t.title} gin_trgm_ops`),
     index("products_brand_trgm_idx").using("gin", sql`${t.brand} gin_trgm_ops`),
-    index("products_department_idx").on(t.departmentId),
+    index("products_category_idx").on(t.categoryId),
     index("products_price_idx").on(t.priceCents),
   ],
 );

@@ -22,6 +22,13 @@
       "when": 1790399845887,
       "tag": "0002_support_requests",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790406434832,
+      "tag": "0003_rename_departments_to_categories",
+      "breakpoints": true
     }
   ]
 }

@@ -14,7 +14,7 @@ This is the single source of truth for what the product does. `docs/requirements
 | Topic | Decision |
 |---|---|
 | Market | US shoppers: prices in USD, US addresses (State, ZIP code). English only, so there is no language or locale picker. |
-| Catalogue | About 12,000 real products in 24 departments with 36k reviews, from the public Amazon Reviews 2023 dataset, filtered to items with a price and an image. Product photos load from the dataset's image URLs. The marketplace name is scrubbed from all catalogue text (`lib/catalogue/store-name.ts`). |
+| Catalogue | About 12,000 real products in 24 categories with 36k reviews, from the public Amazon Reviews 2023 dataset, filtered to items with a price and an image. Product photos load from the dataset's image URLs. The marketplace name is scrubbed from all catalogue text (`lib/catalogue/store-name.ts`). |
 | Accounts | Every page except sign-in and register needs an account, so checkout never interrupts a purchase with a sign-in step and the free database tier isn't spent on anonymous traffic. Email and password only. |
 | Payment | Stripe in test mode, cards only. Card entry is Stripe's own field, so card numbers never touch our server. Test card 4242 4242 4242 4242. |
 | Links | Every link goes to a Shopeedo page. There are no links to other sites and no placeholder links. |
@@ -32,7 +32,7 @@ Cut on purpose: multiple lists (one wishlist instead), the language and locale p
 
 ## 4. Domain vocabulary
 
-Use these terms in code, UI copy and docs, and no synonyms: **product, department, brand, review, rating, cart, cart item, saved item, order, order item, address, payment method, wishlist, browsing history, deal, support request, user**.
+Use these terms in code, UI copy and docs, and no synonyms: **product, category, brand, review, rating, cart, cart item, saved item, order, order item, address, payment method, wishlist, browsing history, deal, support request, user**.
 
 ## 5. Screens and behaviour
 
@@ -42,9 +42,9 @@ One fluid, desktop-first layout scales down to phones; there are no separate mob
 
 - **Sticky header:** All menu, logo, search bar (its own row under 768px), theme toggle, account menu (name, email, account links, Sign out), wishlist with count, Orders, and the cart button with count.
 - **Quick links row:** Today's Deals, Best Sellers, New Releases, Your Orders, Customer Service.
-- **All menu:** a left sheet with the same content on every page: Trending, every department, and the account links.
-- **Footer:** Shop, Your account and Departments columns, "Back to top", and the demo notice. Checkout has a minimal header ("Secure checkout") and a compact footer.
-- **Search suggestions:** typing shows matching product titles; Enter or the search button runs the search in the chosen department.
+- **All menu:** a left sheet with the same content on every page: Trending, every category, and the account links.
+- **Footer:** Shop, Your account and Categories columns, "Back to top", and the demo notice. Checkout has a minimal header ("Secure checkout") and a compact footer.
+- **Search suggestions:** typing shows matching product titles; Enter or the search button runs the search in the chosen category.
 
 ### 5.2 Sign in and register
 
@@ -54,12 +54,12 @@ One fluid, desktop-first layout scales down to phones; there are no separate mob
 ### 5.3 Home
 
 - An animated hero carousel of designed slides: clicking the left or right 25% of the slide moves to the previous or next slide, the middle opens it; swipe, autoplay with a progress dot, and a pause button (no autoplay under reduced motion).
-- Department tiles, then "Recently viewed" and "Buy again" rails (hidden when empty), then Today's Deals, Best Sellers and one rail per department. Every card has Add to cart and a wishlist heart. Sections fade in as they scroll into view.
+- Category tiles, then "Recently viewed" and "Buy again" rails (hidden when empty), then Today's Deals, Best Sellers and one rail per category. Every card has Add to cart and a wishlist heart. Sections fade in as they scroll into view.
 
 ### 5.4 Search
 
 - A responsive product-card grid, 24 per page, with sort (Featured, Price low to high and high to low, Avg. Customer Review, Newest Arrivals, Best Sellers).
-- A filter rail (rating, brand, price range, department, deals only) beside the grid; on phones the filters open in a bottom sheet. An "applied filters" chip bar with "Clear all" sits above the results. Filters live in the URL.
+- A filter rail (rating, brand, price range, category, deals only) beside the grid; on phones the filters open in a bottom sheet. An "applied filters" chip bar with "Clear all" sits above the results. Filters live in the URL.
 
 ### 5.5 Product page
 
@@ -96,7 +96,7 @@ One fluid, desktop-first layout scales down to phones; there are no separate mob
 
 - **Reviews:** the Reviews tab shows the form only to a shopper with a non-cancelled order containing the product and no earlier review of it. New reviews carry "Verified purchase" and update the rating on the server.
 - **Browsing history:** product views are recorded (the latest 100 per user), shown as the home "Recently viewed" rail and on `/history` with remove per item and a two-step "Clear all".
-- **Today's Deals:** discounted products with the discount badge, department chips and paging.
+- **Today's Deals:** discounted products with the discount badge, category chips and paging.
 
 ### 5.12 Customer Service
 

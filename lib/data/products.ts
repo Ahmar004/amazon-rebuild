@@ -1,7 +1,7 @@
 import { eq, inArray, sql } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { db } from "@/lib/db/client";
-import { departments, products } from "@/lib/db/schema";
+import { categories, products } from "@/lib/db/schema";
 
 // Contract fixed by docs/superpowers/plans/2026-09-19-slice-3-search.md: later slices (product
 // page, cart, orders) depend on this exact shape.
@@ -9,7 +9,7 @@ export type ProductSummary = {
   asin: string;
   title: string;
   brand: string;
-  departmentSlug: string;
+  categorySlug: string;
   imageUrl: string;
   priceCents: number;
   listPriceCents: number | null;
@@ -19,13 +19,13 @@ export type ProductSummary = {
   isBestSeller: boolean;
 };
 
-// The row shape produced by a join of products with departments (used by lib/data/search.ts and
+// The row shape produced by a join of products with categories (used by lib/data/search.ts and
 // any future data-layer query that needs a ProductSummary).
 export type ProductSummaryRow = {
   asin: string;
   title: string;
   brand: string;
-  departmentSlug: string;
+  categorySlug: string;
   images: unknown;
   priceCents: number;
   listPriceCents: number | null;
@@ -50,7 +50,7 @@ export function mapProductSummaryRow(row: ProductSummaryRow): ProductSummary {
     asin: row.asin,
     title: row.title,
     brand: row.brand,
-    departmentSlug: row.departmentSlug,
+    categorySlug: row.categorySlug,
     imageUrl: firstImageUrl(row.images),
     priceCents: row.priceCents,
     listPriceCents: row.listPriceCents,
@@ -67,7 +67,7 @@ export type ProductImage = { thumb: string; large: string; hiRes: string | null 
 
 export type ProductDetail = ProductSummary & {
   categoryPath: string[];
-  departmentName: string;
+  categoryName: string;
   features: string[];
   description: string;
   details: Record<string, string>;
@@ -79,8 +79,8 @@ type ProductDetailRow = {
   asin: string;
   title: string;
   brand: string;
-  department_slug: string;
-  department_name: string;
+  category_slug: string;
+  category_name: string;
   category_path: string[];
   price_cents: number;
   list_price_cents: number | null;
@@ -101,11 +101,11 @@ export async function getProduct(asin: string): Promise<ProductDetail | null> {
   cacheTag(`product:${asin}`);
 
   const result = await db.execute<ProductDetailRow>(sql`
-    select p.asin, p.title, p.brand, d.slug as department_slug, d.name as department_name,
+    select p.asin, p.title, p.brand, d.slug as category_slug, d.name as category_name,
            p.category_path, p.price_cents, p.list_price_cents, p.rating_avg, p.rating_count,
            p.rating_counts, p.stock, p.is_best_seller, p.features, p.description, p.details, p.images
     from products p
-    join departments d on d.id = p.department_id
+    join categories d on d.id = p.category_id
     where p.asin = ${asin}
   `);
   const row = result.rows[0];
@@ -115,7 +115,7 @@ export async function getProduct(asin: string): Promise<ProductDetail | null> {
     asin: row.asin,
     title: row.title,
     brand: row.brand,
-    departmentSlug: row.department_slug,
+    categorySlug: row.category_slug,
     images: row.images,
     priceCents: row.price_cents,
     listPriceCents: row.list_price_cents,
@@ -128,7 +128,7 @@ export async function getProduct(asin: string): Promise<ProductDetail | null> {
   return {
     ...summary,
     categoryPath: row.category_path,
-    departmentName: row.department_name,
+    categoryName: row.category_name,
     features: row.features,
     description: row.description,
     details: row.details,
@@ -137,7 +137,7 @@ export async function getProduct(asin: string): Promise<ProductDetail | null> {
   };
 }
 
-// Up to 40 products from the same department (excluding this one), ordered by rating count.
+// Up to 40 products from the same category (excluding this one), ordered by rating count.
 // A pure function (splitRelatedCarousels below) then slices this into the two carousels, so the
 // split logic is testable without a database.
 const RELATED_FETCH_LIMIT = 40;
@@ -146,7 +146,7 @@ type RelatedRow = {
   asin: string;
   title: string;
   brand: string;
-  department_slug: string;
+  category_slug: string;
   images: unknown;
   price_cents: number;
   list_price_cents: number | null;
@@ -158,7 +158,7 @@ type RelatedRow = {
 
 export async function getRelated(
   asin: string,
-  departmentSlug: string,
+  categorySlug: string,
   limit: number = RELATED_FETCH_LIMIT,
 ): Promise<ProductSummary[]> {
   "use cache";
@@ -166,11 +166,11 @@ export async function getRelated(
   cacheTag("products");
 
   const result = await db.execute<RelatedRow>(sql`
-    select p.asin, p.title, p.brand, d.slug as department_slug, p.images, p.price_cents,
+    select p.asin, p.title, p.brand, d.slug as category_slug, p.images, p.price_cents,
            p.list_price_cents, p.rating_avg, p.rating_count, p.stock, p.is_best_seller
     from products p
-    join departments d on d.id = p.department_id
-    where d.slug = ${departmentSlug} and p.asin != ${asin}
+    join categories d on d.id = p.category_id
+    where d.slug = ${categorySlug} and p.asin != ${asin}
     order by p.rating_count desc
     limit ${limit}
   `);
@@ -180,7 +180,7 @@ export async function getRelated(
       asin: row.asin,
       title: row.title,
       brand: row.brand,
-      departmentSlug: row.department_slug,
+      categorySlug: row.category_slug,
       images: row.images,
       priceCents: row.price_cents,
       listPriceCents: row.list_price_cents,
@@ -197,8 +197,8 @@ const RELATED_SIZE = 20;
 
 // Splits getRelated's up-to-40 items (already ordered by rating count) between the two
 // carousels: "Customers also viewed" gets the first 20; "Products related to this item" gets the
-// next 20 in the same order, or - when the department is too small for a full second page -
-// whatever is left, re-sorted by price proximity to this product (plan: "the same department
+// next 20 in the same order, or - when the category is too small for a full second page -
+// whatever is left, re-sorted by price proximity to this product (plan: "the same category
 // sorted by price proximity").
 export function splitRelatedCarousels(
   items: ProductSummary[],
@@ -238,7 +238,7 @@ export async function getProductsByAsins(asins: string[]): Promise<ProductSummar
       asin: products.asin,
       title: products.title,
       brand: products.brand,
-      departmentSlug: departments.slug,
+      categorySlug: categories.slug,
       images: products.images,
       priceCents: products.priceCents,
       listPriceCents: products.listPriceCents,
@@ -248,15 +248,15 @@ export async function getProductsByAsins(asins: string[]): Promise<ProductSummar
       isBestSeller: products.isBestSeller,
     })
     .from(products)
-    .innerJoin(departments, eq(departments.id, products.departmentId))
+    .innerJoin(categories, eq(categories.id, products.categoryId))
     .where(inArray(products.asin, asins));
 
   return rows.map(mapProductSummaryRow);
 }
 
-// The ProductSummary columns for raw SQL over `products p join departments d`, with only the
+// The ProductSummary columns for raw SQL over `products p join categories d`, with only the
 // first image (rails and grids never need the rest). Pair with mapSummarySqlRow.
-export const SUMMARY_COLUMNS = sql`p.asin, p.title, p.brand, d.slug as department_slug,
+export const SUMMARY_COLUMNS = sql`p.asin, p.title, p.brand, d.slug as category_slug,
   jsonb_build_array(p.images->0) as images, p.price_cents, p.list_price_cents, p.rating_avg,
   p.rating_count, p.stock, p.is_best_seller`;
 
@@ -264,7 +264,7 @@ export type SummarySqlRow = {
   asin: string;
   title: string;
   brand: string;
-  department_slug: string;
+  category_slug: string;
   images: unknown;
   price_cents: number;
   list_price_cents: number | null;
@@ -279,7 +279,7 @@ export function mapSummarySqlRow(row: SummarySqlRow): ProductSummary {
     asin: row.asin,
     title: row.title,
     brand: row.brand,
-    departmentSlug: row.department_slug,
+    categorySlug: row.category_slug,
     images: row.images,
     priceCents: row.price_cents,
     listPriceCents: row.list_price_cents,

@@ -2,33 +2,33 @@
 
 import { Suspense, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import type { Department } from "@/lib/data/departments";
+import type { Category } from "@/lib/data/categories";
 import { ChevronDown, Search } from "lucide-react";
 import { useTypeahead } from "@/hooks/useTypeahead";
 import { ROUTES } from "@/lib/constants/links";
 
 type SearchBarProps = {
-  departments: Department[];
+  categories: Category[];
 };
 
 // useSearchParams() (used to keep the field synced with /search) needs a Suspense boundary, since its
 // value is only known at request time. SearchBarFallback is the same static shell so there is no
 // layout shift while it resolves.
-export function SearchBar({ departments }: SearchBarProps) {
+export function SearchBar({ categories }: SearchBarProps) {
   return (
-    <Suspense fallback={<SearchBarFallback departments={departments} />}>
-      <SearchBarInner departments={departments} />
+    <Suspense fallback={<SearchBarFallback categories={categories} />}>
+      <SearchBarInner categories={categories} />
     </Suspense>
   );
 }
 
-function SearchBarInner({ departments }: SearchBarProps) {
+function SearchBarInner({ categories }: SearchBarProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
   const onResultsPage = pathname === ROUTES.search;
 
-  const [dept, setDept] = useState(() => (onResultsPage ? (searchParams.get("i") ?? "") : ""));
+  const [category, setCategory] = useState(() => (onResultsPage ? (searchParams.get("i") ?? "") : ""));
   const [query, setQuery] = useState(() => (onResultsPage ? (searchParams.get("k") ?? "") : ""));
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -42,7 +42,7 @@ function SearchBarInner({ departments }: SearchBarProps) {
   const [syncedSearchParams, setSyncedSearchParams] = useState(searchParams);
   if (onResultsPage && searchParams !== syncedSearchParams) {
     setSyncedSearchParams(searchParams);
-    setDept(searchParams.get("i") ?? "");
+    setCategory(searchParams.get("i") ?? "");
     setQuery(searchParams.get("k") ?? "");
   }
 
@@ -54,13 +54,13 @@ function SearchBarInner({ departments }: SearchBarProps) {
     setActiveIndex(-1);
   }
 
-  const selectedLabel = dept === "" ? "All" : (departments.find((d) => d.slug === dept)?.name ?? "All");
+  const selectedLabel = category === "" ? "All" : (categories.find((d) => d.slug === category)?.name ?? "All");
   const showSuggestions = open && suggestions.length > 0;
 
   function handleSubmit() {
     // Empty "i" is not sent: disable the select just before the native GET submit collects
     // form data, then re-enable it so the control stays usable afterwards.
-    if (dept === "" && selectRef.current) {
+    if (category === "" && selectRef.current) {
       selectRef.current.disabled = true;
       setTimeout(() => {
         if (selectRef.current) selectRef.current.disabled = false;
@@ -74,7 +74,7 @@ function SearchBarInner({ departments }: SearchBarProps) {
     setOpen(false);
     const params = new URLSearchParams();
     params.set("k", value);
-    if (dept) params.set("i", dept);
+    if (category) params.set("i", category);
     router.push(`${ROUTES.search}?${params.toString()}`);
   }
 
@@ -118,15 +118,15 @@ function SearchBarInner({ departments }: SearchBarProps) {
           <select
             ref={selectRef}
             name="i"
-            aria-label="Search in department"
-            value={dept}
-            onChange={(event) => setDept(event.target.value)}
+            aria-label="Search in category"
+            value={category}
+            onChange={(event) => setCategory(event.target.value)}
             className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
           >
-            <option value="">All Departments</option>
-            {departments.map((department) => (
-              <option key={department.slug} value={department.slug}>
-                {department.name}
+            <option value="">All Categories</option>
+            {categories.map((category) => (
+              <option key={category.slug} value={category.slug}>
+                {category.name}
               </option>
             ))}
           </select>
@@ -196,7 +196,7 @@ function SearchBarInner({ departments }: SearchBarProps) {
 // Static markup only (no state, no useSearchParams): ships in the prerendered shell while
 // SearchBarInner resolves, then is replaced once it does. Still a real form, so search works
 // even if JavaScript never loads.
-function SearchBarFallback({ departments }: SearchBarProps) {
+function SearchBarFallback({ categories }: SearchBarProps) {
   return (
     <form
       action={ROUTES.search}
@@ -206,11 +206,11 @@ function SearchBarFallback({ departments }: SearchBarProps) {
       <div className="relative hidden shrink-0 items-center rounded-l-lg border-r border-border bg-surface-muted pl-3 pr-3 text-xs text-fg-muted sm:flex">
         <span className="whitespace-nowrap">All</span>
         <ChevronDown size={14} className="ml-1" aria-hidden="true" />
-        <select name="i" aria-label="Search in department" defaultValue="" className="absolute inset-0 h-full w-full cursor-pointer opacity-0">
-          <option value="">All Departments</option>
-          {departments.map((department) => (
-            <option key={department.slug} value={department.slug}>
-              {department.name}
+        <select name="i" aria-label="Search in category" defaultValue="" className="absolute inset-0 h-full w-full cursor-pointer opacity-0">
+          <option value="">All Categories</option>
+          {categories.map((category) => (
+            <option key={category.slug} value={category.slug}>
+              {category.name}
             </option>
           ))}
         </select>

@@ -6,10 +6,10 @@ import { Menu, UserRound } from "lucide-react";
 import { Sheet } from "@/components/ui/Sheet";
 import { SignOutForm } from "@/components/layout/SignOutForm";
 import { ACCOUNT_LINKS, ROUTES, SIDE_MENU_TRENDING, type NavLink } from "@/lib/constants/links";
-import type { Department } from "@/lib/data/departments";
+import type { Category } from "@/lib/data/categories";
 
 type AllMenuProps = {
-  departments: Department[];
+  categories: Category[];
   /** The signed-in shopper's first name, streamed in by the layout. */
   firstName: ReactNode;
 };
@@ -18,11 +18,11 @@ type AllMenuProps = {
 // built from props the shop layout passes on every page, so the menu is identical wherever it is
 // opened. Every link closes it as it navigates. (Reading usePathname here would block
 // prerendering of dynamic routes, because the menu sits outside Suspense.)
-export function AllMenu({ departments, firstName }: AllMenuProps) {
+export function AllMenu({ categories, firstName }: AllMenuProps) {
   const [open, setOpen] = useState(false);
 
   const close = () => setOpen(false);
-  const departmentLinks: NavLink[] = departments.map((d) => ({ label: d.name, href: `${ROUTES.search}?i=${d.slug}` }));
+  const categoryLinks: NavLink[] = categories.map((d) => ({ label: d.name, href: `${ROUTES.search}?i=${d.slug}` }));
 
   return (
     <>
@@ -46,9 +46,9 @@ export function AllMenu({ departments, firstName }: AllMenuProps) {
           <p className="text-sm font-semibold text-fg">Hello, {firstName}</p>
         </div>
         <MenuSection title="Trending" links={SIDE_MENU_TRENDING} onNavigate={close} />
-        <MenuSection title="Shop by category" links={departmentLinks} onNavigate={close} />
+        <MenuSection title="Shop by category" links={categoryLinks} onNavigate={close} />
         <MenuSection title="Your account" links={ACCOUNT_LINKS} onNavigate={close}>
-          <SignOutForm className="block w-full px-4 py-2.5 text-left text-sm text-fg hover:bg-surface-muted">Sign out</SignOutForm>
+          <SignOutForm onSignOut={close} className="block w-full px-4 py-2.5 text-left text-sm text-fg hover:bg-surface-muted">Sign out</SignOutForm>
         </MenuSection>
       </Sheet>
     </>

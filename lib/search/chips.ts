@@ -17,10 +17,10 @@ export function priceRangeLabel(minCents: number | undefined, maxCents: number |
   return `${dollars(minCents)} - ${dollars(maxCents)}`;
 }
 
-export function appliedFilterChips(query: SearchQuery, departmentName: string | null): FilterChip[] {
+export function appliedFilterChips(query: SearchQuery, categoryName: string | null): FilterChip[] {
   const chips: FilterChip[] = [];
-  if (query.dept) {
-    chips.push({ key: "dept", label: departmentName ?? query.dept, href: toSearchUrl(query, { dept: undefined }) });
+  if (query.category) {
+    chips.push({ key: "category", label: categoryName ?? query.category, href: toSearchUrl(query, { category: undefined }) });
   }
   if (query.minRating) {
     chips.push({ key: "rating", label: `${query.minRating} stars & up`, href: toSearchUrl(query, { minRating: undefined }) });

@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { getDepartments } from "@/lib/data/departments";
+import { getCategories } from "@/lib/data/categories";
 import { searchProducts, PAGE_SIZE } from "@/lib/data/search";
 import { appliedFilterChips } from "@/lib/search/chips";
 import { parseSearchParams, type RawSearchParams, type SearchQuery } from "@/lib/validation/search";
@@ -30,12 +30,12 @@ async function ResultsForParams({ searchParams }: { searchParams: Promise<RawSea
 }
 
 async function Results({ query }: { query: SearchQuery }) {
-  const [result, departments] = await Promise.all([searchProducts(query), getDepartments()]);
+  const [result, categories] = await Promise.all([searchProducts(query), getCategories()]);
   const totalPages = Math.max(1, Math.ceil(result.total / PAGE_SIZE));
-  const departmentName = result.department?.name ?? null;
+  const categoryName = result.category?.name ?? null;
   const start = result.total === 0 ? 0 : (query.page - 1) * PAGE_SIZE + 1;
   const end = Math.min(query.page * PAGE_SIZE, result.total);
-  const heading = query.k ? `Results for "${query.k}"` : (departmentName ?? "All products");
+  const heading = query.k ? `Results for "${query.k}"` : (categoryName ?? "All products");
 
   return (
     <>
@@ -52,21 +52,21 @@ async function Results({ query }: { query: SearchQuery }) {
           <MobileFilters
             query={query}
             brandFacets={result.brandFacets}
-            departments={departments}
+            categories={categories}
             total={result.total}
-            activeCount={appliedFilterChips(query, departmentName).length}
+            activeCount={appliedFilterChips(query, categoryName).length}
           />
           <SortSelect query={query} />
         </div>
       </div>
 
       <div className="mt-3">
-        <AppliedFilters query={query} departmentName={departmentName} />
+        <AppliedFilters query={query} categoryName={categoryName} />
       </div>
 
       <div className="mt-4 flex gap-6">
         <div className="hidden w-[240px] shrink-0 self-start rounded-xl border border-border bg-surface p-4 shadow-card md:sticky md:top-28 md:block md:max-h-[calc(100vh-8rem)] md:overflow-y-auto">
-          <FilterSidebar query={query} brandFacets={result.brandFacets} departments={departments} />
+          <FilterSidebar query={query} brandFacets={result.brandFacets} categories={categories} />
         </div>
 
         <div className="min-w-0 flex-1">

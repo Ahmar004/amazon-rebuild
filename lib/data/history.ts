@@ -12,7 +12,7 @@ export async function getRecentlyViewed(userId: string, limit: number = RECENTLY
     select ${SUMMARY_COLUMNS}
     from browsing_history h
     join products p on p.asin = h.asin
-    join departments d on d.id = p.department_id
+    join categories d on d.id = p.category_id
     where h.user_id = ${userId}
     order by h.viewed_at desc
     limit ${limit}`);

@@ -200,7 +200,7 @@ export async function getBuyAgain(userId: string): Promise<ProductSummary[]> {
       group by oi.asin
     ) bought
     join products p on p.asin = bought.asin
-    join departments d on d.id = p.department_id
+    join categories d on d.id = p.category_id
     order by bought.last_ordered desc
     limit ${BUY_AGAIN_LIMIT}`);
   return result.rows.map(mapSummarySqlRow);

@@ -7,10 +7,10 @@ import { NavAnchor } from "@/components/layout/NavAnchor";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { WishlistLink } from "@/components/wishlist/WishlistLink";
 import { ROUTES, SUBNAV_LINKS } from "@/lib/constants/links";
-import type { Department } from "@/lib/data/departments";
+import type { Category } from "@/lib/data/categories";
 
 type HeaderProps = {
-  departments: Department[];
+  categories: Category[];
   /** The All menu, account menu and cart read the session or cart cookie, so the layout passes
    * them in wrapped in <Suspense>. */
   allMenu: ReactNode;
@@ -21,7 +21,7 @@ type HeaderProps = {
 // One fluid, sticky header for every screen size (C9): menu, logo, search, theme, account, orders
 // and cart. The search bar sits inline from 768px and wraps onto its own full-width row below it
 // (a single element, re-ordered with CSS). The quick-links row scrolls sideways on small screens.
-export function Header({ departments, allMenu, accountMenu, cartLink }: HeaderProps) {
+export function Header({ categories, allMenu, accountMenu, cartLink }: HeaderProps) {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-surface">
       <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-x-2 gap-y-2 px-3 py-2.5 sm:gap-x-3 sm:px-6">
@@ -30,7 +30,7 @@ export function Header({ departments, allMenu, accountMenu, cartLink }: HeaderPr
           <Logo />
         </Link>
         <div className="order-last flex w-full md:order-none md:w-auto md:flex-1">
-          <SearchBar departments={departments} />
+          <SearchBar categories={categories} />
         </div>
         <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
           <ThemeToggle className="text-fg hover:bg-surface-muted" />

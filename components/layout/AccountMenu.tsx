@@ -43,7 +43,7 @@ export function AccountMenu({ firstName, identity }: { firstName: ReactNode; ide
           ))}
         </ul>
         <div className="border-t border-border pt-1">
-          <SignOutForm className="block w-full px-4 py-2 text-left text-sm text-fg hover:bg-surface-muted">Sign out</SignOutForm>
+          <SignOutForm onSignOut={() => setOpen(false)} className="block w-full px-4 py-2 text-left text-sm text-fg hover:bg-surface-muted">Sign out</SignOutForm>
         </div>
       </Popover>
     </div>

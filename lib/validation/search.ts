@@ -4,7 +4,7 @@ import { ROUTES } from "@/lib/constants/links";
 
 export type SearchQuery = {
   k?: string;
-  dept?: string;
+  category?: string;
   minRating?: number;
   brands: string[];
   pminCents?: number;
@@ -45,7 +45,7 @@ export function parseSearchParams(raw: RawSearchParams): SearchQuery {
 
   return {
     k: safe(stringSchema, first(raw.k)),
-    dept: safe(stringSchema, first(raw.i)),
+    category: safe(stringSchema, first(raw.i)),
     minRating: safe(ratingSchema, first(raw.rating)),
     brands: toArray(raw.brand).filter((b): b is string => typeof b === "string" && b.length > 0),
     pminCents: pminDollars !== undefined ? Math.round(pminDollars * 100) : undefined,
@@ -64,7 +64,7 @@ export function toSearchUrl(query: SearchQuery, patch: Partial<SearchQuery>): st
 
   const params = new URLSearchParams();
   if (merged.k) params.set("k", merged.k);
-  if (merged.dept) params.set("i", merged.dept);
+  if (merged.category) params.set("i", merged.category);
   if (merged.minRating) params.set("rating", String(merged.minRating));
   for (const brand of merged.brands) params.append("brand", brand);
   if (merged.pminCents !== undefined) params.set("pmin", String(merged.pminCents / 100));

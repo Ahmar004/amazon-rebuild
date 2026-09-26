@@ -4,13 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { Stars } from "@/components/product/Stars";
 import { toSearchUrl, type SearchQuery } from "@/lib/validation/search";
-import type { Department } from "@/lib/data/departments";
+import type { Category } from "@/lib/data/categories";
 import { ROUTES } from "@/lib/constants/links";
 
 type FilterSidebarProps = {
   query: SearchQuery;
   brandFacets: { name: string; count: number }[];
-  departments: Department[];
+  categories: Category[];
 };
 
 const RATING_THRESHOLDS = [4, 3, 2, 1];
@@ -23,10 +23,10 @@ const PRICE_RANGES: { label: string; pminCents?: number; pmaxCents?: number }[] 
   { label: "$200 & above", pminCents: 20000 },
 ];
 
-// The left filter rail: Customer Reviews, Brands, Price, Department and Deals & Discounts
+// The left filter rail: Customer Reviews, Brands, Price, Category and Deals & Discounts
 // (docs/design.md 6.3). A "See more"/"See less" toggle is the only client state; every filter
 // itself is a plain link built with toSearchUrl so it works without JavaScript.
-export function FilterSidebar({ query, brandFacets, departments }: FilterSidebarProps) {
+export function FilterSidebar({ query, brandFacets, categories }: FilterSidebarProps) {
   const [showAllBrands, setShowAllBrands] = useState(false);
   const visibleBrands = showAllBrands ? brandFacets : brandFacets.slice(0, BRANDS_VISIBLE);
 
@@ -99,15 +99,15 @@ export function FilterSidebar({ query, brandFacets, departments }: FilterSidebar
         <PriceForm query={query} />
       </FilterGroup>
 
-      {!query.dept && (
-        <FilterGroup title="Department" query={query}>
-          {departments.map((department) => (
+      {!query.category && (
+        <FilterGroup title="Category" query={query}>
+          {categories.map((category) => (
             <Link
-              key={department.slug}
-              href={toSearchUrl(query, { dept: department.slug })}
+              key={category.slug}
+              href={toSearchUrl(query, { category: category.slug })}
               className="py-1 text-fg hover:text-accent-hover"
             >
-              {department.name}
+              {category.name}
             </Link>
           ))}
         </FilterGroup>
@@ -153,7 +153,7 @@ function PriceForm({ query }: { query: SearchQuery }) {
   return (
     <form action={ROUTES.search} method="get" className="mt-2 flex items-center gap-1">
       {query.k && <input type="hidden" name="k" value={query.k} />}
-      {query.dept && <input type="hidden" name="i" value={query.dept} />}
+      {query.category && <input type="hidden" name="i" value={query.category} />}
       <label className="sr-only" htmlFor="pmin">
         Minimum price
       </label>

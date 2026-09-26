@@ -5,8 +5,8 @@ import type { SearchQuery } from "@/lib/validation/search";
 
 // The chip bar of active filters with "Clear all" (frontend-rebuild.md C7). Hidden when no
 // filter is applied.
-export function AppliedFilters({ query, departmentName }: { query: SearchQuery; departmentName: string | null }) {
-  const chips = appliedFilterChips(query, departmentName);
+export function AppliedFilters({ query, categoryName }: { query: SearchQuery; categoryName: string | null }) {
+  const chips = appliedFilterChips(query, categoryName);
   if (chips.length === 0) return null;
 
   return (

@@ -42,7 +42,7 @@ export async function getWishlist(userId: string): Promise<WishlistItem[]> {
     from list_items li
     join lists l on l.id = li.list_id
     join products p on p.asin = li.asin
-    join departments d on d.id = p.department_id
+    join categories d on d.id = p.category_id
     where l.user_id = ${userId} and l.is_default
     order by li.added_at desc`);
   return result.rows.map((row) => ({

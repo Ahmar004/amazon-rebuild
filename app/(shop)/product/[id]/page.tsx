@@ -44,13 +44,13 @@ async function ProductPageForParams({ params, searchParams }: ProductPageProps) 
   const product = await getProduct(asin);
   if (!product) notFound();
 
-  const [relatedItems, reviewSummary] = await Promise.all([getRelated(asin, product.departmentSlug), getReviewSummary(asin)]);
+  const [relatedItems, reviewSummary] = await Promise.all([getRelated(asin, product.categorySlug), getReviewSummary(asin)]);
   const { alsoViewed, related } = splitRelatedCarousels(relatedItems, product.priceCents);
 
   return (
     <div className="mx-auto max-w-[1400px] px-3 py-4 sm:px-6 sm:py-6">
       <ViewTracker asin={asin} />
-      <Breadcrumb categoryPath={product.categoryPath} departmentSlug={product.departmentSlug} />
+      <Breadcrumb categoryPath={product.categoryPath} categorySlug={product.categorySlug} />
 
       {/* Phones stack gallery, purchase panel, tabs; from 1024px the panel spans both rows on the
           right and stays in view while the shopper reads the tabs. */}
@@ -93,7 +93,7 @@ async function ProductPageForParams({ params, searchParams }: ProductPageProps) 
 
       <div className="mt-8 space-y-6">
         <ProductCardRail title="Customers also viewed" items={alsoViewed} />
-        <ProductCardRail title={`More in ${product.departmentName}`} href={`${ROUTES.search}?i=${product.departmentSlug}`} items={related} />
+        <ProductCardRail title={`More in ${product.categoryName}`} href={`${ROUTES.search}?i=${product.categorySlug}`} items={related} />
       </div>
     </div>
   );

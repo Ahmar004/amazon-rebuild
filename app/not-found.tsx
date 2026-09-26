@@ -21,7 +21,7 @@ export default function NotFound() {
         <p className="mt-1 text-sm text-fg-muted">The link may be old, or the page may have moved. Try a search instead.</p>
       </div>
       <div className="w-full max-w-[500px]">
-        <SearchBar departments={[]} />
+        <SearchBar categories={[]} />
       </div>
       <Link href={ROUTES.home} className={buttonClass({ variant: "secondary" })}>
         Back to the home page

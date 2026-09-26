@@ -3,7 +3,7 @@
 // Money (lineTotalCents, subtotalCents) is computed here, server-side, never by the client.
 import { and, eq, inArray } from "drizzle-orm";
 import { db } from "@/lib/db/client";
-import { carts, cartItems, departments, products } from "@/lib/db/schema";
+import { carts, cartItems, categories, products } from "@/lib/db/schema";
 import { mapProductSummaryRow, type ProductSummary, type ProductSummaryRow } from "@/lib/data/products";
 
 export type CartOwner = { userId: string } | { guestToken: string };
@@ -91,7 +91,7 @@ export async function getCart(owner: CartOwner): Promise<CartView> {
       asin: products.asin,
       title: products.title,
       brand: products.brand,
-      departmentSlug: departments.slug,
+      categorySlug: categories.slug,
       images: products.images,
       priceCents: products.priceCents,
       listPriceCents: products.listPriceCents,
@@ -104,7 +104,7 @@ export async function getCart(owner: CartOwner): Promise<CartView> {
     })
     .from(cartItems)
     .innerJoin(products, eq(products.asin, cartItems.asin))
-    .innerJoin(departments, eq(departments.id, products.departmentId))
+    .innerJoin(categories, eq(categories.id, products.categoryId))
     .where(eq(cartItems.cartId, cartId));
 
   const lines = rows.filter((r) => !r.savedForLater).map(toCartLine);

@@ -2,9 +2,9 @@ import { sql } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { db } from "@/lib/db/client";
 import { mapSummarySqlRow, SUMMARY_COLUMNS, type ProductSummary, type SummarySqlRow } from "@/lib/data/products";
-import type { Department } from "@/lib/data/departments";
+import type { Category } from "@/lib/data/categories";
 import {
-  DEPARTMENT_RAIL_SIZE,
+  CATEGORY_RAIL_SIZE,
   HERO_IMAGES_PER_SLIDE,
   HERO_SLIDES,
   RAIL_SIZE,
@@ -25,13 +25,13 @@ export async function getHeroSlides(): Promise<HeroSlide[]> {
   cacheLife("days");
   cacheTag("products");
 
-  const slugs = HERO_SLIDES.flatMap((s) => (s.departmentSlug ? [s.departmentSlug] : []));
-  const [byDepartment, deals] = await Promise.all([
+  const slugs = HERO_SLIDES.flatMap((s) => (s.categorySlug ? [s.categorySlug] : []));
+  const [byCategory, deals] = await Promise.all([
     db.execute<{ slug: string; image: string }>(sql`
       select slug, image from (
         select d.slug, p.images->0->>'large' as image,
           row_number() over (partition by d.id order by p.rating_count desc nulls last) as rn
-        from products p join departments d on d.id = p.department_id
+        from products p join categories d on d.id = p.category_id
         where ${HAS_IMAGE} and d.slug in (${sql.join(slugs.map((s) => sql`${s}`), sql`, `)})
       ) ranked
       where rn <= ${HERO_IMAGES_PER_SLIDE}
@@ -44,11 +44,11 @@ export async function getHeroSlides(): Promise<HeroSlide[]> {
   ]);
 
   const images = new Map<string, string[]>();
-  for (const row of byDepartment.rows) images.set(row.slug, [...(images.get(row.slug) ?? []), row.image]);
+  for (const row of byCategory.rows) images.set(row.slug, [...(images.get(row.slug) ?? []), row.image]);
 
   return HERO_SLIDES.map((slide) => ({
     ...slide,
-    images: slide.departmentSlug ? (images.get(slide.departmentSlug) ?? []) : deals.rows.map((r) => r.image),
+    images: slide.categorySlug ? (images.get(slide.categorySlug) ?? []) : deals.rows.map((r) => r.image),
   }));
 }
 
@@ -58,7 +58,7 @@ export async function getDealsRail(): Promise<ProductSummary[]> {
   cacheLife("hours");
   cacheTag("products");
   const result = await db.execute<SummarySqlRow>(sql`
-    select ${SUMMARY_COLUMNS} from products p join departments d on d.id = p.department_id
+    select ${SUMMARY_COLUMNS} from products p join categories d on d.id = p.category_id
     where ${HAS_IMAGE} and ${IS_DEAL} and p.stock > 0 and p.rating_count >= 20
     order by ${DISCOUNT} desc, p.rating_count desc
     limit ${RAIL_SIZE}`);
@@ -70,36 +70,36 @@ export async function getBestSellersRail(): Promise<ProductSummary[]> {
   cacheLife("hours");
   cacheTag("products");
   const result = await db.execute<SummarySqlRow>(sql`
-    select ${SUMMARY_COLUMNS} from products p join departments d on d.id = p.department_id
+    select ${SUMMARY_COLUMNS} from products p join categories d on d.id = p.category_id
     where ${HAS_IMAGE} and p.is_best_seller and p.stock > 0
     order by p.rating_count desc nulls last
     limit ${RAIL_SIZE}`);
   return result.rows.map(mapSummarySqlRow);
 }
 
-export type DepartmentRail = { department: Department; items: ProductSummary[] };
+export type CategoryRail = { category: Category; items: ProductSummary[] };
 
-// One rail per department, each holding its most-rated products, in one query.
-export async function getDepartmentRails(): Promise<DepartmentRail[]> {
+// One rail per category, each holding its most-rated products, in one query.
+export async function getCategoryRails(): Promise<CategoryRail[]> {
   "use cache";
   cacheLife("hours");
-  cacheTag("products", "departments");
-  const result = await db.execute<SummarySqlRow & { department_id: number; department_name: string }>(sql`
-    select d.id as department_id, d.name as department_name, ${SUMMARY_COLUMNS}
+  cacheTag("products", "categories");
+  const result = await db.execute<SummarySqlRow & { category_id: number; category_name: string }>(sql`
+    select d.id as category_id, d.name as category_name, ${SUMMARY_COLUMNS}
     from (
-      select p.*, row_number() over (partition by p.department_id order by p.rating_count desc nulls last) as rn
+      select p.*, row_number() over (partition by p.category_id order by p.rating_count desc nulls last) as rn
       from products p
       where ${HAS_IMAGE} and p.stock > 0
     ) p
-    join departments d on d.id = p.department_id
-    where p.rn <= ${DEPARTMENT_RAIL_SIZE}
+    join categories d on d.id = p.category_id
+    where p.rn <= ${CATEGORY_RAIL_SIZE}
     order by d.sort_order, p.rn`);
 
-  const rails: DepartmentRail[] = [];
+  const rails: CategoryRail[] = [];
   for (const row of result.rows) {
     let rail = rails.at(-1);
-    if (!rail || rail.department.id !== row.department_id) {
-      rail = { department: { id: row.department_id, slug: row.department_slug, name: row.department_name }, items: [] };
+    if (!rail || rail.category.id !== row.category_id) {
+      rail = { category: { id: row.category_id, slug: row.category_slug, name: row.category_name }, items: [] };
       rails.push(rail);
     }
     rail.items.push(mapSummarySqlRow(row));

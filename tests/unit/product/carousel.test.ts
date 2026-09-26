@@ -7,7 +7,7 @@ function item(asin: string, priceCents: number, ratingCount: number): ProductSum
     asin,
     title: `Product ${asin}`,
     brand: "Brand",
-    departmentSlug: "electronics",
+    categorySlug: "electronics",
     imageUrl: "https://images.example.com/I/example.jpg",
     priceCents,
     listPriceCents: null,
