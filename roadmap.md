@@ -73,3 +73,19 @@ Skipped: no paid domain under Rule 0.3; the live link is the free vercel.app add
 Write the README for submission: what is built, how to run it, the live URL, the trade-offs made, and how AI was used to build it, and a talking-point outline for the walkthrough video (five minutes at most, camera on).
 
 <hr style="height:4px; background-color:Grey; border:none;">
+### Step-10: Shopeedo frontend rebuild
+Source: frontend-rebuild.md (points 1-13, C1-C22).
+One slice per session, in this order:
+- R0  Holding page on shopeedo.vercel.app (C5)
+- R1  Rebrand, design tokens, primitives, light/dark themes, remove Amazon links (1,2,3,6,7,10,C1,C2)
+- R2  Layout shell: header, consistent All sidebar, footer, fluid layout, sign-in gate, one-screen auth, clean URLs (9,12,13,C9,C11,C13,C17)
+- R3  Catalogue to ~12k products / 24 depts (4,C3)
+- R4  Home: animations, hero click zones, rails (5,8,C6)
+- R5  Search grid and filter chips (C7)
+- R6  Product page and wishlist (C10,C14)
+- R7  Cart drawer, free-shipping bar, toasts, optimistic updates (C8,C20)
+- R8  One-page checkout, live Stripe check (C12)
+- R9  Orders details/timeline/cancel, Account tabs (C15,C16)
+- R10 Reviews (buyers only), browsing history, deals (C19)
+- R11 Customer Service (11,C18)
+- R12 CLAUDE.md/spec rewrite, README Design decisions, hardening, deploy (C21,C22)
