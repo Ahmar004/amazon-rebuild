@@ -61,12 +61,13 @@ Catalogue pages are cached with `'use cache'` and tags, so they load instantly; 
 - **Product photos load from the dataset's image URLs.** Re-hosting 12,000 products' images is not free at this scale.
 - **Cards are added at checkout only**, where Stripe already collects them; the account page manages saved cards.
 - **Contact requests are stored and tracked**, but no support team answers them, so the page never promises a reply.
+- **The home page renders every category rail on the server** (about 300 product cards). The first byte arrives in about 0.25 s and the page is 140 KB compressed, but the full page takes about 4 s under 10 concurrent users (`npm run load:check`). Fewer cards per rail, or loading lower rails on scroll, would lighten it.
 
 ## How AI was used
 
 The whole codebase was built with Claude Code (Anthropic), working from specs written and approved before any code (`docs/spec.md`, `docs/tech-stack.md`, `docs/design.md`) and a `roadmap.md` that enforced one step at a time. When the brief changed, the new requirements and every proposed design change were written into `frontend-rebuild.md` and approved point by point before the rebuild started. Every prompt and response is logged in `.agent-logs/` as it happened (see `CAPTURE-TEST.md`).
 
-Money, auth and data rules were written test-first (255 unit tests). Each slice was checked in a real browser with Playwright screenshots in both themes at desktop and phone widths, and the money paths were run for real: a Stripe test payment end to end, then cancelling that order with a real refund.
+Money, auth and data rules were written test-first (303 unit tests), and a Playwright suite (`npm run e2e`, 20 tests at desktop and phone widths) runs every key flow against the live site, including real Stripe test payments and the full sell, buy, ship and deliver loop. Each slice was checked in a real browser with Playwright screenshots in both themes at desktop and phone widths, and the money paths were run for real: a Stripe test payment end to end, then cancelling that order with a real refund.
 
 ## Five-minute walkthrough
 
