@@ -5,15 +5,11 @@
 import { z } from "zod";
 import { MAX_CART_QUANTITY } from "@/lib/data/cart";
 
-export const CART_REDIRECT_TARGETS = ["smart-wagon", "none"] as const;
-export type CartRedirectTarget = (typeof CART_REDIRECT_TARGETS)[number];
-
 export const asinSchema = z.string().trim().min(1).max(20);
 
 export const addToCartInputSchema = z.object({
   asin: asinSchema,
   quantity: z.coerce.number().int().min(1).max(MAX_CART_QUANTITY),
-  redirectTo: z.enum(CART_REDIRECT_TARGETS),
 });
 export type AddToCartInput = z.infer<typeof addToCartInputSchema>;
 

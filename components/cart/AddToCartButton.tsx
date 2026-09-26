@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { addToCart } from "@/actions/cart";
+import { useTransition } from "react";
 import { buttonClass } from "@/components/ui/Button";
-
-const ADDED_DISPLAY_MS = 1500;
+import { useToast } from "@/components/ui/Toast";
+import { useCart } from "@/components/cart/CartProvider";
 
 type AddToCartButtonProps = {
   asin: string;
@@ -12,44 +11,29 @@ type AddToCartButtonProps = {
   full?: boolean;
 };
 
-// The small yellow "Add to cart" button on search rows and carousel tiles: adds one unit in
-// place, shows a spinner then a brief "Added" state, and never navigates away (the header count
-// updates via the action's own revalidatePath).
+// Quick "Add to cart" on product cards: the header count bumps at once, a toast confirms with a
+// "View cart" shortcut to the drawer, and the shopper stays where they are (C8, C20).
 export function AddToCartButton({ asin, full = false }: AddToCartButtonProps) {
+  const { add, setDrawerOpen } = useCart();
+  const toast = useToast();
   const [pending, startTransition] = useTransition();
-  const [status, setStatus] = useState<"idle" | "added" | "error">("idle");
-  const [error, setError] = useState<string | null>(null);
 
   function handleClick() {
-    setStatus("idle");
-    setError(null);
     startTransition(async () => {
-      const result = await addToCart({ asin, quantity: 1, redirectTo: "none" });
-      if (result.ok) {
-        setStatus("added");
-        setTimeout(() => setStatus("idle"), ADDED_DISPLAY_MS);
-      } else {
-        setStatus("error");
-        setError(result.error);
-      }
+      const result = await add(asin, 1);
+      if (result.ok) toast("Added to cart", "success", { label: "View cart", onClick: () => setDrawerOpen(true) });
+      else toast(result.error, "error");
     });
   }
 
   return (
-    <div>
-      <button
-        type="button"
-        onClick={handleClick}
-        disabled={pending}
-        className={buttonClass({ size: "sm", full, className: "rounded-full" })}
-      >
-        {pending ? "Adding..." : status === "added" ? "Added" : "Add to cart"}
-      </button>
-      {error && (
-        <p role="alert" className="mt-1 text-xs text-danger">
-          {error}
-        </p>
-      )}
-    </div>
+    <button
+      type="button"
+      onClick={handleClick}
+      disabled={pending}
+      className={buttonClass({ size: "sm", full, className: "rounded-full" })}
+    >
+      {pending ? "Adding..." : "Add to cart"}
+    </button>
   );
 }

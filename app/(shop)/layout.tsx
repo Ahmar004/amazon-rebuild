@@ -3,15 +3,16 @@ import { Header } from "@/components/layout/Header";
 import { AllMenu } from "@/components/layout/AllMenu";
 import { AccountMenu } from "@/components/layout/AccountMenu";
 import { SessionGuard, UserFirstName, UserIdentity } from "@/components/layout/SessionShell";
-import { CartLink } from "@/components/layout/CartLink";
-import { CartCount } from "@/components/cart/CartCount";
+import { CartButton } from "@/components/layout/CartLink";
+import { CartProvider } from "@/components/cart/CartProvider";
 import { Footer } from "@/components/layout/Footer";
 import { WishlistProvider } from "@/components/wishlist/WishlistProvider";
 import { getDepartments } from "@/lib/data/departments";
 
 // Shell for every storefront page: one fluid header, the page, and the footer (C9). Departments
 // are cached catalogue data, so the layout reads them directly and passes the same list to every
-// menu (point 9). Anything that reads the session or cart cookie renders inside its own
+// menu (point 9). The cart and wishlist load on the client (CartProvider, WishlistProvider) so
+// cached pages stay cached. Anything that reads the session or cart cookie renders inside its own
 // <Suspense> with a static fallback, never under 'use cache' (CLAUDE.md caching rule); the menus
 // themselves sit outside Suspense so their open state never resets when a slot streams in.
 export default async function ShopLayout({ children }: { children: React.ReactNode }) {
@@ -19,6 +20,7 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
 
   return (
     <WishlistProvider>
+      <CartProvider>
       <div className="flex min-h-screen flex-col">
       <Suspense fallback={null}>
         <SessionGuard />
@@ -49,15 +51,12 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
             }
           />
         }
-        cartLink={
-          <Suspense fallback={<CartLink count={0} />}>
-            <CartCount />
-          </Suspense>
-        }
+        cartLink={<CartButton />}
       />
       <main className="flex-1">{children}</main>
       <Footer departments={departments} />
       </div>
+      </CartProvider>
     </WishlistProvider>
   );
 }

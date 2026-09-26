@@ -2,10 +2,8 @@ import Link from "next/link";
 import { imageAt } from "@/lib/assets";
 import { formatPrice } from "@/lib/pricing/money";
 import { productHref, ROUTES } from "@/lib/constants/links";
-import { QuantityStepper } from "@/components/cart/QuantityStepper";
 import { ShareButton } from "@/components/product/ShareButton";
-import { SaveForLaterButton } from "@/components/cart/SaveForLaterButton";
-import { DeleteLineButton } from "@/components/cart/DeleteLineButton";
+import { CartLineActions } from "@/components/cart/CartLineActions";
 import type { CartLine as CartLineType } from "@/lib/data/cart";
 
 const LOW_STOCK_THRESHOLD = 10;
@@ -51,9 +49,7 @@ export function CartLine({ line }: CartLineProps) {
           </p>
 
           <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
-            <QuantityStepper asin={line.asin} quantity={line.quantity} maxQuantity={line.maxQuantity} />
-            <DeleteLineButton asin={line.asin} />
-            <SaveForLaterButton asin={line.asin} />
+            <CartLineActions asin={line.asin} quantity={line.quantity} maxQuantity={line.maxQuantity} />
             <ShareButton path={href} />
           </div>
         </div>

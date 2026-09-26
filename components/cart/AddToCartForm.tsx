@@ -2,7 +2,8 @@
 
 import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { addToCart } from "@/actions/cart";
+import { useCart } from "@/components/cart/CartProvider";
+import { useToast } from "@/components/ui/Toast";
 import { QuantitySelect } from "@/components/product/QuantitySelect";
 import { ROUTES } from "@/lib/constants/links";
 
@@ -12,14 +13,16 @@ type AddToCartFormProps = {
 };
 
 // The purchase panel's "Add to cart" and "Buy now" buttons, one <form> so Enter
-// submits "Add to cart" (CLAUDE.md forms rule). Add to cart adds the item and goes to the
-// smart-wagon interstitial. Buy Now skips the cart entirely (docs/spec.md 5.8: "Buy Now skips
+// submits "Add to cart" (CLAUDE.md forms rule). Add to cart adds the item in place and slides the
+// cart drawer open (C8). Buy Now skips the cart entirely (docs/spec.md 5.8: "Buy Now skips
 // the cart and opens checkout with only that product and quantity; the rest of the cart stays as
 // it was") by navigating straight to /checkout?buy=<asin>:<qty>; requireUser there sends a
 // signed-out visitor to sign in first with that URL as return_to. Only rendered when the product
 // is in stock (see BuyBox).
 export function AddToCartForm({ asin, maxQuantity }: AddToCartFormProps) {
   const router = useRouter();
+  const { add, setDrawerOpen } = useCart();
+  const toast = useToast();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -38,8 +41,13 @@ export function AddToCartForm({ asin, maxQuantity }: AddToCartFormProps) {
     }
 
     startTransition(async () => {
-      const result = await addToCart({ asin, quantity, redirectTo: "smart-wagon" });
-      if (!result.ok) setError(result.error);
+      const result = await add(asin, quantity);
+      if (!result.ok) {
+        setError(result.error);
+        return;
+      }
+      toast(`Added ${quantity} to your cart`);
+      setDrawerOpen(true);
     });
   }
 
@@ -52,7 +60,7 @@ export function AddToCartForm({ asin, maxQuantity }: AddToCartFormProps) {
         disabled={pending}
         className="h-11 w-full rounded-full bg-accent px-3 text-sm font-semibold text-accent-fg transition hover:bg-accent-hover disabled:opacity-60"
       >
-        Add to cart
+        {pending ? "Adding..." : "Add to cart"}
       </button>
       <button
         type="submit"

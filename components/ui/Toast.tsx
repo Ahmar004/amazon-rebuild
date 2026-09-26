@@ -4,8 +4,9 @@ import { createContext, useCallback, useContext, useRef, useState, type ReactNod
 import { CircleAlert, CircleCheck, X } from "lucide-react";
 
 type ToastTone = "success" | "error";
-type ToastItem = { id: number; message: string; tone: ToastTone };
-type ShowToast = (message: string, tone?: ToastTone) => void;
+export type ToastAction = { label: string; onClick: () => void };
+type ToastItem = { id: number; message: string; tone: ToastTone; action?: ToastAction };
+type ShowToast = (message: string, tone?: ToastTone, action?: ToastAction) => void;
 
 const ToastContext = createContext<ShowToast>(() => {});
 
@@ -19,9 +20,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const dismiss = useCallback((id: number) => setToasts((all) => all.filter((t) => t.id !== id)), []);
 
   const show = useCallback<ShowToast>(
-    (message, tone = "success") => {
+    (message, tone = "success", action) => {
       const id = nextId.current++;
-      setToasts((all) => [...all.slice(-2), { id, message, tone }]);
+      setToasts((all) => [...all.slice(-2), { id, message, tone, action }]);
       setTimeout(() => dismiss(id), TOAST_MS);
     },
     [dismiss],
@@ -43,6 +44,18 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               <CircleAlert size={18} className="shrink-0 text-danger" aria-hidden="true" />
             )}
             <span className="flex-1">{t.message}</span>
+            {t.action && (
+              <button
+                type="button"
+                onClick={() => {
+                  t.action?.onClick();
+                  dismiss(t.id);
+                }}
+                className="rounded-md px-2 py-1 font-semibold text-accent hover:bg-accent-soft"
+              >
+                {t.action.label}
+              </button>
+            )}
             <button type="button" onClick={() => dismiss(t.id)} aria-label="Dismiss" className="rounded p-0.5 text-fg-muted hover:text-fg">
               <X size={16} aria-hidden="true" />
             </button>

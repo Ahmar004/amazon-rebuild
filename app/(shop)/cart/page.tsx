@@ -8,6 +8,8 @@ import { CartLine } from "@/components/cart/CartLine";
 import { SavedForLater } from "@/components/cart/SavedForLater";
 import { SubtotalBox } from "@/components/cart/SubtotalBox";
 import { EmptyCart } from "@/components/cart/EmptyCart";
+import { FreeShippingBar } from "@/components/cart/FreeShippingBar";
+import { freeShippingProgress } from "@/lib/pricing/shipping";
 
 // /cart (recon docs/recon/4-shopping-cart-scroll-*.png). Reads the cart_token cookie via
 // getCartOwner, so it renders inside <Suspense> rather than under 'use cache' (CLAUDE.md).
@@ -66,6 +68,9 @@ async function CartPageContent() {
               <EmptyCart compact />
             ) : (
               <>
+                <div className="pt-4">
+                  <FreeShippingBar progress={freeShippingProgress(cart.subtotalCents)} />
+                </div>
                 {cart.lines.map((line) => (
                   <CartLine key={line.asin} line={line} />
                 ))}

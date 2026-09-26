@@ -85,7 +85,7 @@ One slice per session, in this order:
 - **[completed]** R4  Home: animations, hero click zones, rails (5,8,C6)
 - **[completed]** R5  Search grid and filter chips (C7)
 - **[completed]** R6  Product page and wishlist (C10,C14)
-- R7  Cart drawer, free-shipping bar, toasts, optimistic updates (C8,C20)
+- **[completed]** R7  Cart drawer, free-shipping bar, toasts, optimistic updates (C8,C20)
 - R8  One-page checkout, live Stripe check (C12)
 - R9  Orders details/timeline/cancel, Account tabs (C15,C16)
 - **[completed]** R10 Reviews (buyers only), browsing history, deals (C19)

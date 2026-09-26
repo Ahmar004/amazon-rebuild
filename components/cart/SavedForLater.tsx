@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { imageAt } from "@/lib/assets";
 import { formatPrice } from "@/lib/pricing/money";
-import { DeleteLineButton } from "@/components/cart/DeleteLineButton";
-import { MoveToCartButton } from "@/components/cart/MoveToCartButton";
+import { SavedItemActions } from "@/components/cart/CartLineActions";
 import type { CartLine } from "@/lib/data/cart";
 import { productHref } from "@/lib/constants/links";
 
@@ -39,8 +38,7 @@ export function SavedForLater({ items }: SavedForLaterProps) {
             </Link>
             <p className="mt-1 font-bold text-fg">{formatPrice(item.priceCents)}</p>
             <div className="mt-2 flex gap-3 text-sm">
-              <MoveToCartButton asin={item.asin} />
-              <DeleteLineButton asin={item.asin} />
+              <SavedItemActions asin={item.asin} />
             </div>
           </div>
         </div>
