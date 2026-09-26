@@ -1,25 +1,23 @@
 import { Suspense } from "react";
 import { getDepartments } from "@/lib/data/departments";
 import { searchProducts, PAGE_SIZE } from "@/lib/data/search";
+import { appliedFilterChips } from "@/lib/search/chips";
 import { parseSearchParams, type RawSearchParams, type SearchQuery } from "@/lib/validation/search";
-import { ResultsHeader } from "@/components/search/ResultsHeader";
 import { FilterSidebar } from "@/components/search/FilterSidebar";
 import { MobileFilters } from "@/components/search/MobileFilters";
-import { ResultRow } from "@/components/search/ResultRow";
+import { AppliedFilters } from "@/components/search/AppliedFilters";
+import { SortSelect } from "@/components/search/SortSelect";
 import { Pagination } from "@/components/search/Pagination";
 import { EmptyResults } from "@/components/search/EmptyResults";
+import { ProductCard } from "@/components/product/ProductCard";
 
-// Search results page (docs/design.md 6.3). Reads searchParams directly (request-time, so the
-// page renders dynamically rather than under 'use cache'); the data fetch itself streams inside
-// <Suspense> so the sidebar shell can ship while searchProducts (its own 'use cache' function)
-// resolves.
-export default function SearchPage({
-  searchParams,
-}: {
-  searchParams: Promise<RawSearchParams>;
-}) {
+// Search results (frontend-rebuild.md C7): a responsive product-card grid, an applied-filters chip
+// bar, a sticky filter rail from 768px and a bottom sheet below it. Every filter lives in the URL.
+// searchParams is request-time data, so it is awaited inside <Suspense>; searchProducts itself is
+// cached per query.
+export default function SearchPage({ searchParams }: { searchParams: Promise<RawSearchParams> }) {
   return (
-    <div className="mx-auto max-w-[1500px] bg-surface px-4 py-3 md:bg-surface">
+    <div className="mx-auto max-w-[1400px] px-3 py-4 sm:px-6 sm:py-6">
       <Suspense fallback={<ResultsSkeleton />}>
         <ResultsForParams searchParams={searchParams} />
       </Suspense>
@@ -27,44 +25,62 @@ export default function SearchPage({
   );
 }
 
-// searchParams is only known at request time, so it is awaited here, inside the Suspense
-// boundary, rather than at the top of the page (docs caching guide: "streaming uncached data").
 async function ResultsForParams({ searchParams }: { searchParams: Promise<RawSearchParams> }) {
-  const raw = await searchParams;
-  const query = parseSearchParams(raw);
-  return <Results query={query} />;
+  return <Results query={parseSearchParams(await searchParams)} />;
 }
 
 async function Results({ query }: { query: SearchQuery }) {
   const [result, departments] = await Promise.all([searchProducts(query), getDepartments()]);
   const totalPages = Math.max(1, Math.ceil(result.total / PAGE_SIZE));
-  const now = new Date();
+  const departmentName = result.department?.name ?? null;
+  const start = result.total === 0 ? 0 : (query.page - 1) * PAGE_SIZE + 1;
+  const end = Math.min(query.page * PAGE_SIZE, result.total);
+  const heading = query.k ? `Results for "${query.k}"` : (departmentName ?? "All products");
 
   return (
     <>
-      <div className="-mx-4 -mt-3 mb-3">
-        <div className="flex items-center justify-between gap-2 px-4 py-2 md:hidden">
-          <p className="text-sm text-fg">{result.total.toLocaleString("en-US")} results</p>
-          <MobileFilters query={query} brandFacets={result.brandFacets} departments={departments} total={result.total} />
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="truncate text-xl font-bold text-fg sm:text-2xl">{heading}</h1>
+          <p className="mt-0.5 text-sm text-fg-muted">
+            {result.total === 0
+              ? "No results"
+              : `${start.toLocaleString("en-US")}-${end.toLocaleString("en-US")} of ${result.total.toLocaleString("en-US")} results`}
+          </p>
         </div>
-        <div className="hidden md:block">
-          <ResultsHeader query={query} total={result.total} departmentName={result.department?.name ?? null} />
+        <div className="flex items-center gap-2">
+          <MobileFilters
+            query={query}
+            brandFacets={result.brandFacets}
+            departments={departments}
+            total={result.total}
+            activeCount={appliedFilterChips(query, departmentName).length}
+          />
+          <SortSelect query={query} />
         </div>
       </div>
 
-      <div className="flex gap-6">
-        <div className="hidden md:block">
+      <div className="mt-3">
+        <AppliedFilters query={query} departmentName={departmentName} />
+      </div>
+
+      <div className="mt-4 flex gap-6">
+        <div className="hidden w-[240px] shrink-0 self-start rounded-xl border border-border bg-surface p-4 shadow-card md:sticky md:top-28 md:block md:max-h-[calc(100vh-8rem)] md:overflow-y-auto">
           <FilterSidebar query={query} brandFacets={result.brandFacets} departments={departments} />
         </div>
 
         <div className="min-w-0 flex-1">
           {result.items.length === 0 ? (
-            <EmptyResults query={query.k} />
+            <EmptyResults query={query} />
           ) : (
             <>
-              {result.items.map((item) => (
-                <ResultRow key={item.asin} item={item} now={now} />
-              ))}
+              <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {result.items.map((item, i) => (
+                  <li key={item.asin} className="animate-[rise-in_450ms_ease-out_both]" style={{ animationDelay: `${Math.min(i, 11) * 35}ms` }}>
+                    <ProductCard item={item} />
+                  </li>
+                ))}
+              </ul>
               <Pagination query={query} totalPages={totalPages} />
             </>
           )}
@@ -76,21 +92,16 @@ async function Results({ query }: { query: SearchQuery }) {
 
 function ResultsSkeleton() {
   return (
-    <div className="flex gap-6">
-      <div className="hidden w-[240px] shrink-0 md:block" aria-hidden="true">
-        <div className="h-64 animate-pulse rounded bg-surface-muted" />
-      </div>
-      <div className="min-w-0 flex-1 space-y-4" aria-hidden="true">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="flex gap-4 border-b border-border py-4">
-            <div className="h-40 w-[40%] animate-pulse rounded bg-surface-muted md:w-[240px]" />
-            <div className="flex-1 space-y-2">
-              <div className="h-4 w-2/3 animate-pulse rounded bg-surface-muted" />
-              <div className="h-4 w-1/3 animate-pulse rounded bg-surface-muted" />
-              <div className="h-4 w-1/4 animate-pulse rounded bg-surface-muted" />
-            </div>
-          </div>
-        ))}
+    <div aria-hidden="true">
+      <div className="skeleton h-7 w-64 rounded-md" />
+      <div className="skeleton mt-2 h-4 w-40 rounded-md" />
+      <div className="mt-6 flex gap-6">
+        <div className="skeleton hidden h-[480px] w-[240px] shrink-0 rounded-xl md:block" />
+        <div className="grid flex-1 grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="skeleton h-[380px] rounded-xl" />
+          ))}
+        </div>
       </div>
     </div>
   );

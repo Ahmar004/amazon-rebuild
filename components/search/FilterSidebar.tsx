@@ -31,7 +31,7 @@ export function FilterSidebar({ query, brandFacets, departments }: FilterSidebar
   const visibleBrands = showAllBrands ? brandFacets : brandFacets.slice(0, BRANDS_VISIBLE);
 
   return (
-    <aside className="w-full shrink-0 text-sm md:w-[240px]">
+    <aside className="w-full text-sm">
       <FilterGroup title="Customer Reviews" active={query.minRating !== undefined} query={query} clearPatch={{ minRating: undefined }}>
         {RATING_THRESHOLDS.map((threshold) => (
           <Link
@@ -58,7 +58,7 @@ export function FilterSidebar({ query, brandFacets, departments }: FilterSidebar
                 href={toSearchUrl(query, { brands })}
                 className="flex items-center gap-2 py-1 text-fg hover:text-accent-hover"
               >
-                <input type="checkbox" checked={checked} readOnly className="pointer-events-none" />
+                <input type="checkbox" checked={checked} readOnly tabIndex={-1} className="pointer-events-none accent-accent" />
                 <span>
                   {facet.name} ({facet.count})
                 </span>
@@ -135,7 +135,7 @@ type FilterGroupProps = {
 
 function FilterGroup({ title, active, query, clearPatch, children }: FilterGroupProps) {
   return (
-    <div className="mb-4 border-b border-border pb-3">
+    <div className="mb-4 border-b border-border pb-3 last:mb-0 last:border-b-0 last:pb-0">
       <div className="mb-1 flex items-center justify-between">
         <h3 className="font-bold text-fg">{title}</h3>
         {active && clearPatch && (
@@ -165,7 +165,7 @@ function PriceForm({ query }: { query: SearchQuery }) {
         min={0}
         defaultValue={query.pminCents !== undefined ? query.pminCents / 100 : undefined}
         placeholder="Min"
-        className="w-14 rounded border border-border px-1 py-1"
+        className="h-8 w-16 rounded-md border border-border-strong bg-surface px-2 text-sm text-fg"
       />
       <span className="text-fg-muted">-</span>
       <label className="sr-only" htmlFor="pmax">
@@ -179,9 +179,9 @@ function PriceForm({ query }: { query: SearchQuery }) {
         min={0}
         defaultValue={query.pmaxCents !== undefined ? query.pmaxCents / 100 : undefined}
         placeholder="Max"
-        className="w-14 rounded border border-border px-1 py-1"
+        className="h-8 w-16 rounded-md border border-border-strong bg-surface px-2 text-sm text-fg"
       />
-      <button type="submit" className="rounded border border-border bg-surface-muted px-2 py-1 text-xs hover:bg-surface-muted">
+      <button type="submit" className="h-8 rounded-md bg-accent px-3 text-xs font-semibold text-accent-fg hover:bg-accent-hover">
         Go
       </button>
     </form>

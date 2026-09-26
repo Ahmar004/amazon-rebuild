@@ -6,7 +6,7 @@ import { mapProductSummaryRow, type ProductSummary } from "@/lib/data/products";
 import type { SearchQuery } from "@/lib/validation/search";
 import type { SortKey } from "@/lib/constants/sort";
 
-export const PAGE_SIZE = 16;
+export const PAGE_SIZE = 24; // divides evenly into 2, 3 and 4 grid columns
 
 export type SearchResult = {
   total: number;

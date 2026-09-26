@@ -31,9 +31,9 @@ export function Pagination({ query, totalPages }: PaginationProps) {
   const current = query.page;
 
   return (
-    <nav aria-label="Search results pages" className="mt-4 flex items-center justify-center gap-1 pb-8 text-sm">
+    <nav aria-label="Search results pages" className="mt-8 flex flex-wrap items-center justify-center gap-1 pb-4 text-sm">
       <PageLink query={query} page={current - 1} disabled={current <= 1}>
-        {"< Previous"}
+        Previous
       </PageLink>
 
       {pageNumbers(current, totalPages).map((page, index) =>
@@ -49,7 +49,7 @@ export function Pagination({ query, totalPages }: PaginationProps) {
       )}
 
       <PageLink query={query} page={current + 1} disabled={current >= totalPages}>
-        {"Next >"}
+        Next
       </PageLink>
     </nav>
   );
@@ -69,14 +69,14 @@ function PageLink({
   children: React.ReactNode;
 }) {
   if (disabled) {
-    return <span className="rounded border border-border px-3 py-1 text-fg-muted">{children}</span>;
+    return <span className="rounded-md border border-border px-3 py-1.5 text-fg-muted opacity-60">{children}</span>;
   }
   return (
     <Link
       href={toSearchUrl(query, { page })}
       aria-current={current ? "page" : undefined}
-      className={`rounded border px-3 py-1 hover:bg-surface-muted ${
-        current ? "border-2 border-accent font-bold text-fg" : "border-border text-accent"
+      className={`rounded-md border px-3 py-1.5 transition ${
+        current ? "border-accent bg-accent font-bold text-accent-fg" : "border-border bg-surface text-fg hover:border-accent hover:text-accent"
       }`}
     >
       {children}
