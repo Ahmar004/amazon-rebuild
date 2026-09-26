@@ -43,7 +43,7 @@ async function Departments() {
   return (
     <section>
       <Reveal>
-        <h2 className="text-xl font-bold text-fg sm:text-2xl">Shop by department</h2>
+        <h2 className="text-xl font-bold text-fg sm:text-2xl">Shop by category</h2>
       </Reveal>
       <ul className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6 xl:grid-cols-8">
         {departments.map((department, i) => (

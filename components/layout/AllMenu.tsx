@@ -46,7 +46,7 @@ export function AllMenu({ departments, firstName }: AllMenuProps) {
           <p className="text-sm font-semibold text-fg">Hello, {firstName}</p>
         </div>
         <MenuSection title="Trending" links={SIDE_MENU_TRENDING} onNavigate={close} />
-        <MenuSection title="Shop by department" links={departmentLinks} onNavigate={close} />
+        <MenuSection title="Shop by category" links={departmentLinks} onNavigate={close} />
         <MenuSection title="Your account" links={ACCOUNT_LINKS} onNavigate={close}>
           <SignOutForm className="block w-full px-4 py-2.5 text-left text-sm text-fg hover:bg-surface-muted">Sign out</SignOutForm>
         </MenuSection>
