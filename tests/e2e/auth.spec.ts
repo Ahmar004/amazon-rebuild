@@ -18,7 +18,9 @@ test("the sign-in gate, register, sign out and sign in again", async ({ page, re
   await register(page, shopper, "/search?k=lamp");
   await expect(page.locator("main a[href^='/product/']").first()).toBeVisible();
 
-  // Register again with the same email is refused.
+  // Register again with the same email is refused. Leave the store first, so its search box
+  // doesn't ask the (then signed-out, so 401) suggestions API for "lamp".
+  await page.goto("about:blank");
   await page.context().clearCookies();
   await page.goto("/register");
   await page.getByLabel("Your name").fill(shopper.name);

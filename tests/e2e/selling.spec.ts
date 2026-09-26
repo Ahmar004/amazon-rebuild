@@ -99,7 +99,7 @@ test("sell, buy, ship, deliver, review and delete a listing", async ({ browser }
   await s.getByRole("button", { name: "Pause" }).first().click();
   await expect(s.getByRole("button", { name: "Resume" }).first()).toBeVisible();
   await b.goto(href);
-  await expect(b.getByText("Currently unavailable.")).toBeVisible();
+  await expect(b.getByRole("complementary").getByText("Currently unavailable.")).toBeVisible();
   await s.getByRole("button", { name: "Resume" }).first().click();
   await expect(s.getByRole("button", { name: "Pause" }).first()).toBeVisible();
 
