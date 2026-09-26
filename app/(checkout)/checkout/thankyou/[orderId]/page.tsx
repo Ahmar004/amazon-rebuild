@@ -85,10 +85,10 @@ async function ThankYouContent({ params }: { params: Promise<{ orderId: string }
 
         <div className="mt-6 flex flex-col gap-2 border-t border-border pt-4 sm:flex-row sm:gap-4">
           <Link
-            href={ROUTES.orders}
+            href={`${ROUTES.orders}/${order.id}`}
             className="rounded-full border border-accent bg-accent px-4 py-2 text-center text-sm font-bold text-accent-fg hover:bg-accent-hover"
           >
-            Review or edit your recent orders
+            View order details
           </Link>
           <Link
             href={ROUTES.home}

@@ -9,11 +9,12 @@ type AddToCartButtonProps = {
   asin: string;
   /** Stretch to the width of its container (product cards). */
   full?: boolean;
+  label?: string;
 };
 
 // Quick "Add to cart" on product cards: the header count bumps at once, a toast confirms with a
 // "View cart" shortcut to the drawer, and the shopper stays where they are (C8, C20).
-export function AddToCartButton({ asin, full = false }: AddToCartButtonProps) {
+export function AddToCartButton({ asin, full = false, label = "Add to cart" }: AddToCartButtonProps) {
   const { add, setDrawerOpen } = useCart();
   const toast = useToast();
   const [pending, startTransition] = useTransition();
@@ -33,7 +34,7 @@ export function AddToCartButton({ asin, full = false }: AddToCartButtonProps) {
       disabled={pending}
       className={buttonClass({ size: "sm", full, className: "rounded-full" })}
     >
-      {pending ? "Adding..." : "Add to cart"}
+      {pending ? "Adding..." : label}
     </button>
   );
 }

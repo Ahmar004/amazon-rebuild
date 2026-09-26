@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { requireUser } from "@/lib/auth/current-user";
 import { getOrdersForUser } from "@/lib/data/orders";
+import { orderStatus } from "@/lib/orders/status";
 import { OrdersList } from "@/components/orders/OrdersList";
 import { ROUTES } from "@/lib/constants/links";
 
@@ -17,16 +18,12 @@ export default function YourOrdersPage() {
 
 async function OrdersContent() {
   const user = await requireUser(ROUTES.orders);
-  const orders = await getOrdersForUser(user.id);
+  const now = new Date();
+  const orders = (await getOrdersForUser(user.id)).map((order) => ({ ...order, status: orderStatus(order, now) }));
 
   return (
     <div className="mx-auto max-w-[900px] px-4 py-6">
-      <p className="text-xs text-fg-muted">
-        Your Account {"›"} <span className="text-fg">Your Orders</span>
-      </p>
-      <div className="mt-2">
-        <OrdersList orders={orders} />
-      </div>
+      <OrdersList orders={orders} />
     </div>
   );
 }

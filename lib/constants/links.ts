@@ -49,6 +49,7 @@ export const SIDE_MENU_TRENDING: NavLink[] = [
 ];
 
 export const ACCOUNT_LINKS: NavLink[] = [
+  { label: "Your account", href: ROUTES.account },
   { label: "Your Orders", href: ROUTES.orders },
   { label: "Your Wishlist", href: ROUTES.wishlist },
   { label: "Browsing history", href: ROUTES.history },
@@ -68,6 +69,7 @@ export const FOOTER_COLUMNS: { title: string; links: NavLink[] }[] = [
   {
     title: "Your account",
     links: [
+      { label: "Account settings", href: ROUTES.account },
       { label: "Your Orders", href: ROUTES.orders },
       { label: "Your Wishlist", href: ROUTES.wishlist },
       { label: "Your Cart", href: ROUTES.cart },

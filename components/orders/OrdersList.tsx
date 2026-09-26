@@ -1,109 +1,121 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { Package, Search } from "lucide-react";
 import type { OrderSummary } from "@/lib/data/orders";
+import { ORDER_STATUS, type OrderStatus } from "@/lib/constants/orders";
 import { formatDeliveryDate } from "@/lib/pricing/delivery";
 import { formatPrice } from "@/lib/pricing/money";
-import { ROUTES } from "@/lib/constants/links";
+import { productHref, ROUTES } from "@/lib/constants/links";
+import { buttonClass } from "@/components/ui/Button";
+import { OrderStatusBadge } from "@/components/orders/OrderStatusBadge";
 
-// The order list and its search box (docs/spec.md 5.8): filtering is
-// client-side over the already-fetched, ownership-checked orders (small dataset per user, so no
-// need for a server round trip per keystroke).
-export function OrdersList({ orders }: { orders: OrderSummary[] }) {
+export type OrderListItem = OrderSummary & { status: OrderStatus };
+
+const TABS = [
+  { id: "all", label: "All orders", matches: () => true },
+  { id: "open", label: "Not yet delivered", matches: (s: OrderStatus) => s !== ORDER_STATUS.delivered && s !== ORDER_STATUS.cancelled },
+  { id: "cancelled", label: "Cancelled", matches: (s: OrderStatus) => s === ORDER_STATUS.cancelled },
+] as const;
+
+// Your Orders: status tabs and a search box over the shopper's own orders (already fetched and
+// ownership-checked on the server, and few per shopper, so filtering stays on the client).
+// Each status comes from the server's clock (lib/orders/status.ts).
+export function OrdersList({ orders }: { orders: OrderListItem[] }) {
   const [query, setQuery] = useState("");
+  const [tab, setTab] = useState<(typeof TABS)[number]["id"]>("all");
 
   const normalized = query.trim().toLowerCase();
-  const filtered = normalized
-    ? orders.filter(
-        (order) =>
-          order.id.toLowerCase().includes(normalized) ||
-          order.items.some((item) => item.title.toLowerCase().includes(normalized)),
-      )
-    : orders;
+  const matchesTab = TABS.find((t) => t.id === tab)!.matches;
+  const filtered = orders.filter(
+    (order) =>
+      matchesTab(order.status) &&
+      (!normalized || order.id.toLowerCase().includes(normalized) || order.items.some((item) => item.title.toLowerCase().includes(normalized))),
+  );
 
   return (
     <div>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <h1 className="text-3xl text-fg">Your Orders</h1>
-        <form
-          onSubmit={(event) => event.preventDefault()}
-          className="flex w-full max-w-sm shrink-0"
-        >
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-2xl font-bold text-fg">Your Orders</h1>
+        <form onSubmit={(event: FormEvent) => event.preventDefault()} role="search" className="relative w-full sm:max-w-xs">
+          <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-fg-muted" aria-hidden="true" />
           <input
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search all orders"
-            aria-label="Search all orders"
-            className="min-w-0 flex-1 rounded-l border border-r-0 border-border px-3 py-2 text-sm text-fg focus:outline-none focus:ring-2 focus:ring-accent"
+            placeholder="Search by product or order #"
+            aria-label="Search your orders"
+            className="h-10 w-full rounded-full border border-border-strong bg-surface pl-9 pr-3 text-sm text-fg outline-none focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-accent/40"
           />
-          <button
-            type="submit"
-            className="shrink-0 rounded-r bg-inverse-muted px-4 py-2 text-sm font-medium text-white hover:bg-inverse-muted"
-          >
-            Search Orders
-          </button>
         </form>
       </div>
 
-      <div className="mt-4 border-b border-border">
-        <span className="inline-block border-b-2 border-accent pb-2 text-sm font-bold text-fg">Orders</span>
+      <div role="tablist" aria-label="Filter orders" className="mt-4 flex gap-1 overflow-x-auto border-b border-border">
+        {TABS.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            role="tab"
+            aria-selected={tab === t.id}
+            onClick={() => setTab(t.id)}
+            className={`shrink-0 border-b-2 px-3 pb-2 text-sm font-semibold transition-colors ${
+              tab === t.id ? "border-accent text-fg" : "border-transparent text-fg-muted hover:text-fg"
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
       </div>
 
-      <p className="mt-4 text-sm text-fg">
-        {filtered.length} {filtered.length === 1 ? "order" : "orders"} placed
-      </p>
-
       {filtered.length === 0 ? (
-        <div className="mt-4 rounded-xl border border-border bg-surface p-6 text-center">
-          <p className="text-sm text-fg">
-            {orders.length === 0 ? "You have no orders yet." : "No orders match your search."}
-          </p>
-          <Link
-            href={ROUTES.home}
-            className="mt-3 inline-block rounded-full border border-accent bg-accent px-4 py-2 text-sm font-bold text-accent-fg hover:bg-accent-hover"
-          >
+        <div className="mt-6 flex flex-col items-center gap-3 rounded-xl border border-border bg-surface p-8 text-center">
+          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-accent-soft text-accent">
+            <Package size={26} aria-hidden="true" />
+          </span>
+          <p className="text-base font-semibold text-fg">{orders.length === 0 ? "You haven't placed an order yet" : "No orders match"}</p>
+          <Link href={ROUTES.home} className={buttonClass({ className: "rounded-full" })}>
             Continue shopping
           </Link>
         </div>
       ) : (
         <ul className="mt-4 space-y-4">
           {filtered.map((order) => (
-            <li key={order.id} className="rounded border border-border bg-surface">
-              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border bg-surface-muted px-4 py-3">
-                <div className="flex flex-wrap gap-6">
-                  <div>
-                    <p className="text-xs text-fg-muted">ORDER PLACED</p>
-                    <p className="text-sm text-fg">{formatDeliveryDate(order.placedAt)}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-fg-muted">TOTAL</p>
-                    <p className="text-sm text-fg">{formatPrice(order.totalCents)}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-fg-muted">SHIP TO</p>
-                    <p className="text-sm text-fg">{order.address.fullName}</p>
-                  </div>
-                </div>
-                <div className="flex flex-wrap items-center gap-3">
-                  <p className="text-xs text-fg-muted">ORDER # {order.id}</p>
-                  <Link
-                    href={`${ROUTES.checkout}/thankyou/${order.id}`}
-                    className="rounded-full border border-border bg-surface px-3 py-1.5 text-xs text-fg hover:bg-surface-muted"
-                  >
-                    View order details
-                  </Link>
-                </div>
+            <li key={order.id} className="overflow-hidden rounded-xl border border-border bg-surface shadow-card">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-surface-muted px-4 py-3 text-sm">
+                <dl className="flex flex-wrap gap-x-6 gap-y-1">
+                  <HeaderCell label="Placed" value={formatDeliveryDate(order.placedAt)} />
+                  <HeaderCell label="Total" value={formatPrice(order.totalCents)} />
+                  <HeaderCell label="Ship to" value={order.address.fullName} />
+                  <HeaderCell label="Order #" value={order.id} />
+                </dl>
+                <Link href={`${ROUTES.orders}/${order.id}`} className={buttonClass({ variant: "secondary", size: "sm", className: "rounded-full" })}>
+                  View order details
+                </Link>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 px-4 pt-3">
+                <OrderStatusBadge status={order.status} />
+                <span className="text-sm text-fg">
+                  {order.status === ORDER_STATUS.cancelled
+                    ? "Cancelled and refunded"
+                    : order.status === ORDER_STATUS.delivered
+                      ? `Delivered ${formatDeliveryDate(order.deliveryDate)}`
+                      : `Arriving ${formatDeliveryDate(order.deliveryDate)}`}
+                </span>
               </div>
 
               <ul className="divide-y divide-border px-4">
                 {order.items.map((item) => (
                   <li key={item.asin} className="flex items-center gap-3 py-3">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={item.imageUrl} alt={item.title} className="h-16 w-16 shrink-0 object-contain" />
+                    <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-white p-1">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={item.imageUrl} alt="" className="max-h-full max-w-full object-contain" />
+                    </span>
                     <div className="min-w-0 flex-1">
-                      <p className="line-clamp-2 text-sm text-accent hover:text-accent-hover">{item.title}</p>
+                      <Link href={productHref(item.asin)} className="line-clamp-2 text-sm text-fg hover:text-accent">
+                        {item.title}
+                      </Link>
                       <p className="text-sm text-fg-muted">Qty: {item.quantity}</p>
                     </div>
                   </li>
@@ -113,6 +125,15 @@ export function OrdersList({ orders }: { orders: OrderSummary[] }) {
           ))}
         </ul>
       )}
+    </div>
+  );
+}
+
+function HeaderCell({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <dt className="text-xs uppercase text-fg-muted">{label}</dt>
+      <dd className="text-fg">{value}</dd>
     </div>
   );
 }

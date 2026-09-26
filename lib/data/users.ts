@@ -1,4 +1,4 @@
-// User accounts (docs/design.md 5.3). Only actions/auth.ts calls these - components and pages
+// User accounts (docs/design.md 5.3). Only server actions call these - components and pages
 // never import the database client directly (CLAUDE.md architecture rule).
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db/client";
@@ -38,4 +38,17 @@ export async function findUserById(id: string): Promise<UserWithBilling | null> 
 // 6.7: "Ensures a Stripe customer").
 export async function updateUser(userId: string, patch: { stripeCustomerId?: string }): Promise<void> {
   await db.update(users).set(patch).where(eq(users.id, userId));
+}
+
+export async function updateProfile(userId: string, patch: { name: string; email: string }): Promise<void> {
+  await db.update(users).set(patch).where(eq(users.id, userId));
+}
+
+export async function getPasswordHash(userId: string): Promise<string | null> {
+  const [row] = await db.select({ hash: users.passwordHash }).from(users).where(eq(users.id, userId)).limit(1);
+  return row?.hash ?? null;
+}
+
+export async function setPasswordHash(userId: string, passwordHash: string): Promise<void> {
+  await db.update(users).set({ passwordHash }).where(eq(users.id, userId));
 }

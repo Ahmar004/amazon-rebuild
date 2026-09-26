@@ -2,9 +2,9 @@
 // withTransaction (actions/checkout.ts's finalizeOrder) so the order insert, the order-item
 // snapshots, the stock decrement and the cart cleanup all succeed or fail together
 // (CLAUDE.md: "created in one transaction with the stock decrement and cart cleanup").
-import { and, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 import type { Tx } from "@/lib/db/client";
-import { db } from "@/lib/db/client";
+import { db, withTransaction } from "@/lib/db/client";
 import { cartItems, carts, orderItems, orders, products, type AddressSnapshot } from "@/lib/db/schema";
 import type { DeliverySpeed } from "@/lib/pricing/shipping";
 import type { OrderTotals } from "@/lib/pricing/totals";
@@ -204,4 +204,34 @@ export async function getBuyAgain(userId: string): Promise<ProductSummary[]> {
     order by bought.last_ordered desc
     limit ${BUY_AGAIN_LIMIT}`);
   return result.rows.map(mapSummarySqlRow);
+}
+
+// Ownership-checked: the Stripe PaymentIntent behind one of the user's orders, for a refund.
+export async function getOrderPaymentIntentId(userId: string, orderId: string): Promise<string | null> {
+  const [row] = await db
+    .select({ id: orders.stripePaymentIntentId })
+    .from(orders)
+    .where(and(eq(orders.id, orderId), eq(orders.userId, userId)))
+    .limit(1);
+  return row?.id ?? null;
+}
+
+// Marks the user's order cancelled and puts its stock back, in one transaction (docs/spec.md 6.4).
+// The `cancelled_at is null` guard makes a repeated call a no-op, so stock is only returned once.
+// Returns the cancelled order's product ids, or null when there was nothing to cancel.
+export async function cancelOrderAndRestock(userId: string, orderId: string, now: Date): Promise<string[] | null> {
+  return withTransaction(async (tx) => {
+    const [cancelled] = await tx
+      .update(orders)
+      .set({ cancelledAt: now })
+      .where(and(eq(orders.id, orderId), eq(orders.userId, userId), isNull(orders.cancelledAt)))
+      .returning({ id: orders.id });
+    if (!cancelled) return null;
+
+    const items = await tx.select({ asin: orderItems.asin, quantity: orderItems.quantity }).from(orderItems).where(eq(orderItems.orderId, orderId));
+    for (const item of items) {
+      await tx.update(products).set({ stock: sql`${products.stock} + ${item.quantity}` }).where(eq(products.asin, item.asin));
+    }
+    return items.map((item) => item.asin);
+  });
 }
