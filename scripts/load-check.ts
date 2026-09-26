@@ -25,7 +25,8 @@ async function main() {
 
   const routes = ["/", "/search?k=headphones", "/search?k=lamp&sort=price-asc", `/product/${product.asin}`, "/deals", "/cart", "/api/suggest?q=hea"];
   const jobs = routes.flatMap((route) => Array.from({ length: perRoute }, () => route));
-  const results = new Map<string, { ms: number[]; statuses: Map<number, number> }>();
+  type RouteResult = { ms: number[]; statuses: Map<number, number> };
+  const results = new Map<string, RouteResult>();
   const started = Date.now();
 
   async function worker() {
@@ -34,7 +35,7 @@ async function main() {
       const status = await fetch(base + route, { headers: { cookie: `session=${session}` }, redirect: "manual" })
         .then(async (r) => (await r.arrayBuffer(), r.status))
         .catch(() => 0);
-      const entry = results.get(route) ?? { ms: [], statuses: new Map() };
+      const entry: RouteResult = results.get(route) ?? { ms: [], statuses: new Map() };
       entry.ms.push(performance.now() - t);
       entry.statuses.set(status, (entry.statuses.get(status) ?? 0) + 1);
       results.set(route, entry);
