@@ -281,3 +281,26 @@ export const browsingHistory = pgTable(
   },
   (t) => [primaryKey({ columns: [t.userId, t.asin] }), index("history_user_viewed_idx").on(t.userId, t.viewedAt)],
 );
+
+// Customer Service "Contact us" requests (frontend-rebuild.md C18). Topic and status values live
+// in lib/constants/support.ts; the enums below must list the same values.
+export const supportTopicEnum = pgEnum("support_topic", ["order", "delivery", "return", "payment", "account", "other"]);
+export const supportStatusEnum = pgEnum("support_status", ["open", "closed"]);
+
+export const supportRequests = pgTable(
+  "support_requests",
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    userId: uuid()
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    orderId: text().references(() => orders.id, { onDelete: "set null" }),
+    topic: supportTopicEnum().notNull(),
+    subject: text().notNull(),
+    message: text().notNull(),
+    status: supportStatusEnum().notNull().default("open"),
+    createdAt: createdAt(),
+    closedAt: timestamp({ withTimezone: true }),
+  },
+  (t) => [index("support_requests_user_created_idx").on(t.userId, t.createdAt)],
+);

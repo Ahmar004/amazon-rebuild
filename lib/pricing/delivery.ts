@@ -1,7 +1,7 @@
 import type { DeliverySpeed } from "@/lib/pricing/shipping";
 
-const STANDARD_DAYS = 5;
-const FAST_DAYS = 2;
+export const STANDARD_DAYS = 5;
+export const FAST_DAYS = 2;
 
 export function deliveryDate(from: Date, speed: DeliverySpeed): Date {
   const days = speed === "fast" ? FAST_DAYS : STANDARD_DAYS;

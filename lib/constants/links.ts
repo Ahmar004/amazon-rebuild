@@ -33,13 +33,13 @@ export function productHref(asin: string): string {
 export const BEST_SELLERS_HREF = `${ROUTES.search}?sort=bestsellers`;
 export const NEW_RELEASES_HREF = `${ROUTES.search}?sort=newest`;
 
-// The quick links next to the All menu. Pages still to come (customer service) are added here by
-// the slice that builds them, so no link ever points at a missing page.
+// The quick links next to the All menu. Only pages that exist are linked.
 export const SUBNAV_LINKS: NavLink[] = [
   { label: "Today's Deals", href: ROUTES.deals },
   { label: "Best Sellers", href: BEST_SELLERS_HREF },
   { label: "New Releases", href: NEW_RELEASES_HREF },
   { label: "Your Orders", href: ROUTES.orders },
+  { label: "Customer Service", href: ROUTES.customerService },
 ];
 
 export const SIDE_MENU_TRENDING: NavLink[] = [
@@ -54,6 +54,7 @@ export const ACCOUNT_LINKS: NavLink[] = [
   { label: "Your Wishlist", href: ROUTES.wishlist },
   { label: "Browsing history", href: ROUTES.history },
   { label: "Your Cart", href: ROUTES.cart },
+  { label: "Customer Service", href: ROUTES.customerService },
 ];
 
 export const FOOTER_COLUMNS: { title: string; links: NavLink[] }[] = [
@@ -73,6 +74,7 @@ export const FOOTER_COLUMNS: { title: string; links: NavLink[] }[] = [
       { label: "Your Orders", href: ROUTES.orders },
       { label: "Your Wishlist", href: ROUTES.wishlist },
       { label: "Your Cart", href: ROUTES.cart },
+      { label: "Customer Service", href: ROUTES.customerService },
     ],
   },
 ];

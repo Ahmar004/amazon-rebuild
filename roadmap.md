@@ -89,5 +89,5 @@ One slice per session, in this order:
 - **[completed]** R8  One-page checkout, live Stripe check (C12)
 - **[completed]** R9  Orders details/timeline/cancel, Account tabs (C15,C16)
 - **[completed]** R10 Reviews (buyers only), browsing history, deals (C19)
-- R11 Customer Service (11,C18)
+- **[completed]** R11 Customer Service (11,C18)
 - R12 CLAUDE.md/spec rewrite, README Design decisions, hardening, deploy (C21,C22)
